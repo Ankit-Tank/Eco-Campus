@@ -15,10 +15,10 @@ SPEC §10 & Prompt Requirements:
 - PATCH /complaints/{id} (Admin only): acknowledge, assign, add notes, update status.
 - Admin notification recorded on new complaint submission (no external service).
 """
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import shutil
-from typing import List, Optional
+from typing import Any, List, Optional
 import uuid
 
 from fastapi import (
@@ -75,7 +75,8 @@ VALID_STATUS_LIFECYCLE = {
 
 def _format_complaint(c: models.Complaint, db: Session) -> ComplaintResponse:
     """Format Complaint DB model with user info, overdue calculation, and history."""
-    age_hours = (datetime.utcnow() - c.created_at).total_seconds() / 3600.0 if c.created_at else 0.0
+    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+    age_hours = (now_utc - c.created_at).total_seconds() / 3600.0 if c.created_at else 0.0
     is_overdue = (c.status != "resolved") and (age_hours > 48.0)
 
     # Resolve student and assignee emails
@@ -87,8 +88,9 @@ def _format_complaint(c: models.Complaint, db: Session) -> ComplaintResponse:
     )
 
     history_items = []
-    if c.history:
-        for h in sorted(c.history, key=lambda x: x.changed_at or datetime.min):
+    history_records: Any = getattr(c, "history", None)
+    if history_records:
+        for h in sorted(history_records, key=lambda x: getattr(x, "changed_at", None) or datetime.min):
             changed_user = (
                 db.query(models.User).filter(models.User.id == h.changed_by).first()
                 if h.changed_by
@@ -213,7 +215,7 @@ async def submit_complaint(
             break
         candidate_num += 1
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     complaint = models.Complaint(
         complaint_code=code,
         student_id=current_user.id,
@@ -280,6 +282,54 @@ def get_my_complaints(
         "total_count": query.count(),
         "data_source": "simulated",
     }
+
+
+# ===========================================================================
+# Admin Notifications (SPEC §10) — MUST be defined BEFORE /{complaint_id}
+# ===========================================================================
+@router.get(
+    "/admin/notifications",
+    response_model=AdminNotificationListResponse,
+    summary="Get admin notification records for new complaints and events (Admin only)",
+)
+@router.get(
+    "/notifications/admin",
+    response_model=AdminNotificationListResponse,
+    summary="Get admin notification records for new complaints and events (Admin only) - Alias",
+)
+def get_admin_notifications(
+    limit: int = Query(20, ge=1, le=200),
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    """Retrieve internal admin notification logs for student complaints."""
+    notifs = (
+        db.query(models.AdminNotification)
+        .order_by(models.AdminNotification.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    items = [
+        AdminNotificationItem(
+            id=n.id,
+            title=n.title,
+            message=n.message,
+            notification_type=n.notification_type,
+            reference_id=n.reference_id,
+            is_read=n.is_read,
+            created_at=n.created_at.isoformat() if n.created_at else "",
+            data_source="simulated",
+        )
+        for n in notifs
+    ]
+    unread = sum(1 for n in items if not n.is_read)
+
+    return AdminNotificationListResponse(
+        notifications=items,
+        unread_count=unread,
+        count=len(items),
+        data_source="simulated",
+    )
 
 
 @router.get(
@@ -400,7 +450,7 @@ def update_complaint(
             detail=f"Complaint with id {complaint_id} not found",
         )
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     old_status = complaint.status
     audit_notes = []
 
@@ -466,43 +516,5 @@ def update_complaint(
     return _format_complaint(complaint, db)
 
 
-# ===========================================================================
-# Admin Notifications (SPEC §10)
-# ===========================================================================
-@router.get(
-    "/notifications/admin",
-    response_model=AdminNotificationListResponse,
-    summary="Get admin notification records for new complaints and events (Admin only)",
-)
-def get_admin_notifications(
-    db: Session = Depends(get_db),
-    admin_user: models.User = Depends(require_admin),
-):
-    """Retrieve internal admin notification logs for student complaints."""
-    notifs = (
-        db.query(models.AdminNotification)
-        .order_by(models.AdminNotification.created_at.desc())
-        .limit(100)
-        .all()
-    )
-    items = [
-        AdminNotificationItem(
-            id=n.id,
-            title=n.title,
-            message=n.message,
-            notification_type=n.notification_type,
-            reference_id=n.reference_id,
-            is_read=n.is_read,
-            created_at=n.created_at.isoformat() if n.created_at else "",
-            data_source="simulated",
-        )
-        for n in notifs
-    ]
-    unread = sum(1 for n in items if not n.is_read)
-
-    return AdminNotificationListResponse(
-        notifications=items,
-        unread_count=unread,
-        count=len(items),
-        data_source="simulated",
-    )
+# NOTE: /admin/notifications is now defined above, before /{complaint_id},
+# to prevent FastAPI from matching 'admin' as a complaint integer ID.

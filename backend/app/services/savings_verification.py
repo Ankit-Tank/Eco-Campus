@@ -13,7 +13,7 @@ SPEC §8 & Requirements:
 - Monetary and CO2 savings computed using runtime settings.
 - Pure service functions: NO FastAPI imports.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -118,7 +118,7 @@ def verify_action(
     # Determine the reference simulation timestamp
     if current_ts is None:
         state = db.query(models.SimState).filter(models.SimState.id == 1).first()
-        current_ts = state.virtual_now if state else datetime.utcnow()
+        current_ts = state.virtual_now if state else datetime.now(timezone.utc).replace(tzinfo=None)
 
     action_ts = action.timestamp
     post_end = action_ts + timedelta(minutes=window_minutes)
@@ -232,7 +232,7 @@ def verify_action(
         is_simulated=True,
     )
     db.add(record)
-    action.verification_status = status
+    setattr(action, "verification_status", status)
     db.commit()
     db.refresh(record)
 

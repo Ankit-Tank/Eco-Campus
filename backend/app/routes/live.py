@@ -201,7 +201,9 @@ def get_live_snapshot(
         expected_kw=round(total_expected_kw, 3),
         ghost_kw=round(total_ghost_kw, 3),
         cost_per_hour=cost_per_hour,
+        cost_per_hour_inr=cost_per_hour,  # alias for frontend
         co2_per_hour=co2_per_hour,
+        co2_per_hour_kg=co2_per_hour,     # alias for frontend
         fan_equivalent=fan_res["value"],
         fan_assumption=fan_res["assumption"],
         bucket_equivalent=bucket_res["value"],

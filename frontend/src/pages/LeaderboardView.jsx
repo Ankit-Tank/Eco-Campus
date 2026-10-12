@@ -98,9 +98,16 @@ export default function LeaderboardView() {
             <div className="kpi">
               <p className="kpi-label">Campus Efficiency Leader</p>
               <div className="kpi-value" style={{ color: '#047857' }}>
-                <strong>Block {data.leaderboard?.[0]?.block || 'A'}</strong>
+                <strong>
+                  {(() => {
+                    const top = (data.leaderboard || data.blocks || [])[0]
+                    if (!top) return 'Block A'
+                    const blk = top.block || 'A'
+                    return blk.startsWith('Block') ? blk : `Block ${blk}`
+                  })()}
+                </strong>
               </div>
-              <p className="kpi-note">Highest sustainability score ({data.leaderboard?.[0]?.score || 0}/100)</p>
+              <p className="kpi-note">Highest sustainability score ({(data.leaderboard || data.blocks || [])[0]?.score ?? (data.leaderboard || data.blocks || [])[0]?.sustainability_score ?? 0}/100)</p>
             </div>
 
             <div className="kpi">
@@ -122,8 +129,10 @@ export default function LeaderboardView() {
 
           {/* Leaderboard Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginTop: 24 }}>
-            {(data.leaderboard || []).map((b, idx) => {
+            {(data.leaderboard || data.blocks || []).map((b, idx) => {
               const gradeStyle = GRADE_COLORS[b.grade] || GRADE_COLORS.B
+              const blockTitle = b.block?.startsWith('Block') ? b.block : `Block ${b.block}`
+              const scoreVal = b.score ?? b.sustainability_score ?? 0
               return (
                 <section
                   key={b.block}
@@ -136,7 +145,7 @@ export default function LeaderboardView() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <span style={{ fontSize: 24 }}>{MEDAL_ICONS[idx] || `#${b.rank}`}</span>
-                      <h2 style={{ fontSize: 20, marginTop: 4 }}>Block {b.block}</h2>
+                      <h2 style={{ fontSize: 20, marginTop: 4 }}>{blockTitle}</h2>
                       <p style={{ fontSize: 13, color: '#64748b' }}>{b.name}</p>
                     </div>
 
@@ -160,16 +169,16 @@ export default function LeaderboardView() {
                   <div style={{ marginTop: 20, padding: '12px 16px', background: '#f8fafc', borderRadius: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                       <span style={{ fontSize: 13, color: '#64748b' }}>Sustainability Score</span>
-                      <strong style={{ fontSize: 15, color: '#0f172a' }}>{b.score} / 100</strong>
+                      <strong style={{ fontSize: 15, color: '#0f172a' }}>{scoreVal} / 100</strong>
                     </div>
 
                     {/* Progress Bar */}
                     <div style={{ width: '100%', height: 8, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
                       <div
                         style={{
-                          width: `${Math.min(100, Math.max(0, b.score))}%`,
+                          width: `${Math.min(100, Math.max(0, scoreVal))}%`,
                           height: '100%',
-                          background: b.score > 80 ? '#10b981' : b.score > 65 ? '#3b82f6' : '#ef4444',
+                          background: scoreVal > 80 ? '#10b981' : scoreVal > 65 ? '#3b82f6' : '#ef4444',
                         }}
                       />
                     </div>
@@ -184,7 +193,7 @@ export default function LeaderboardView() {
                     <div style={{ padding: '8px 12px', background: '#fef2f2', borderRadius: 8 }}>
                       <div style={{ fontSize: 11, color: '#991b1b' }}>Ghost Load</div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>
-                        {formatNumber(b.ghost_kwh, 1)} kWh ({b.waste_pct}%)
+                        {formatNumber(b.ghost_kwh, 1)} kWh ({b.waste_pct ?? b.waste_percentage ?? 0}%)
                       </div>
                     </div>
 
@@ -195,13 +204,13 @@ export default function LeaderboardView() {
 
                     <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8 }}>
                       <div style={{ fontSize: 11, color: '#64748b' }}>Carbon Footprint</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2 }}>{formatNumber(b.emissions_kg, 1)} kg</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2 }}>{formatNumber(b.emissions_kg ?? b.co2_kg, 1)} kg</div>
                     </div>
                   </div>
 
                   <div style={{ marginTop: 14, fontSize: 12, color: '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Zap size={14} color="#f59e0b" />
-                    <span>Wastes equivalent of <strong>{Math.round(b.fan_equivalents)} fan-hours</strong></span>
+                    <span>Wastes equivalent of <strong>{Math.round(b.fan_equivalents || 0)} fan-hours</strong></span>
                   </div>
                 </section>
               )

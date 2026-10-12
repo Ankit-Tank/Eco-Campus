@@ -24,11 +24,14 @@ class GhostRoomCurrent(BaseModel):
 class GhostCurrentResponse(BaseModel):
     rooms: List[GhostRoomCurrent]
     total_ghost_kw: float
+    total_actual_kw: float = 0.0
+    total_expected_kw: float = 0.0
     high_usage_count: int
     idle_load_count: int
     fan_equivalent: Optional[float] = None
     fan_equivalents: Optional[float] = None
     fan_assumption: Optional[str] = None
+    cost_per_hour_inr: Optional[float] = None
     assumptions: Optional[dict] = None
     data_source: str = "simulated"
 
@@ -38,10 +41,13 @@ class GhostRoomRankingItem(BaseModel):
     room_id: int
     room_code: str
     name: str
+    room_name: Optional[str] = None  # alias for name, used by frontend
     block: str
     total_actual_kwh: float
     total_expected_kwh: float
     total_ghost_kwh: float
+    ghost_kwh: Optional[float] = None  # alias for total_ghost_kwh, used by frontend
+    dominant_reason_code: Optional[str] = "IDLE_WASTE"  # for frontend ranking table
     cost_inr: float
     co2_kg: float
 

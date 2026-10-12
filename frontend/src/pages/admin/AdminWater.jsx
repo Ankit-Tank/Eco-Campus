@@ -57,7 +57,7 @@ export default function AdminWater() {
       setLocations(locsRes || [])
       setAlerts(alertsRes.alerts || [])
 
-      const formattedSeries = (seriesRes.points || []).map((p) => {
+      const formattedSeries = (seriesRes.series || seriesRes.points || []).map((p) => {
         const timePart = p.timestamp ? p.timestamp.slice(11, 16) : ''
         const datePart = p.timestamp ? p.timestamp.slice(5, 10) : ''
         return {
@@ -199,8 +199,8 @@ export default function AdminWater() {
               <Droplet size={20} color="#0f8fa0" />
             </div>
 
-            <div className="chart-box" style={{ height: 320 }}>
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="chart-box" style={{ height: 320, width: '100%', minHeight: 320 }}>
+              <ResponsiveContainer width="100%" height={320}>
                 <AreaChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="flowGrad" x1="0" y1="0" x2="0" y2="1">

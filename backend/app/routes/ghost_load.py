@@ -138,9 +138,22 @@ def get_ghost_current(
     from app.services.carbon_calculator import fan_equivalents
     fan_res = fan_equivalents(total_ghost_kw, 75.0)
 
+    # Calculate total actual and expected kW across all rooms
+    total_actual_kw_sum = sum(c.actual_kw for c in room_cards)
+    total_expected_kw_sum = sum(c.expected_kw for c in room_cards)
+
+    # Get settings for cost calculation
+    settings_rows = db.query(models.Setting).all()
+    cfg = {s.key: s.value for s in settings_rows}
+    price_per_kwh = float(cfg.get("electricity_price_per_kwh", 8.50))
+    cost_per_hour = round(total_ghost_kw * price_per_kwh, 2)
+
     return GhostCurrentResponse(
         rooms=room_cards,
         total_ghost_kw=round(total_ghost_kw, 3),
+        total_actual_kw=round(total_actual_kw_sum, 3),
+        total_expected_kw=round(total_expected_kw_sum, 3),
+        cost_per_hour_inr=cost_per_hour,
         high_usage_count=high_usage_count,
         idle_load_count=idle_load_count,
         fan_equivalent=fan_res["value"],
@@ -240,10 +253,13 @@ def get_ghost_ranking(
             room_id=item["room_id"],
             room_code=item["room_code"],
             name=item["name"],
+            room_name=item["name"],  # alias for frontend
             block=item["block"],
             total_actual_kwh=item["total_actual_kwh"],
             total_expected_kwh=item["total_expected_kwh"],
             total_ghost_kwh=item["total_ghost_kwh"],
+            ghost_kwh=item["total_ghost_kwh"],  # alias for frontend
+            dominant_reason_code="IDLE_WASTE",  # default reason for ranking display
             cost_inr=item["estimated_cost_inr"],
             co2_kg=item["estimated_emissions_kg"],
         )

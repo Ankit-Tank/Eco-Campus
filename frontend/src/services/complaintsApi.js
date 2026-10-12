@@ -38,10 +38,16 @@ export function createComplaint({ title, category, location, description, image 
 }
 
 // PATCH /api/complaints/:id (admin triage)
-export function patchComplaint(id, { status, assigned_to, admin_notes }) {
+export function patchComplaint(id, { status, assigned_to, admin_notes, resolution_notes, notes }) {
   return request(`/complaints/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ status, assigned_to, admin_notes }),
+    body: JSON.stringify({
+      status,
+      assigned_to,
+      // Support both admin_notes (legacy) and notes/resolution_notes (backend schema)
+      notes: notes || admin_notes,
+      resolution_notes: resolution_notes || admin_notes,
+    }),
   })
 }
 

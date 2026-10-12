@@ -65,14 +65,20 @@ export default function AdminSimulator() {
 
   useEffect(() => {
     loadData()
-    getRooms().then((res) => setRooms(res.rooms || []))
+    getRooms().then((res) => {
+      const list = Array.isArray(res) ? res : (res?.items || res?.rooms || [])
+      setRooms(list)
+    })
     const timer = setInterval(loadData, 2000) // Fast polling for real-time simulation clock
     return () => clearInterval(timer)
   }, [])
 
   useEffect(() => {
     if (selectedRoomId) {
-      getRoomEquipment(selectedRoomId).then((res) => setEquipmentList(res || []))
+      getRoomEquipment(selectedRoomId).then((res) => {
+        const list = Array.isArray(res) ? res : (res?.items || res?.equipment || [])
+        setEquipmentList(list)
+      })
     }
   }, [selectedRoomId])
 
@@ -352,7 +358,7 @@ export default function AdminSimulator() {
                     <option value="">Select a room...</option>
                     {rooms.map((r) => (
                       <option key={r.id} value={r.id}>
-                        {r.room_code} - {r.room_name} (Block {r.block})
+                        {r.room_code} - {r.room_name || r.name} (Block {r.block})
                       </option>
                     ))}
                   </select>

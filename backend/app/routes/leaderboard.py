@@ -7,7 +7,7 @@ SPEC §5 & User Requirements:
 - Open to all authenticated users (students and admins).
 - Includes equivalents and assumptions.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -46,7 +46,7 @@ def get_block_leaderboard(
     - Letter grade: A+ (>=90), A (>=80), B (>=70), C (>=60), D (<60)
     """
     state = db.query(models.SimState).filter(models.SimState.id == 1).first()
-    virtual_now = state.virtual_now if state else datetime.utcnow()
+    virtual_now = state.virtual_now if state else datetime.now(timezone.utc).replace(tzinfo=None)
 
     p_clean = period.lower().strip()
     if p_clean in ("today", "24h", "1d"):
@@ -129,16 +129,19 @@ def get_block_leaderboard(
         fan_res = fan_equivalents(avg_ghost_kw, fan_watts)
 
         items.append({
-            "block": f"Block {blk_key}",
+            "block": blk_key,
             "name": BLOCK_NAMES.get(blk_key, f"Block {blk_key} Building"),
             "actual_kwh": round(actual, 2),
             "expected_kwh": round(expected, 2),
             "ghost_kwh": round(ghost, 2),
             "waste_percentage": waste_pct,
+            "waste_pct": waste_pct,
             "sustainability_score": score,
+            "score": score,
             "grade": grade,
             "cost_inr": cost,
             "co2_kg": co2,
+            "emissions_kg": co2,
             "fan_equivalents": fan_res["value"],
             "fan_assumption": fan_res["assumption"],
         })
@@ -149,14 +152,22 @@ def get_block_leaderboard(
     for idx, it in enumerate(items, start=1):
         it["rank"] = idx
 
-    best_block = items[0]["block"] if items else "Block B"
-    worst_block = items[-1]["block"] if items else "Block A"
+    best_block = f"Block {items[0]['block']}" if items else "Block B"
+    worst_block = f"Block {items[-1]['block']}" if items else "Block A"
+
+    total_ghost_kwh = sum(it["ghost_kwh"] for it in items)
+    total_cost_inr = sum(it["cost_inr"] for it in items)
+    total_co2_kg = sum(it["co2_kg"] for it in items)
 
     leaderboard_items = [BlockLeaderboardItem(**it) for it in items]
 
     return BlockLeaderboardResponse(
         period=period,
         blocks=leaderboard_items,
+        leaderboard=leaderboard_items,
+        total_ghost_kwh=round(total_ghost_kwh, 2),
+        total_cost_inr=round(total_cost_inr, 2),
+        total_co2_kg=round(total_co2_kg, 2),
         best_block=best_block,
         worst_block=worst_block,
         assumptions={

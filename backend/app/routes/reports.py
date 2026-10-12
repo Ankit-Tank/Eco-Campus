@@ -16,7 +16,7 @@ SPEC §12 & Prompt Requirements:
   - Downloadable CSV report with tagged figures and recommendations.
 """
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import io
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -70,8 +70,9 @@ def _compute_report_data(
     min_date = db.query(models.MeterReading.timestamp).order_by(models.MeterReading.timestamp.asc()).first()
     max_date = db.query(models.MeterReading.timestamp).order_by(models.MeterReading.timestamp.desc()).first()
 
-    default_start = min_date[0] if min_date else (datetime.utcnow() - timedelta(days=14))
-    default_end = max_date[0] if max_date else datetime.utcnow()
+    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+    default_start = min_date[0] if min_date else (now_utc - timedelta(days=14))
+    default_end = max_date[0] if max_date else now_utc
 
     start_dt = default_start
     if date_from_str:
@@ -473,7 +474,7 @@ def export_report_csv(
                 writer.writerow(["Complaints Breakdown", f"Category: {cat}", cnt, "count", c.tag, "Admin campus breakdown"])
 
     csv_content = output.getvalue()
-    filename = f"ghostwatt_sustainability_report_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"ghostwatt_sustainability_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"
 
     return Response(
         content=csv_content,
@@ -518,6 +519,7 @@ def report_appliance_left_on(
     eq_kind = (payload.equipment_type or payload.appliance_kind or "appliance").lower()
 
     # 3. Generate unique complaint code
+    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
     count = db.query(models.Complaint).count()
     signal_code = f"AL-{count + 1:04d}"
 
@@ -530,7 +532,7 @@ def report_appliance_left_on(
         category="appliance_left_on",
         description=f"Appliance Left On: {eq_kind.upper()}. {payload.notes or ''}".strip(),
         status="submitted",
-        created_at=datetime.utcnow(),
+        created_at=now_utc,
     )
     db.add(complaint)
     db.flush()
@@ -542,7 +544,7 @@ def report_appliance_left_on(
         old_status=None,
         new_status="submitted",
         note=f"Signal reported by {current_user.email}: {eq_kind} left on",
-        changed_at=datetime.utcnow(),
+        changed_at=now_utc,
     )
     db.add(history)
 
@@ -552,7 +554,7 @@ def report_appliance_left_on(
         notification_type="complaint",
         reference_id=complaint.complaint_code,
         is_read=False,
-        created_at=datetime.utcnow(),
+        created_at=now_utc,
     )
     db.add(notification)
 

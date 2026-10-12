@@ -249,6 +249,8 @@ class WaterLocation(Base):
     building               = Column(String(50), nullable=False)
     description            = Column(String(200), default="")
     low_flow_threshold_lph = Column(Float, default=50.0)   # night-flow alert threshold
+    baseline_night_lph     = Column(Float, default=50.0)   # baseline night flow in L/h (alias used by API)
+    meter_type             = Column(String(50), default="pulse")  # pulse / ultrasonic / mechanical
 
     readings = relationship("WaterReading", back_populates="location", cascade="all, delete-orphan")
     alerts   = relationship("WaterAlert", back_populates="location", cascade="all, delete-orphan")

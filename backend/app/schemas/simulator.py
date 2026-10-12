@@ -54,7 +54,9 @@ class LiveSnapshotResponse(BaseModel):
     expected_kw: Optional[float] = None
     ghost_kw: Optional[float] = None
     cost_per_hour: float
+    cost_per_hour_inr: Optional[float] = None   # alias used by frontend AdminSimulator
     co2_per_hour: float
+    co2_per_hour_kg: Optional[float] = None     # alias used by frontend AdminSimulator
     fan_equivalent: float
     fan_assumption: Optional[str] = None
     bucket_equivalent: Optional[float] = None

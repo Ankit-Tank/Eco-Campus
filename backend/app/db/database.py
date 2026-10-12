@@ -33,6 +33,21 @@ Base = declarative_base()
 def create_all_tables():
     """Create all tables. Called on startup and by seed script."""
     Base.metadata.create_all(bind=engine)
+    # Ensure any newly added columns in SQLite are migrated automatically
+    if settings.db_url.startswith("sqlite"):
+        with engine.connect() as conn:
+            # Check water_locations columns
+            try:
+                res = conn.exec_driver_sql("PRAGMA table_info(water_locations)").fetchall()
+                col_names = {row[1] for row in res}
+                if "baseline_night_lph" not in col_names:
+                    conn.exec_driver_sql("ALTER TABLE water_locations ADD COLUMN baseline_night_lph REAL DEFAULT 50.0")
+                if "meter_type" not in col_names:
+                    conn.exec_driver_sql("ALTER TABLE water_locations ADD COLUMN meter_type TEXT DEFAULT 'pulse'")
+                conn.commit()
+            except Exception:
+                pass
+
 
 
 def drop_all_tables():

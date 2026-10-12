@@ -65,23 +65,60 @@ export default function AdminElectricity() {
     setError(null)
     try {
       const [seriesRes, currentRes, rankingRes, switchRes] = await Promise.all([
-        getElectricitySeries({ block: block === 'all' ? undefined : block, limit: 100 }),
+        getElectricitySeries({ block: block === 'all' ? undefined : block, limit: 500 }),
         getGhostCurrent(),
         getGhostRanking({ period }),
         getSwitchOffList(),
       ])
 
-      const chartPoints = (seriesRes.points || []).map((p) => {
-        const timePart = p.timestamp ? p.timestamp.slice(11, 16) : ''
-        const datePart = p.timestamp ? p.timestamp.slice(5, 10) : ''
-        return {
-          ...p,
-          label: `${datePart} ${timePart}`,
+      // Aggregate per-room readings by timestamp for campus/block telemetry stream
+      const pointsByTimestamp = new Map()
+      const rawPoints = seriesRes.series || seriesRes.points || []
+
+      for (const p of rawPoints) {
+        const ts = p.timestamp || ''
+        const actual = Number(p.actual_kw ?? p.actual_demand_kw ?? 0)
+        const expected = Number(p.expected_kw ?? p.expected_demand_kw ?? 0)
+        const ghost = Number(p.ghost_kw ?? p.ghost_load_kw ?? 0)
+
+        if (!pointsByTimestamp.has(ts)) {
+          const timePart = ts ? ts.slice(11, 16) : ''
+          const datePart = ts ? ts.slice(5, 10) : ''
+          pointsByTimestamp.set(ts, {
+            timestamp: ts,
+            label: `${datePart} ${timePart}`,
+            actual_kw: actual,
+            expected_kw: expected,
+            ghost_kw: ghost,
+          })
+        } else {
+          const existing = pointsByTimestamp.get(ts)
+          existing.actual_kw = Math.round((existing.actual_kw + actual) * 1000) / 1000
+          existing.expected_kw = Math.round((existing.expected_kw + expected) * 1000) / 1000
+          existing.ghost_kw = Math.round((existing.ghost_kw + ghost) * 1000) / 1000
         }
-      })
+      }
+
+      const chartPoints = Array.from(pointsByTimestamp.values())
+        .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+        .slice(-32)
+
       setSeriesData(chartPoints)
-      setCurrentGhost(currentRes)
-      setRanking(rankingRes.ranking || [])
+      setCurrentGhost({
+        ...currentRes,
+        total_actual_kw: currentRes?.total_actual_kw ?? currentRes?.actual_kw ?? 0,
+        total_expected_kw: currentRes?.total_expected_kw ?? currentRes?.expected_kw ?? 0,
+        total_ghost_kw: currentRes?.total_ghost_kw ?? currentRes?.ghost_kw ?? 0,
+        cost_per_hour_inr: currentRes?.cost_per_hour_inr ?? currentRes?.cost_per_hour ?? ((currentRes?.total_ghost_kw || 0) * 8.5),
+        fan_equivalents: currentRes?.fan_equivalents ?? currentRes?.fan_equivalent ?? 0,
+      })
+      setRanking(
+        (rankingRes.ranking || []).map((r) => ({
+          ...r,
+          ghost_kwh: r.ghost_kwh ?? r.total_ghost_kwh ?? 0,
+          room_name: r.room_name ?? r.name ?? '',
+        }))
+      )
       setSwitchOffList(switchRes.items || [])
     } catch (err) {
       setError(err)
@@ -233,8 +270,8 @@ export default function AdminElectricity() {
               </div>
             </div>
 
-            <div className="chart-box" style={{ height: 320 }}>
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="chart-box" style={{ height: 320, width: '100%', minHeight: 320 }}>
+              <ResponsiveContainer width="100%" height={320}>
                 <AreaChart data={seriesData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="actualGrad" x1="0" y1="0" x2="0" y2="1">

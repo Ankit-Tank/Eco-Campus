@@ -6,6 +6,7 @@ backend/uploads/*
 !backend/uploads/complaints/.gitkeep
 __pycache__/
 *.pyc
+.pyc
 *.pyo
 .venv/
 venv/

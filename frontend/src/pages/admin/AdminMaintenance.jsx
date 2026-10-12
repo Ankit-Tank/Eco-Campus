@@ -44,11 +44,14 @@ export default function AdminMaintenance() {
     try {
       const [compRes, notifRes] = await Promise.all([
         getComplaints({ status: statusFilter === 'all' ? undefined : statusFilter }),
-        getAdminNotifications(),
+        getAdminNotifications().catch((e) => {
+          console.warn('Admin notifications not available:', e)
+          return { notifications: [] }
+        }),
       ])
       setComplaints(compRes.complaints || [])
       setOverdueCount(compRes.overdue_count || 0)
-      setNotifications(notifRes.notifications || [])
+      setNotifications(notifRes?.notifications || [])
     } catch (err) {
       setError(err)
     } finally {
@@ -74,7 +77,8 @@ export default function AdminMaintenance() {
     try {
       await patchComplaint(selected.id, {
         status: patchStatus,
-        admin_notes: patchNotes,
+        resolution_notes: patchNotes,
+        notes: patchNotes,
       })
       setSuccessMsg(`Complaint ${selected.complaint_code} updated to ${patchStatus}!`)
       setSelected(null)

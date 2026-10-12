@@ -60,9 +60,13 @@ def get_electricity_series(
     all_matching = query.order_by(models.MeterReading.timestamp.asc()).all()
     total_matching = len(all_matching)
 
-    start_idx = offset or 0
-    end_idx = (start_idx + limit) if limit is not None else total_matching
-    results = all_matching[start_idx:end_idx]
+    if limit is not None and not date_from and not offset:
+        # Default to the most recent window of readings leading up to virtual now
+        results = all_matching[-limit:] if total_matching > limit else all_matching
+    else:
+        start_idx = offset or 0
+        end_idx = (start_idx + limit) if limit is not None else total_matching
+        results = all_matching[start_idx:end_idx]
 
     # Pre-index equipment and timetables for quick expected_kw computation
     rooms = db.query(models.Room).all()

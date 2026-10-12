@@ -14,7 +14,7 @@ SPEC §11 & User Requirements:
   Students NEVER see other students' complaints or administrative operations.
 - Pure service functions: NO FastAPI imports.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 from sqlalchemy.orm import Session
@@ -129,7 +129,7 @@ TOOL_DEFINITIONS = [
 # ---------------------------------------------------------------------------
 def _resolve_period_start(db: Session, period: str) -> datetime:
     state = db.query(models.SimState).filter(models.SimState.id == 1).first()
-    virtual_now = state.virtual_now if state else datetime.utcnow()
+    virtual_now = state.virtual_now if state else datetime.now(timezone.utc).replace(tzinfo=None)
 
     p_clean = str(period or "7d").lower()
     if p_clean in ("today", "24h", "1d"):

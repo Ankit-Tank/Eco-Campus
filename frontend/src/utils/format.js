@@ -1,7 +1,11 @@
 // Number, date and CSV helpers shared by the admin and student screens.
 
-export const formatNumber = (n, digits = 0) =>
-  Number(n).toLocaleString('en-IN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+export const formatNumber = (n, digits = 0) => {
+  if (n === null || n === undefined || isNaN(Number(n))) {
+    return (0).toLocaleString('en-IN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+  }
+  return Number(n).toLocaleString('en-IN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+}
 
 const localeFor = (language) => (language === 'hi' ? 'hi-IN' : 'en-US')
 
