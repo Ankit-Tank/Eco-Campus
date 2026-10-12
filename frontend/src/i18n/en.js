@@ -1,5 +1,8 @@
+import appEn from './en.app.js'
+
 // All English text. To add a sentence, add it here AND in hi.js, then use t('section.key').
 const en = {
+  ...appEn,
   nav: {
     monitor: 'Monitor',
     understand: 'Understand',

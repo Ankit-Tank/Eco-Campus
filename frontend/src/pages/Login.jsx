@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { User, ShieldCheck } from 'lucide-react'
 import Brand from '../components/Brand.jsx'
 import LanguageToggle from '../components/LanguageToggle.jsx'
-import ImpactCard from '../components/ImpactCard.jsx'
 import StudentLogin from '../components/auth/StudentLogin.jsx'
 import AdminLogin from '../components/auth/AdminLogin.jsx'
-import { getPublicImpact } from '../services/dashboardApi.js'
 import { useLanguage } from '../i18n/LanguageContext.jsx'
 import { ROLES } from '../config.js'
 import './Login.css'
@@ -17,25 +15,12 @@ export default function Login() {
   const [role, setRole] = useState('student')
   const [resetCount, setResetCount] = useState(0) // changing this number restarts the login form
 
-  // status is "loading", "ready" or "error"
-  const [impact, setImpact] = useState({ status: 'loading', cards: [], isSimulated: false })
-
-  // The numbers on the side cards come from the backend, not from this file.
-  useEffect(() => {
-    getPublicImpact()
-      .then((data) => setImpact({ status: 'ready', cards: data.cards, isSimulated: data.is_simulated }))
-      .catch(() => setImpact({ status: 'error', cards: [], isSimulated: false }))
-  }, [])
-
   // Clicking the logo goes to /login (see Brand.jsx). Here we also restart the form,
   // so someone in the middle of the OTP step goes back to the very first step.
   function handleLogoClick() {
     setRole('student')
     setResetCount(resetCount + 1)
   }
-
-  const leftCards = impact.cards.slice(0, 2)
-  const rightCards = impact.cards.slice(2, 4)
 
   return (
     <div className="login-page">
@@ -89,34 +74,7 @@ export default function Login() {
           <div className="auth-area" key={`${role}-${resetCount}`}>
             {role === 'student' ? <StudentLogin /> : <AdminLogin />}
           </div>
-
-          {impact.isSimulated && <p className="demo-note">{t('login.demoNote')}</p>}
         </section>
-
-        <aside className="impact-col impact-col--left" aria-label="Campus impact">
-          {impact.status === 'loading' && (
-            <>
-              <ImpactCard loading />
-              <ImpactCard loading />
-            </>
-          )}
-          {impact.status === 'error' && <p className="impact-error">{t('login.impactUnavailable')}</p>}
-          {leftCards.map((card) => (
-            <ImpactCard key={card.key} card={card} />
-          ))}
-        </aside>
-
-        <aside className="impact-col impact-col--right" aria-label="Campus impact, continued">
-          {impact.status === 'loading' && (
-            <>
-              <ImpactCard loading />
-              <ImpactCard loading />
-            </>
-          )}
-          {rightCards.map((card) => (
-            <ImpactCard key={card.key} card={card} />
-          ))}
-        </aside>
       </main>
     </div>
   )

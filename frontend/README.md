@@ -110,3 +110,20 @@ on the left and the next two on the right. `unit` is `kg`, `kwh` or `litres`.
 ## Campus photo
 
 The login background is `src/assets/campus-bg.webp`. Replace that file to change it.
+
+## Signed-in screens (admin + student)
+
+- `/admin/overview`: Overview (KPIs, actual vs baseline chart, consumption by block, building table, CSV export). Other admin menu items are placeholders for now.
+- `/student/home`, `/student/report`, `/student/my-reports`, `/student/impact`: student screens.
+- Login sends everyone to `/dashboard`, which forwards to the right home by role.
+- Pages live in `src/pages/admin` and `src/pages/student`. The sidebar is `src/layouts/AppShell.jsx` and the menus are in `src/layouts/nav.js`.
+- Every page reads data through `src/services/*Api.js`. With `VITE_USE_MOCK=true` these use `src/services/mock/*`; with `false` they call the FastAPI routes documented above each service function.
+
+Endpoints these screens expect (add them to the backend routes):
+
+| Method | Path | Used by |
+| --- | --- | --- |
+| GET | `/api/dashboard/admin-overview?from&to&zone` | Admin Overview |
+| GET | `/api/dashboard/student-home` | Student Home, Impact |
+| GET | `/api/complaints/mine` | My Reports |
+| POST | `/api/complaints` (multipart: title, category, location, description, image) | Report form |

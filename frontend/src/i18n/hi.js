@@ -1,5 +1,8 @@
+import appHi from './hi.app.js'
+
 // हिंदी अनुवाद. Same keys as en.js. If a key is missing here, the English text is shown instead.
 const hi = {
+  ...appHi,
   nav: {
     monitor: 'निगरानी',
     understand: 'समझें',

@@ -54,6 +54,13 @@
   color: var(--ink-navy);
 }
 
+.brand img {
+  display: block;
+  height: 76px;
+  width: auto;
+  margin: -14px 0; /* keeps the header row the same height as before */
+}
+
 .nav-right {
   display: flex;
   align-items: center;
@@ -629,6 +636,11 @@
   .brand svg {
     width: 30px;
     height: 30px;
+  }
+
+  .brand img {
+    height: 54px;
+    margin: -8px 0;
   }
 
   .language-toggle button {
