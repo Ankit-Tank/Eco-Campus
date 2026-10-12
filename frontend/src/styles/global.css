@@ -1,0 +1,49 @@
+:root {
+  /* GhostWatt design system (from the project plan) */
+  --ink-navy: #0f1e2e;
+  --ground: #eff2f5;
+  --green: #1f8a5b;
+  --green-dark: #17714a;
+  --green-soft: #e6f4ec;
+  --amber: #f2a413;
+  --amber-soft: #fdf0cf;
+  --teal: #0f8fa0;
+  --water-soft: #dcf1f7;
+  --violet: #5b3fd9;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --text-muted: #5f6b7a;
+  --border: #e3e8ee;
+
+  --font-heading: 'Bricolage Grotesque', 'Noto Sans Devanagari', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Figtree', 'Noto Sans Devanagari', 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink-navy);
+  background: var(--ground);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+}
