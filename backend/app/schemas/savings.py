@@ -27,6 +27,7 @@ class ActionResponse(BaseModel):
     timestamp: str
     notes: str
     verification_status: str
+    status: Optional[str] = None
     claimed_reduction_kw: float
     claimed_kwh_per_interval: float
     data_source: str = "simulated"
@@ -35,6 +36,9 @@ class ActionResponse(BaseModel):
 class ActionListResponse(BaseModel):
     actions: List[ActionResponse]
     count: int
+    limit: Optional[int] = None
+    offset: Optional[int] = None
+    total_count: Optional[int] = None
     data_source: str = "simulated"
 
 
@@ -64,6 +68,9 @@ class SavingsRecordsListResponse(BaseModel):
     total_credited_kwh: float
     total_monetary_saving_inr: float
     total_emissions_kg: float
+    limit: Optional[int] = None
+    offset: Optional[int] = None
+    total_count: Optional[int] = None
     data_source: str = "simulated"
 
 

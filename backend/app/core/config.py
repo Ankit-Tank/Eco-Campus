@@ -1,4 +1,4 @@
-﻿"""
+"""
 GhostWatt — app/core/config.py
 Reads configuration from environment variables / .env file.
 Never hardcode prices or factors — always read from settings DB or here.
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     # Groq
     groq_api_key: str = ""
-    groq_model: str = "llama3-8b-8192"
+    groq_model: str = "qwen/qwen3.8-27b"
 
     # Default calculation factors (overridden by DB settings table at runtime)
     default_electricity_price_per_kwh: float = 8.50  # INR

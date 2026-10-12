@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_db, get_current_user, require_admin
 from app.db import models
+from app.services.carbon_calculator import bucket_equivalents
 from app.schemas.water import (
     WaterAlertPatch,
     WaterAlertResponse,
@@ -70,10 +71,17 @@ def get_water_series(
             )
         )
 
+    bucket_res = bucket_equivalents(total_litres, 15.0)
+
     return WaterSeriesResponse(
         series=points,
         count=len(points),
         total_litres=round(total_litres, 2),
+        bucket_equivalents=bucket_res["value"],
+        bucket_assumption=bucket_res["assumption"],
+        assumptions={
+            "bucket": bucket_res["assumption"],
+        },
         data_source="simulated",
     )
 
@@ -107,8 +115,9 @@ def get_water_alerts(
         expected_litres = round(alert.baseline_lph * duration_hours, 1)
         actual_litres = round(alert.avg_flow_lph * duration_hours, 1)
         excess_litres = max(0.0, round(actual_litres - expected_litres, 1))
-
         resolved_str = alert.resolved_at.isoformat() if alert.resolved_at else None
+
+        b_res = bucket_equivalents(excess_litres, 15.0)
 
         alerts_list.append(
             WaterAlertResponse(
@@ -127,6 +136,9 @@ def get_water_alerts(
                 expected_litres=expected_litres,
                 actual_litres=actual_litres,
                 excess_litres=excess_litres,
+                bucket_equivalents=b_res["value"],
+                bucket_assumption=b_res["assumption"],
+                assumptions={"bucket": b_res["assumption"]},
                 data_source="simulated",
             )
         )
@@ -182,6 +194,8 @@ def update_water_alert(
     excess_litres = max(0.0, round(actual_litres - expected_litres, 1))
     resolved_str = alert.resolved_at.isoformat() if alert.resolved_at else None
 
+    b_res = bucket_equivalents(excess_litres, 15.0)
+
     return WaterAlertResponse(
         id=alert.id,
         location_id=alert.location_id,
@@ -198,5 +212,8 @@ def update_water_alert(
         expected_litres=expected_litres,
         actual_litres=actual_litres,
         excess_litres=excess_litres,
+        bucket_equivalents=b_res["value"],
+        bucket_assumption=b_res["assumption"],
+        assumptions={"bucket": b_res["assumption"]},
         data_source="simulated",
     )

@@ -56,7 +56,27 @@ class LiveSnapshotResponse(BaseModel):
     cost_per_hour: float
     co2_per_hour: float
     fan_equivalent: float
+    fan_assumption: Optional[str] = None
+    bucket_equivalent: Optional[float] = None
+    bucket_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     rooms: List[LiveRoomSnapshot]
     active_alerts: List[LiveAlertItem]
     accelerated_time: bool = True
+    data_source: str = "simulated"
+
+
+class DemoScenarioResponse(BaseModel):
+    status: str
+    message: str
+    room_id: int
+    room_code: str
+    room_name: str
+    equipment_kind: str
+    equipment_id: Optional[int] = None
+    virtual_now: str
+    speed: float
+    running: bool
+    ghost_kw: float
+    alert_status: str
     data_source: str = "simulated"

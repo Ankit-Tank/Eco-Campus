@@ -8,8 +8,9 @@ FastAPI application entry point.
 """
 import asyncio
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.db.database import SessionLocal, create_all_tables
@@ -17,7 +18,7 @@ from app.services.simulator import calculate_sleep_duration, get_or_create_sim_s
 
 # ---- Import routers ----
 from app.routes import auth, dashboard, electricity, ghost_load, rooms, timetable
-from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live, actions
+from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live, actions, leaderboard
 
 app = FastAPI(
     title=settings.app_name,
@@ -96,6 +97,21 @@ def health():
 
 
 # ---------------------------------------------------------------------------
+# Consistent JSON Error Responses for uncaught exceptions
+# ---------------------------------------------------------------------------
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Internal server error",
+            "error_message": str(exc) if settings.debug else "An unexpected internal server error occurred.",
+            "data_source": "simulated",
+        },
+    )
+
+
+# ---------------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------------
 app.include_router(auth.router,         prefix="/auth",        tags=["Auth"])
@@ -115,3 +131,4 @@ app.include_router(simulator.router,    prefix="/sim",         tags=["Simulator"
 app.include_router(simulator.router,    prefix="/simulator",   tags=["Simulator"])
 app.include_router(live.router,         prefix="/live",        tags=["Live"])
 app.include_router(assistant.router,    prefix="/assistant",   tags=["Assistant"])
+app.include_router(leaderboard.router,  prefix="/leaderboard", tags=["Leaderboard"])

@@ -19,6 +19,9 @@ class WaterSeriesResponse(BaseModel):
     series: List[WaterReadingPoint]
     count: int
     total_litres: float
+    bucket_equivalents: Optional[float] = None
+    bucket_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     data_source: str = "simulated"
 
 
@@ -38,6 +41,9 @@ class WaterAlertResponse(BaseModel):
     expected_litres: Optional[float] = None
     actual_litres: Optional[float] = None
     excess_litres: Optional[float] = None
+    bucket_equivalents: Optional[float] = None
+    bucket_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     data_source: str = "simulated"
 
 

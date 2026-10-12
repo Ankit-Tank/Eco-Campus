@@ -224,109 +224,115 @@ def test_admin_crud_and_validation(client, admin_headers):
     assert created_room["room_code"] == new_room_code
     assert created_room["data_source"] == "simulated"
 
-    # 2. Admin Duplicate Room Code check
-    r_dup = client.post("/rooms", json=room_payload, headers=admin_headers)
-    assert r_dup.status_code == 400
+    eq_id = None
+    tt_id = None
+    try:
+        # 2. Admin Duplicate Room Code check
+        r_dup = client.post("/rooms", json=room_payload, headers=admin_headers)
+        assert r_dup.status_code == 400
 
-    # 3. Admin Update Room
-    r_up = client.put(f"/rooms/{room_id}", json={"name": "Renamed Admin Lab"}, headers=admin_headers)
-    assert r_up.status_code == 200
-    assert r_up.json()["name"] == "Renamed Admin Lab"
+        # 3. Admin Update Room
+        r_up = client.put(f"/rooms/{room_id}", json={"name": "Renamed Admin Lab"}, headers=admin_headers)
+        assert r_up.status_code == 200
+        assert r_up.json()["name"] == "Renamed Admin Lab"
 
-    # 4. Admin Add Equipment to Room
-    eq_payload = {
-        "kind": "lab_equipment",
-        "rated_kw": 1.5,
-        "count": 4,
-        "state": "OFF",
-        "expected_in_class": 1.0,
-    }
-    eq_resp = client.post(f"/rooms/{room_id}/equipment", json=eq_payload, headers=admin_headers)
-    assert eq_resp.status_code == 201
-    eq_data = eq_resp.json()
-    eq_id = eq_data["id"]
-    assert eq_data["kind"] == "lab_equipment"
-    assert eq_data["data_source"] == "simulated"
-
-    # 5. Invalid Equipment Kind Check
-    eq_bad = client.post(
-        f"/rooms/{room_id}/equipment",
-        json={"kind": "plasma_cannon", "rated_kw": 5.0, "count": 1, "state": "OFF"},
-        headers=admin_headers,
-    )
-    assert eq_bad.status_code == 400
-
-    # 6. Admin Update Equipment
-    eq_update = client.put(f"/rooms/equipment/{eq_id}", json={"count": 6}, headers=admin_headers)
-    assert eq_update.status_code == 200
-    assert eq_update.json()["count"] == 6
-
-    # 7. Admin Create Timetable Entry
-    tt_payload = {
-        "room_id": room_id,
-        "day_of_week": 2,
-        "start_time": "10:00",
-        "end_time": "12:00",
-        "activity": "Advanced Robotics Practical",
-        "expected_students": 20,
-    }
-    tt_resp = client.post("/timetable", json=tt_payload, headers=admin_headers)
-    assert tt_resp.status_code == 201
-    tt_data = tt_resp.json()
-    tt_id = tt_data["id"]
-    assert tt_data["activity"] == "Advanced Robotics Practical"
-    assert tt_data["data_source"] == "simulated"
-
-    # 8. Timetable Validation: end_time <= start_time
-    tt_bad = client.post(
-        "/timetable",
-        json={
-            "room_id": room_id,
-            "day_of_week": 2,
-            "start_time": "15:00",
-            "end_time": "14:00",  # Backward time
-            "activity": "Paradox Session",
-        },
-        headers=admin_headers,
-    )
-    assert tt_bad.status_code in (400, 422)
-
-    # 9. Admin Update Settings with strictly positive values
-    settings_payload = {
-        "settings": {
-            "electricity_price_per_kwh": "9.25",
-            "emissions_factor_kg_per_kwh": "0.75",
+        # 4. Admin Add Equipment to Room
+        eq_payload = {
+            "kind": "lab_equipment",
+            "rated_kw": 1.5,
+            "count": 4,
+            "state": "OFF",
+            "expected_in_class": 1.0,
         }
-    }
-    s_resp = client.put("/settings", json=settings_payload, headers=admin_headers)
-    assert s_resp.status_code == 200
-    assert s_resp.json()["settings"]["electricity_price_per_kwh"] == "9.25"
-    assert s_resp.json()["data_source"] == "simulated"
+        eq_resp = client.post(f"/rooms/{room_id}/equipment", json=eq_payload, headers=admin_headers)
+        assert eq_resp.status_code == 201
+        eq_data = eq_resp.json()
+        eq_id = eq_data["id"]
+        assert eq_data["kind"] == "lab_equipment"
+        assert eq_data["data_source"] == "simulated"
 
-    # 10. Settings Validation: non-positive value rejection
-    s_bad = client.put(
-        "/settings",
-        json={"settings": {"electricity_price_per_kwh": "-5.0"}},
-        headers=admin_headers,
-    )
-    assert s_bad.status_code in (400, 422)
-    assert "positive" in str(s_bad.json()).lower()
-
-    # 11. Admin Triage Water Alert
-    water_alerts = client.get("/water/alerts", headers=admin_headers).json()["alerts"]
-    if water_alerts:
-        first_alert_id = water_alerts[0]["id"]
-        patch_resp = client.patch(
-            f"/water/alerts/{first_alert_id}",
-            json={"status": "CONFIRMED", "inspection_notes": "Plumber repaired leaking flange in Restroom C"},
+        # 5. Invalid Equipment Kind Check
+        eq_bad = client.post(
+            f"/rooms/{room_id}/equipment",
+            json={"kind": "plasma_cannon", "rated_kw": 5.0, "count": 1, "state": "OFF"},
             headers=admin_headers,
         )
-        assert patch_resp.status_code == 200
-        assert patch_resp.json()["status"] == "CONFIRMED"
-        assert patch_resp.json()["inspection_notes"] == "Plumber repaired leaking flange in Restroom C"
-        assert patch_resp.json()["data_source"] == "simulated"
+        assert eq_bad.status_code == 400
 
-    # Cleanup created entities
-    client.delete(f"/timetable/{tt_id}", headers=admin_headers)
-    client.delete(f"/rooms/equipment/{eq_id}", headers=admin_headers)
-    client.delete(f"/rooms/{room_id}", headers=admin_headers)
+        # 6. Admin Update Equipment
+        eq_update = client.put(f"/rooms/equipment/{eq_id}", json={"count": 6}, headers=admin_headers)
+        assert eq_update.status_code == 200
+        assert eq_update.json()["count"] == 6
+
+        # 7. Admin Create Timetable Entry
+        tt_payload = {
+            "room_id": room_id,
+            "day_of_week": 2,
+            "start_time": "10:00",
+            "end_time": "12:00",
+            "activity": "Advanced Robotics Practical",
+            "expected_students": 20,
+        }
+        tt_resp = client.post("/timetable", json=tt_payload, headers=admin_headers)
+        assert tt_resp.status_code == 201
+        tt_data = tt_resp.json()
+        tt_id = tt_data["id"]
+        assert tt_data["activity"] == "Advanced Robotics Practical"
+        assert tt_data["data_source"] == "simulated"
+
+        # 8. Timetable Validation: end_time <= start_time
+        tt_bad = client.post(
+            "/timetable",
+            json={
+                "room_id": room_id,
+                "day_of_week": 2,
+                "start_time": "15:00",
+                "end_time": "14:00",  # Backward time
+                "activity": "Paradox Session",
+            },
+            headers=admin_headers,
+        )
+        assert tt_bad.status_code in (400, 422)
+
+        # 9. Admin Update Settings with strictly positive values
+        settings_payload = {
+            "settings": {
+                "electricity_price_per_kwh": "9.25",
+                "emissions_factor_kg_per_kwh": "0.75",
+            }
+        }
+        s_resp = client.put("/settings", json=settings_payload, headers=admin_headers)
+        assert s_resp.status_code == 200
+        assert s_resp.json()["settings"]["electricity_price_per_kwh"] == "9.25"
+        assert s_resp.json()["data_source"] == "simulated"
+
+        # 10. Settings Validation: non-positive value rejection
+        s_bad = client.put(
+            "/settings",
+            json={"settings": {"electricity_price_per_kwh": "-5.0"}},
+            headers=admin_headers,
+        )
+        assert s_bad.status_code in (400, 422)
+        assert "positive" in str(s_bad.json()).lower()
+
+        # 11. Admin Triage Water Alert
+        water_alerts = client.get("/water/alerts", headers=admin_headers).json()["alerts"]
+        if water_alerts:
+            first_alert_id = water_alerts[0]["id"]
+            patch_resp = client.patch(
+                f"/water/alerts/{first_alert_id}",
+                json={"status": "CONFIRMED", "inspection_notes": "Plumber repaired leaking flange in Restroom C"},
+                headers=admin_headers,
+            )
+            assert patch_resp.status_code == 200
+            assert patch_resp.json()["status"] == "CONFIRMED"
+            assert patch_resp.json()["inspection_notes"] == "Plumber repaired leaking flange in Restroom C"
+            assert patch_resp.json()["data_source"] == "simulated"
+
+    finally:
+        # Cleanup created entities
+        if tt_id is not None:
+            client.delete(f"/timetable/{tt_id}", headers=admin_headers)
+        if eq_id is not None:
+            client.delete(f"/rooms/equipment/{eq_id}", headers=admin_headers)
+        client.delete(f"/rooms/{room_id}", headers=admin_headers)

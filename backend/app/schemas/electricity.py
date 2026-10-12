@@ -2,7 +2,7 @@
 GhostWatt — schemas/electricity.py
 Pydantic schemas for electricity time-series and meter readings.
 """
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -20,4 +20,7 @@ class ElectricitySeriesResponse(BaseModel):
     series: List[MeterReadingPoint]
     count: int
     total_kwh: float
+    limit: Optional[int] = None
+    offset: Optional[int] = None
+    total_count: Optional[int] = None
     data_source: str = "simulated"

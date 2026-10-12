@@ -103,6 +103,7 @@ def get_savings_summary(
 def get_savings_records(
     room_id: Optional[int] = Query(None, description="Filter by room ID"),
     limit: int = Query(100, ge=1, le=500, description="Max records to return"),
+    offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -116,7 +117,8 @@ def get_savings_records(
     if room_id is not None:
         query = query.filter(models.Action.room_id == room_id)
 
-    rows = query.limit(limit).all()
+    total_matching = query.count()
+    rows = query.offset(offset).limit(limit).all()
 
     records_out: List[SavingsRecordResponse] = []
     for r in rows:
@@ -147,6 +149,9 @@ def get_savings_records(
         total_credited_kwh=round(sum(rec.credited_kwh for rec in records_out), 4),
         total_monetary_saving_inr=round(sum(rec.monetary_saving_inr for rec in records_out), 2),
         total_emissions_kg=round(sum(rec.emissions_kg for rec in records_out), 4),
+        limit=limit,
+        offset=offset,
+        total_count=total_matching,
         data_source="simulated",
     )
 

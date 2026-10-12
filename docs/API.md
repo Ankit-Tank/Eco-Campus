@@ -889,6 +889,33 @@ Inspect current simulation state, speed factor, and active status.
 
 ---
 
+### `POST /sim/scenario/demo` *(Admin Only)*
+Resets the simulation to an evening timeframe (21:30), accelerates speed to 60x, starts the virtual clock, and injects an AC-left-on ghost event in room A-102.
+This triggers an immediate `High Usage` / `TRIGGERED` alert status, enabling a rapid demo loop where an operator registers a switch-off action and sees savings verification complete within 2–3 seconds.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "status": "demo_scenario_active",
+  "virtual_now": "2026-10-12T21:30:00",
+  "speed": 60.0,
+  "room_code": "A-102",
+  "room_id": 2,
+  "equipment_type": "ac",
+  "actual_kw": 3.75,
+  "expected_kw": 0.15,
+  "ghost_kw": 3.60,
+  "alert_status": "TRIGGERED",
+  "message": "Demo scenario active. AC in room A-102 is left on at 21:30. Switch it off via POST /actions/switch-off to verify savings.",
+  "data_source": "simulated"
+}
+```
+
+---
+
 ## 11. Corrective Actions & Verified Savings Meter (`/actions` and `/savings`)
 
 GhostWatt's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
@@ -968,6 +995,36 @@ Retrieve history of all corrective actions taken across campus, including author
     }
   ],
   "count": 1,
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /actions/{action_id}`
+Retrieve complete verification details and status for a single corrective action by ID.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "id": 1,
+  "room_id": 2,
+  "room_code": "A-102",
+  "room_name": "Classroom A-102",
+  "equipment_id": 4,
+  "equipment_kind": "AC",
+  "user_id": 1,
+  "user_email": "admin@ghostwatt.demo",
+  "action_type": "switch_off",
+  "timestamp": "2026-10-12T21:30:00",
+  "notes": "Patrol guard switched off forgotten AC unit in A-102.",
+  "verification_status": "VERIFIED",
+  "status": "VERIFIED",
+  "claimed_reduction_kw": 3.6,
+  "claimed_kwh_per_interval": 0.9,
   "data_source": "simulated"
 }
 ```
@@ -1372,6 +1429,264 @@ Downloadable CSV report format with provenance tags (`simulated`, `calculated`, 
 
 ---
 
-## 14. Upcoming Modules
+### `POST /reports/appliance-left-on`
+Allows students and faculty to submit real-time observations of appliances left running in unoccupied rooms.
+Generates an audit record, an `AL-XXXX` signal code, and an administrative notification for facility staff.
 
-- **AI Sustainability Assistant (`/assistant`)** — Natural language queries powered by the Groq API grounded in backend data.
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "room_id": 2,
+  "equipment_type": "ac",
+  "notes": "Spotted AC running at full blast while looking through classroom window after hours."
+}
+```
+
+*Note: `equipment_type` and `appliance_kind` are accepted interchangeably.*
+
+**Response `201 Created`:**
+```json
+{
+  "status": "signal_recorded",
+  "signal_id": "AL-0001",
+  "complaint_id": 1,
+  "complaint_code": "AL-0001",
+  "category": "appliance_left_on",
+  "room_code": "A-102",
+  "block": "A",
+  "equipment_type": "ac",
+  "reported_by": "student@ghostwatt.demo",
+  "created_at": "2026-10-12T21:35:00",
+  "message": "Signal recorded for A-102. Notification sent to administrators.",
+  "data_source": "simulated"
+}
+```
+
+---
+
+## 14. AI Sustainability Assistant (`/assistant`)
+
+Natural language queries grounded in backend energy and water metrics powered by the Groq API (with deterministic template fallback).
+
+### Architecture & Grounding Guarantees
+- **Tool Grounding:** The assistant uses Groq function calling mapped to 6 whitelisted backend query functions:
+  1. `top_ghost_rooms(period)`
+  2. `explain_room_alert(room_id)`
+  3. `verified_savings(period)`
+  4. `block_wastage(period)`
+  5. `open_complaints(user)`
+  6. `recommended_actions()`
+- **Number Guard:** Every numeric value in the LLM-generated explanation is strictly validated against the tool output. If any hallucinated or ungrounded number is detected, the LLM text is discarded and a deterministic template response is returned with `source: "fallback"`.
+- **Role Enforcement:** Students can only view their own submitted water complaints. Querying other students' complaints or administrative operations results in an immediate access denial.
+- **Graceful Fallback:** If the Groq API encounters a timeout (>8s), invalid API key, rate limit, or unsupported question, the assistant returns a template-based answer or a friendly listing of supported questions with `source: "fallback"`.
+
+---
+
+### `POST /assistant/ask`
+Submit a natural language question to the AI Sustainability Assistant.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "question": "Which rooms have the highest ghost load?"
+}
+```
+
+**Response `200 OK` (Groq Grounded):**
+```json
+{
+  "answer": "Based on the latest 7-day readings, Classroom 101 (A-101) has the highest accumulated ghost load at 45.2 kWh, costing ₹384.20, followed by Computer Lab 1 (B-201) with 30.1 kWh.",
+  "data_used": {
+    "period": "7d",
+    "top_rooms": [
+      {
+        "rank": 1,
+        "room_code": "A-101",
+        "name": "Classroom 101",
+        "block": "A",
+        "ghost_kwh": 45.2,
+        "cost_inr": 384.2,
+        "co2_kg": 32.09
+      },
+      {
+        "rank": 2,
+        "room_code": "B-201",
+        "name": "Computer Science Lab 1",
+        "block": "B",
+        "ghost_kwh": 30.1,
+        "cost_inr": 255.85,
+        "co2_kg": 21.37
+      }
+    ],
+    "total_ghost_kwh": 128.5
+  },
+  "source": "groq",
+  "data_source": "simulated"
+}
+```
+
+**Response `200 OK` (Fallback Mode — e.g. when API key is unset or timeout occurs):**
+```json
+{
+  "answer": "Top rooms with the highest ghost load: 1. A-101 (Classroom 101) with 45.2 kWh (₹384.2); 2. B-201 (Computer Science Lab 1) with 30.1 kWh (₹255.85). Total waste: 128.5 kWh.",
+  "data_used": {
+    "period": "7d",
+    "top_rooms": [
+      {
+        "rank": 1,
+        "room_code": "A-101",
+        "name": "Classroom 101",
+        "block": "A",
+        "ghost_kwh": 45.2,
+        "cost_inr": 384.2,
+        "co2_kg": 32.09
+      }
+    ],
+    "total_ghost_kwh": 128.5
+  },
+  "source": "fallback",
+  "data_source": "simulated"
+}
+```
+
+---
+
+### Example Questions & Tool Mappings
+
+| Example Question | Selected Tool | Description |
+| :--- | :--- | :--- |
+| `"Which rooms have the highest ghost load?"` | `top_ghost_rooms(period)` | Ranks campus rooms by accumulated ghost kWh. |
+| `"Why is room A-101 alerting?"` | `explain_room_alert(room_id)` | Diagnoses actual vs expected kW, reason code, and status. |
+| `"How much energy have we saved through verified actions?"` | `verified_savings(period)` | Compares claimed savings with post-action verified power reductions. |
+| `"Which block wastes the most electricity?"` | `block_wastage(period)` | Compares waste across Block A, Block B, and Block C. |
+| `"What are the open water complaints?"` | `open_complaints(user)` | Fetches open complaints (students see own; admins see campus-wide). |
+| `"What recommended actions should we take to reduce energy waste?"` | `recommended_actions()` | Prioritized switch-off actions ranked by potential kW reduction. |
+
+---
+
+### Student Privacy Refusal Example
+
+When a student queries complaints filed by another user:
+```json
+{
+  "question": "What complaints were filed by student2@ghostwatt.demo?"
+}
+```
+**Response `200 OK`:**
+```json
+{
+  "answer": "Access denied: Students are only permitted to view their own complaints.",
+  "data_used": {
+    "refusal": "Access denied: Students are only permitted to view their own complaints.",
+    "role": "student",
+    "count": 0
+  },
+  "source": "fallback",
+  "data_source": "simulated"
+}
+```
+
+---
+
+### Unsupported Question Fallback Example
+
+When an out-of-scope query is submitted:
+```json
+{
+  "question": "What is the capital of France?"
+}
+```
+**Response `200 OK`:**
+```json
+{
+  "answer": "I can answer questions regarding campus electricity waste, ghost load diagnostics, verified savings, and water complaints. Here are examples of questions I can answer:\n1. 'Which rooms have the highest ghost load?'\n2. 'Why is room A-101 alerting?'\n3. 'How much energy have we saved through verified actions?'\n4. 'Which block wastes the most electricity?'\n5. 'What are the open water complaints?'\n6. 'What recommended actions should we take to reduce energy waste?'",
+  "data_used": {},
+  "source": "fallback",
+  "data_source": "simulated"
+}
+```
+
+---
+
+## 15. Campus Sustainability Leaderboard (`/leaderboard`)
+
+Ranks campus blocks (Block A, Block B, Block C) based on their Ghost Load efficiency score, letter grades, and wastage metrics. Enables friendly competition between campus departments to reduce energy waste.
+
+### `GET /leaderboard/blocks`
+Returns a ranked list of campus blocks with sustainability scores (0–100, higher is better), letter grades (`A+`, `A`, `B`, `C`, `D`), financial waste, CO2 emissions, and ceiling fan equivalents.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Query Parameters:**
+- `period` *(optional, default: `7d`)*: Time period window (`24h`, `7d`, `30d`, `all`).
+
+**Response `200 OK`:**
+```json
+{
+  "period": "7d",
+  "blocks": [
+    {
+      "rank": 1,
+      "block": "Block B",
+      "name": "Mechanical & Civil Engineering",
+      "actual_kwh": 945.20,
+      "expected_kwh": 810.00,
+      "ghost_kwh": 135.20,
+      "waste_percentage": 14.30,
+      "sustainability_score": 85.70,
+      "grade": "A",
+      "cost_inr": 1149.20,
+      "co2_kg": 95.99,
+      "fan_equivalents": 4.12,
+      "fan_assumption": "Equivalent to 4.1 ceiling fans (75W) continuously running"
+    },
+    {
+      "rank": 2,
+      "block": "Block A",
+      "name": "Administrative & Computer Science",
+      "actual_kwh": 1420.50,
+      "expected_kwh": 1050.00,
+      "ghost_kwh": 370.50,
+      "waste_percentage": 26.08,
+      "sustainability_score": 73.92,
+      "grade": "B",
+      "cost_inr": 3149.25,
+      "co2_kg": 263.06,
+      "fan_equivalents": 11.28,
+      "fan_assumption": "Equivalent to 11.3 ceiling fans (75W) continuously running"
+    },
+    {
+      "rank": 3,
+      "block": "Block C",
+      "name": "Electrical & Electronics Engineering",
+      "actual_kwh": 1350.00,
+      "expected_kwh": 890.00,
+      "ghost_kwh": 460.00,
+      "waste_percentage": 34.07,
+      "sustainability_score": 65.93,
+      "grade": "C",
+      "cost_inr": 3910.00,
+      "co2_kg": 326.60,
+      "fan_equivalents": 14.01,
+      "fan_assumption": "Equivalent to 14.0 ceiling fans (75W) continuously running"
+    }
+  ],
+  "best_block": "Block B",
+  "worst_block": "Block C",
+  "assumptions": {
+    "fan": "Ceiling fan baseline of 75W continuous draw",
+    "tariff": "Commercial campus tariff of Rs 8.50 per kWh",
+    "emissions": "Regional grid emission factor of 0.71 kg CO2/kWh",
+    "score": "Sustainability score = 100 - (ghost_kwh / actual_kwh * 100)"
+  },
+  "data_source": "simulated"
+}
+```
+

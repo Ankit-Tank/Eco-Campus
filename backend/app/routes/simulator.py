@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.core.deps import get_db, require_admin
 from app.db import models
 from app.schemas.simulator import (
+    DemoScenarioResponse,
     SimResetRequest,
     SimSpeedRequest,
     SimStateResponse,
@@ -20,6 +21,7 @@ from app.services.simulator import (
     reset_sim,
     set_sim_running,
     set_sim_speed,
+    setup_demo_scenario,
     tick,
 )
 
@@ -136,3 +138,24 @@ def manual_tick(
         running=state.running,
         data_source="simulated",
     )
+
+
+@router.post(
+    "/scenario/demo",
+    response_model=DemoScenarioResponse,
+    summary="Initialize interactive demo scenario: A-102 AC left on (Admin only)",
+)
+def run_demo_scenario(
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    """
+    Admin-only endpoint to activate the end-to-end interactive demo scenario:
+    - Resets virtual clock to 21:30 (evening).
+    - Injects AC left ON in Classroom 102 (A-102).
+    - Sets up 2 consecutive intervals above threshold so alert triggers immediately.
+    - Sets fast speed (60x) and running=True so user can mark appliance switched off
+      and verification completes within seconds.
+    """
+    res = setup_demo_scenario(db)
+    return DemoScenarioResponse(**res)

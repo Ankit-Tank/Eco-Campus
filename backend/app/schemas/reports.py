@@ -70,6 +70,11 @@ class ReportSummaryResponse(BaseModel):
     ghost_kwh: float
     cost_inr: float
     co2_kg: float
+    fan_equivalents: Optional[float] = None
+    bucket_equivalents: Optional[float] = None
+    fan_assumption: Optional[str] = None
+    bucket_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     top_ghost_rooms: List[TopGhostRoomReport]
     rooms_over_limit: List[RoomOverLimitReport]
     verified_savings: VerifiedSavingsReport
@@ -77,4 +82,26 @@ class ReportSummaryResponse(BaseModel):
     complaints: ComplaintsReport
     data_tags: Dict[str, str]
     is_restricted: bool = False
+    data_source: str = "simulated"
+
+
+class ApplianceLeftOnRequest(BaseModel):
+    room_id: Any = Field(..., description="Room numeric ID or Room Code, e.g. 'A-102'")
+    equipment_type: Optional[str] = Field(None, min_length=1, max_length=50, description="Appliance kind: ac, light, fan, projector, pc")
+    appliance_kind: Optional[str] = Field(None, max_length=50, description="Alias for equipment_type")
+    notes: Optional[str] = Field(None, max_length=500, description="Optional description of the situation")
+
+
+class ApplianceLeftOnResponse(BaseModel):
+    status: str
+    signal_id: str
+    complaint_id: int
+    complaint_code: Optional[str] = None
+    category: Optional[str] = "appliance_left_on"
+    room_code: str
+    block: Optional[str] = None
+    equipment_type: str
+    reported_by: str
+    created_at: str
+    message: str
     data_source: str = "simulated"

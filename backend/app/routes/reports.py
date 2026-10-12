@@ -19,12 +19,14 @@ import csv
 from datetime import datetime, timedelta
 import io
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_db, get_current_user
 from app.db import models
 from app.schemas.reports import (
+    ApplianceLeftOnRequest,
+    ApplianceLeftOnResponse,
     ComplaintsReport,
     ReportSummaryResponse,
     RoomOverLimitReport,
@@ -314,6 +316,19 @@ def _compute_report_data(
         "complaints": "calculated",
     }
 
+    # 8. Equivalents & Assumptions (SPEC §13)
+    s_rows = db.query(models.Setting).all()
+    cfg = {s.key: s.value for s in s_rows}
+    fan_watts = float(cfg.get("fan_watt_equivalent", 75.0))
+    bucket_litres = float(cfg.get("bucket_litres", 15.0))
+
+    from app.services.carbon_calculator import fan_equivalents, bucket_equivalents
+    # Estimate average ghost kW over duration
+    duration_hours = max(1.0, (len(readings) / max(1, 12)) * 0.25)
+    avg_ghost_kw = (total_ghost_kwh / duration_hours) if duration_hours > 0 else 0.0
+    fan_res = fan_equivalents(avg_ghost_kw, fan_watts)
+    bucket_res = bucket_equivalents(total_litres, bucket_litres)
+
     return {
         "date_from": start_dt.isoformat(),
         "date_to": end_dt.isoformat(),
@@ -322,6 +337,16 @@ def _compute_report_data(
         "ghost_kwh": round(total_ghost_kwh, 2),
         "cost_inr": cost_inr,
         "co2_kg": co2_kg,
+        "fan_equivalents": fan_res["value"],
+        "bucket_equivalents": bucket_res["value"],
+        "fan_assumption": fan_res["assumption"],
+        "bucket_assumption": bucket_res["assumption"],
+        "assumptions": {
+            "fan": fan_res["assumption"],
+            "bucket": bucket_res["assumption"],
+            "tariff": f"Commercial campus tariff of Rs {price_kwh:.2f} per kWh",
+            "emissions": f"Regional grid emission factor of {emissions_factor:.2f} kg CO2/kWh",
+        },
         "top_ghost_rooms": top_3_list,
         "rooms_over_limit": rooms_over_limit,
         "verified_savings": verified_report,
@@ -454,4 +479,97 @@ def export_report_csv(
         content=csv_content,
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+@router.post(
+    "/appliance-left-on",
+    response_model=ApplianceLeftOnResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Report an appliance left on in an unoccupied room (Students & Admins)",
+)
+def report_appliance_left_on(
+    payload: ApplianceLeftOnRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """
+    Submits an observation that an electrical appliance was left running.
+    Creates a signal and administrative notification visible to campus facility staff.
+    """
+    # 1. Resolve room
+    room = None
+    r_id_str = str(payload.room_id).strip()
+    if r_id_str.isdigit():
+        room = db.query(models.Room).filter(models.Room.id == int(r_id_str)).first()
+    if not room:
+        clean_code = r_id_str.replace("Room", "").strip().upper()
+        room = db.query(models.Room).filter(models.Room.room_code == clean_code).first()
+    if not room:
+        room = db.query(models.Room).filter(models.Room.room_code.ilike(f"%{r_id_str}%")).first()
+
+    if not room:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Room '{payload.room_id}' not found.",
+        )
+
+    # 2. Determine appliance kind
+    eq_kind = (payload.equipment_type or payload.appliance_kind or "appliance").lower()
+
+    # 3. Generate unique complaint code
+    count = db.query(models.Complaint).count()
+    signal_code = f"AL-{count + 1:04d}"
+
+    # 4. Create complaint record
+    complaint = models.Complaint(
+        student_id=current_user.id,
+        complaint_code=signal_code,
+        building=room.block,
+        location_detail=f"Room {room.room_code} ({room.name})",
+        category="appliance_left_on",
+        description=f"Appliance Left On: {eq_kind.upper()}. {payload.notes or ''}".strip(),
+        status="submitted",
+        created_at=datetime.utcnow(),
+    )
+    db.add(complaint)
+    db.flush()
+
+    # 5. History and notification for facility staff
+    history = models.ComplaintHistory(
+        complaint_id=complaint.id,
+        changed_by=current_user.id,
+        old_status=None,
+        new_status="submitted",
+        note=f"Signal reported by {current_user.email}: {eq_kind} left on",
+        changed_at=datetime.utcnow(),
+    )
+    db.add(history)
+
+    notification = models.AdminNotification(
+        title="Appliance Left On Signal",
+        message=f"Appliance Left On reported in {room.room_code} ({eq_kind.upper()}) by {current_user.email}",
+        notification_type="complaint",
+        reference_id=complaint.complaint_code,
+        is_read=False,
+        created_at=datetime.utcnow(),
+    )
+    db.add(notification)
+
+    db.commit()
+    db.refresh(complaint)
+
+    return ApplianceLeftOnResponse(
+        status="signal_recorded",
+        signal_id=complaint.complaint_code,
+        complaint_id=complaint.id,
+        complaint_code=complaint.complaint_code,
+        category="appliance_left_on",
+        room_code=room.room_code,
+        block=room.block,
+        equipment_type=eq_kind,
+        reported_by=current_user.email,
+        created_at=complaint.created_at.isoformat(),
+        message=f"Signal recorded for {room.room_code}. Notification sent to administrators.",
+        data_source="simulated",
     )

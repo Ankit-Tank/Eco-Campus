@@ -55,6 +55,9 @@ class ComplaintListResponse(BaseModel):
     count: int
     overdue_count: int
     frequently_affected_locations: List[FrequentlyAffectedLocation]
+    limit: Optional[int] = None
+    offset: Optional[int] = None
+    total_count: Optional[int] = None
     data_source: str = "simulated"
 
 

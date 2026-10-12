@@ -51,6 +51,7 @@ def _format_action_response(action: models.Action, db: Session) -> ActionRespons
         timestamp=action.timestamp.isoformat() if action.timestamp else "",
         notes=action.notes or "",
         verification_status=str(action.verification_status),
+        status=str(action.verification_status),
         claimed_reduction_kw=claimed_kw,
         claimed_kwh_per_interval=claimed_kwh,
         data_source="simulated",
@@ -135,6 +136,7 @@ def switch_off_appliance(
         timestamp=action.timestamp.isoformat(),
         notes=action.notes,
         verification_status="PENDING",
+        status="PENDING",
         claimed_reduction_kw=claimed_kw,
         claimed_kwh_per_interval=claimed_kwh,
         data_source="simulated",
@@ -149,6 +151,7 @@ def switch_off_appliance(
 def get_actions(
     room_id: Optional[int] = Query(None, description="Optional room ID filter"),
     limit: int = Query(100, ge=1, le=500, description="Max actions to return"),
+    offset: int = Query(0, ge=0, description="Pagination offset"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -157,11 +160,35 @@ def get_actions(
     if room_id is not None:
         query = query.filter(models.Action.room_id == room_id)
 
-    actions = query.limit(limit).all()
+    total_matching = query.count()
+    actions = query.offset(offset).limit(limit).all()
     action_responses = [_format_action_response(a, db) for a in actions]
 
     return ActionListResponse(
         actions=action_responses,
         count=len(action_responses),
+        limit=limit,
+        offset=offset,
+        total_count=total_matching,
         data_source="simulated",
     )
+
+
+@router.get(
+    "/{action_id}",
+    response_model=ActionResponse,
+    summary="Get details of a single corrective action by ID",
+)
+def get_action_by_id(
+    action_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Retrieve an action by ID."""
+    action = db.query(models.Action).filter(models.Action.id == action_id).first()
+    if not action:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Action with ID {action_id} not found",
+        )
+    return _format_action_response(action, db)

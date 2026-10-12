@@ -123,8 +123,8 @@ def get_dashboard_summary(
     # Average ghost kW over the duration for instantaneous fan equivalent
     duration_hours = max(1.0, (len(meter_readings) / max(1, len(rooms))) * 0.25)
     avg_ghost_kw = total_ghost_kwh / duration_hours if duration_hours > 0 else 0.0
-    fan_eq = fan_equivalents(avg_ghost_kw, fan_watts)["value"]
-    bucket_eq = bucket_equivalents(total_water_litres, bucket_litres)["value"]
+    fan_res = fan_equivalents(avg_ghost_kw, fan_watts)
+    bucket_res = bucket_equivalents(total_water_litres, bucket_litres)
 
     d_from_str = earliest_ts.isoformat() if earliest_ts else (date_from or "N/A")
     d_to_str = latest_ts.isoformat() if latest_ts else (date_to or "N/A")
@@ -136,8 +136,16 @@ def get_dashboard_summary(
         water_litres=round(total_water_litres, 1),
         emissions_co2_kg=emissions_kg,
         cost_inr=cost_inr,
-        fan_equivalents=fan_eq,
-        bucket_equivalents=bucket_eq,
+        fan_equivalents=fan_res["value"],
+        bucket_equivalents=bucket_res["value"],
+        fan_assumption=fan_res["assumption"],
+        bucket_assumption=bucket_res["assumption"],
+        assumptions={
+            "fan": fan_res["assumption"],
+            "bucket": bucket_res["assumption"],
+            "tariff": f"Commercial campus tariff of Rs {price_per_kwh:.2f} per kWh",
+            "emissions": f"Regional grid emission factor of {emissions_factor:.2f} kg CO2/kWh",
+        },
         date_from=d_from_str,
         date_to=d_to_str,
         data_source="simulated",

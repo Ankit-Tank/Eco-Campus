@@ -26,6 +26,10 @@ class GhostCurrentResponse(BaseModel):
     total_ghost_kw: float
     high_usage_count: int
     idle_load_count: int
+    fan_equivalent: Optional[float] = None
+    fan_equivalents: Optional[float] = None
+    fan_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     data_source: str = "simulated"
 
 
@@ -46,6 +50,10 @@ class GhostRankingResponse(BaseModel):
     ranking: List[GhostRoomRankingItem]
     total_ghost_kwh: float
     total_cost_inr: float
+    total_co2_kg: Optional[float] = None
+    fan_equivalents: Optional[float] = None
+    fan_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     data_source: str = "simulated"
 
 
@@ -85,4 +93,7 @@ class GhostExplainResponse(BaseModel):
     reason_explanation: Optional[str]
     is_legitimate: bool
     explanation: str
+    fan_equivalent: Optional[float] = None
+    fan_assumption: Optional[str] = None
+    assumptions: Optional[dict] = None
     data_source: str = "simulated"

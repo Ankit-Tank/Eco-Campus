@@ -22,6 +22,8 @@ def get_electricity_series(
     room: Optional[str] = Query(None, description="Filter by room_code (e.g. A-101) or room ID"),
     date_from: Optional[str] = Query(None, alias="from", description="Start datetime (ISO string)"),
     date_to: Optional[str] = Query(None, alias="to", description="End datetime (ISO string)"),
+    limit: Optional[int] = Query(None, ge=1, le=5000, description="Optional maximum number of readings"),
+    offset: Optional[int] = Query(0, ge=0, description="Optional pagination offset"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -55,7 +57,12 @@ def get_electricity_series(
             pass
 
     # Order chronologically
-    results = query.order_by(models.MeterReading.timestamp.asc()).all()
+    all_matching = query.order_by(models.MeterReading.timestamp.asc()).all()
+    total_matching = len(all_matching)
+
+    start_idx = offset or 0
+    end_idx = (start_idx + limit) if limit is not None else total_matching
+    results = all_matching[start_idx:end_idx]
 
     # Pre-index equipment and timetables for quick expected_kw computation
     rooms = db.query(models.Room).all()
@@ -103,5 +110,8 @@ def get_electricity_series(
         series=series_points,
         count=len(series_points),
         total_kwh=round(total_kwh, 2),
+        limit=limit,
+        offset=offset or 0,
+        total_count=total_matching,
         data_source="simulated",
     )

@@ -117,6 +117,86 @@ def reset_sim(db: Session, to_date: Optional[datetime] = None) -> models.SimStat
     return state
 
 
+def setup_demo_scenario(db: Session) -> Dict[str, Any]:
+    """
+    Demo scenario setup (SPEC §7):
+    Resets the virtual clock to evening (21:30), injects an AC-left-on ghost event in A-102,
+    ensures consecutive intervals above threshold so the alert immediately triggers,
+    and sets speed to 60x with running=True so user can mark it switched off and
+    verification completes within seconds.
+    """
+    demo_evening = datetime(2026, 10, 12, 21, 30, 0)
+
+    # 1. Update sim_state
+    state = get_or_create_sim_state(db)
+    state.virtual_now = demo_evening
+    state.speed = 60.0
+    state.running = True
+
+    # 2. Reset appliance state overrides and force AC on in A-102
+    clear_appliance_states()
+    set_appliance("A-102", "ac", True)
+
+    # 3. Resolve room A-102
+    room = db.query(models.Room).filter(models.Room.room_code == "A-102").first()
+    if not room:
+        room = db.query(models.Room).first()
+
+    ac_eq = (
+        db.query(models.Equipment)
+        .filter(models.Equipment.room_id == room.id, models.Equipment.kind == "ac")
+        .first()
+    )
+    ac_kw = float(ac_eq.rated_kw * ac_eq.count) if ac_eq else 3.6
+    idle_kw = float(room.idle_baseline_kw or 0.08)
+    total_demand = round(idle_kw + ac_kw, 3)
+
+    # 4. Ensure consecutive readings at 21:15 and 21:30 for all rooms so live snapshot works
+    all_rooms = db.query(models.Room).filter(models.Room.is_active == True).all()
+    t_prev = demo_evening - timedelta(minutes=15)
+
+    for t_step in (t_prev, demo_evening):
+        for rm in all_rooms:
+            rm_demand = total_demand if rm.id == room.id else rm.idle_baseline_kw
+            existing_mr = (
+                db.query(models.MeterReading)
+                .filter(models.MeterReading.room_id == rm.id, models.MeterReading.timestamp == t_step)
+                .first()
+            )
+            if existing_mr:
+                existing_mr.actual_demand_kw = rm_demand
+                existing_mr.interval_kwh = round(rm_demand * 0.25, 4)
+            else:
+                new_mr = models.MeterReading(
+                    room_id=rm.id,
+                    timestamp=t_step,
+                    actual_demand_kw=rm_demand,
+                    interval_kwh=round(rm_demand * 0.25, 4),
+                    source="simulated",
+                    is_simulated=True,
+                )
+                db.add(new_mr)
+
+    db.commit()
+    db.refresh(state)
+
+    return {
+        "status": "demo_scenario_active",
+        "message": f"Demo scenario initialized: Room {room.room_code} ({room.name}) AC running after-hours at {demo_evening.strftime('%H:%M')}. Alert triggered.",
+        "room_id": room.id,
+        "room_code": room.room_code,
+        "room_name": room.name,
+        "equipment_kind": "ac",
+        "equipment_id": ac_eq.id if ac_eq else None,
+        "virtual_now": state.virtual_now.isoformat(),
+        "speed": state.speed,
+        "running": state.running,
+        "ghost_kw": round(ac_kw, 2),
+        "alert_status": "TRIGGERED",
+        "data_source": "simulated",
+    }
+
+
 def calculate_sleep_duration(speed: float, base_seconds: float = 2.0) -> float:
     """Calculate asyncio sleep duration in seconds scaled inversely by speed."""
     eff_speed = max(0.01, float(speed))

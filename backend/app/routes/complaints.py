@@ -263,6 +263,7 @@ def get_complaints(
     building_filter: Optional[str] = Query(None, alias="building", description="Filter by building"),
     category_filter: Optional[str] = Query(None, alias="category", description="Filter by category"),
     limit: int = Query(100, ge=1, le=500, description="Max complaints to return"),
+    offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -286,7 +287,8 @@ def get_complaints(
         if category_filter:
             query = query.filter(models.Complaint.category == category_filter.lower())
 
-    complaints_list = query.limit(limit).all()
+    total_matching = query.count()
+    complaints_list = query.offset(offset).limit(limit).all()
     formatted = [_format_complaint(c, db) for c in complaints_list]
     overdue_count = sum(1 for c in formatted if c.is_overdue)
 
@@ -307,6 +309,9 @@ def get_complaints(
         count=len(formatted),
         overdue_count=overdue_count,
         frequently_affected_locations=frequently_affected,
+        limit=limit,
+        offset=offset,
+        total_count=total_matching,
         data_source="simulated",
     )
 

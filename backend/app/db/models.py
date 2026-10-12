@@ -320,7 +320,7 @@ class Complaint(Base):
     category         = Column(
         SAEnum(
             "leaking_tap", "broken_pipe", "overflowing_tank",
-            "low_pressure", "general_wastage",
+            "low_pressure", "general_wastage", "appliance_left_on",
             name="complaint_category",
         ),
         nullable=False,

@@ -181,10 +181,16 @@ def get_live_snapshot(
             )
         )
 
-    # 7. Aggregate financial and environmental burn rates
+    # 7. Aggregate financial and environmental burn rates & equivalents
     cost_per_hour = round(total_ghost_kw * price_per_kwh, 2)
     co2_per_hour = round(total_ghost_kw * emissions_factor, 3)
-    fan_eq = round((total_ghost_kw * 1000.0) / fan_watts, 1)
+
+    from app.services.carbon_calculator import fan_equivalents, bucket_equivalents
+    fan_res = fan_equivalents(total_ghost_kw, fan_watts)
+
+    bucket_litres = float(cfg.get("bucket_litres", 15.0))
+    active_leak_lph = sum(float(wa.avg_flow_lph) for wa, _ in water_alerts) if water_alerts else 0.0
+    bucket_res = bucket_equivalents(active_leak_lph, bucket_litres)
 
     return LiveSnapshotResponse(
         virtual_now=v_now.isoformat(),
@@ -196,7 +202,16 @@ def get_live_snapshot(
         ghost_kw=round(total_ghost_kw, 3),
         cost_per_hour=cost_per_hour,
         co2_per_hour=co2_per_hour,
-        fan_equivalent=fan_eq,
+        fan_equivalent=fan_res["value"],
+        fan_assumption=fan_res["assumption"],
+        bucket_equivalent=bucket_res["value"],
+        bucket_assumption=bucket_res["assumption"],
+        assumptions={
+            "fan": fan_res["assumption"],
+            "bucket": bucket_res["assumption"],
+            "tariff": f"Commercial campus tariff of Rs {price_per_kwh:.2f} per kWh",
+            "emissions": f"Regional grid emission factor of {emissions_factor:.2f} kg CO2/kWh",
+        },
         rooms=room_cards,
         active_alerts=active_alerts,
         accelerated_time=True,

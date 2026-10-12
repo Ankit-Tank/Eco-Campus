@@ -135,11 +135,20 @@ def get_ghost_current(
             )
         )
 
+    from app.services.carbon_calculator import fan_equivalents
+    fan_res = fan_equivalents(total_ghost_kw, 75.0)
+
     return GhostCurrentResponse(
         rooms=room_cards,
         total_ghost_kw=round(total_ghost_kw, 3),
         high_usage_count=high_usage_count,
         idle_load_count=idle_load_count,
+        fan_equivalent=fan_res["value"],
+        fan_equivalents=fan_res["value"],
+        fan_assumption=fan_res["assumption"],
+        assumptions={
+            "fan": fan_res["assumption"],
+        },
         data_source="simulated",
     )
 
@@ -243,11 +252,25 @@ def get_ghost_ranking(
 
     total_ghost_kwh = sum(i.total_ghost_kwh for i in ranking_responses)
     total_cost_inr = round(total_ghost_kwh * price_per_kwh, 2)
+    total_co2_kg = round(total_ghost_kwh * emissions_factor, 3)
+
+    from app.services.carbon_calculator import fan_equivalents
+    duration_hours = max(1.0, (len(meter_readings) / max(1, len(rooms))) * 0.25)
+    avg_ghost_kw = (total_ghost_kwh / duration_hours) if duration_hours > 0 else 0.0
+    fan_res = fan_equivalents(avg_ghost_kw, 75.0)
 
     return GhostRankingResponse(
         ranking=ranking_responses,
         total_ghost_kwh=round(total_ghost_kwh, 2),
         total_cost_inr=total_cost_inr,
+        total_co2_kg=total_co2_kg,
+        fan_equivalents=fan_res["value"],
+        fan_assumption=fan_res["assumption"],
+        assumptions={
+            "fan": fan_res["assumption"],
+            "tariff": f"Commercial campus tariff of Rs {price_per_kwh:.2f} per kWh",
+            "emissions": f"Regional grid emission factor of {emissions_factor:.2f} kg CO2/kWh",
+        },
         data_source="simulated",
     )
 
@@ -431,6 +454,9 @@ def explain_room_ghost_load(
             f"baseline parameters ({exp_kw:.2f} kW)."
         )
 
+    from app.services.carbon_calculator import fan_equivalents
+    fan_res = fan_equivalents(g_kw, 75.0)
+
     return GhostExplainResponse(
         room_id=room.id,
         room_code=room.room_code,
@@ -449,5 +475,10 @@ def explain_room_ghost_load(
         reason_explanation=reason_exp,
         is_legitimate=is_legitimate,
         explanation=detailed_explanation,
+        fan_equivalent=fan_res["value"],
+        fan_assumption=fan_res["assumption"],
+        assumptions={
+            "fan": fan_res["assumption"],
+        },
         data_source="simulated",
     )
