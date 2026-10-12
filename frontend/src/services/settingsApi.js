@@ -1,6 +1,13 @@
-// Wraps backend/app/routes/settings.py   (URL starts with /api/settings)
-// Empty for now. Add one function per endpoint when you build the matching page:
-//
-//   import { request } from './httpClient.js'
-//   export const getSomething = () => request('/settings')
-export {}
+// Wraps backend/app/routes/app_settings.py (URL /api/settings)
+import { request } from './httpClient.js'
+
+export function getSettings() {
+  return request('/settings')
+}
+
+export function updateSettings(settingsDict) {
+  return request('/settings', {
+    method: 'PUT',
+    body: JSON.stringify({ settings: settingsDict }),
+  })
+}

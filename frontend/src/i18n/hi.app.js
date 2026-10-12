@@ -31,6 +31,10 @@ const appHi = {
     alerts: 'अलर्ट',
     maintenance: 'रखरखाव',
     reports: 'रिपोर्ट',
+    leaderboard: 'कैंपस लीडरबोर्ड',
+    system: 'सिस्टम नियंत्रण',
+    simulator: 'सिम्युलेटर कंसोल',
+    settings: 'सेटिंग्स',
   },
 
   studentNav: {
@@ -38,6 +42,7 @@ const appHi = {
     chatbot: 'AI चैटबॉट',
     myReports: 'मेरी रिपोर्ट',
     impact: 'प्रभाव',
+    leaderboard: 'कैंपस लीडरबोर्ड',
   },
 
   admin: {

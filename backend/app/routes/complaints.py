@@ -125,6 +125,9 @@ def _format_complaint(c: models.Complaint, db: Session) -> ComplaintResponse:
         updated_at=c.updated_at.isoformat() if c.updated_at else "",
         resolution_notes=c.resolution_notes or "",
         is_overdue=is_overdue,
+        title=c.description[:40] if c.description else c.category.replace("_", " ").title(),
+        place=f"{c.building} - {c.location_detail}" if c.location_detail else c.building,
+        image_url=f"/uploads/complaints/{os.path.basename(c.attachment_path)}" if c.attachment_path else None,
         history=history_items,
         data_source="simulated",
     )
@@ -137,12 +140,14 @@ def _format_complaint(c: models.Complaint, db: Session) -> ComplaintResponse:
     summary="Submit a water or facility complaint (Multipart form data)",
 )
 async def submit_complaint(
-    building: str = Form(..., description="Campus building (e.g. Block C, Block A)"),
+    building: Optional[str] = Form(None, description="Campus building (e.g. Block C, Block A)"),
     location: Optional[str] = Form(None, description="Location detail"),
     location_detail: Optional[str] = Form(None, description="Location detail alternative"),
+    title: Optional[str] = Form(None, description="Short complaint title"),
     category: str = Form(..., description="leaking_tap | broken_pipe | overflowing_tank | low_pressure | general_wastage"),
-    description: str = Form(..., description="Detailed description of the water wastage issue"),
+    description: Optional[str] = Form(None, description="Detailed description of the water wastage issue"),
     photo: Optional[UploadFile] = File(None, description="Optional photographic evidence"),
+    image: Optional[UploadFile] = File(None, description="Optional image upload (frontend alias)"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -155,12 +160,13 @@ async def submit_complaint(
     5. Creates complaint in 'submitted' status and logs initial complaint_history entry.
     6. Creates an internal admin notification record.
     """
+    actual_photo = photo if (photo and photo.filename) else image
+    actual_desc = description or title or "Reported facility issue"
+
     loc = location or location_detail
     if not loc or not loc.strip():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Location detail is required",
-        )
+        loc = building or "Main Campus"
+    bldg = building or (loc.split("-")[0].strip() if "-" in loc else "Campus")
 
     cat_clean = category.strip().lower().replace(" ", "_").replace("-", "_")
     if cat_clean not in VALID_CATEGORIES:
@@ -170,9 +176,9 @@ async def submit_complaint(
         )
 
     saved_attachment_path = None
-    if photo and photo.filename:
+    if actual_photo and actual_photo.filename:
         # Validate extension
-        _, ext = os.path.splitext(photo.filename)
+        _, ext = os.path.splitext(actual_photo.filename)
         ext_lower = ext.lower()
         if ext_lower not in ALLOWED_EXTENSIONS:
             raise HTTPException(
@@ -181,7 +187,7 @@ async def submit_complaint(
             )
 
         # Read contents to validate size
-        content = await photo.read()
+        content = await actual_photo.read()
         if len(content) > MAX_FILE_SIZE_BYTES:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -189,7 +195,7 @@ async def submit_complaint(
             )
 
         # Save to disk
-        safe_filename = f"{uuid.uuid4().hex[:10]}_{photo.filename}"
+        safe_filename = f"{uuid.uuid4().hex[:10]}_{actual_photo.filename}"
         disk_path = os.path.join(UPLOAD_DIR, safe_filename)
         with open(disk_path, "wb") as f:
             f.write(content)
@@ -211,10 +217,10 @@ async def submit_complaint(
     complaint = models.Complaint(
         complaint_code=code,
         student_id=current_user.id,
-        building=building.strip(),
+        building=bldg.strip(),
         location_detail=loc.strip(),
         category=cat_clean,
-        description=description.strip(),
+        description=actual_desc.strip(),
         attachment_path=saved_attachment_path,
         assigned_to=None,
         status="submitted",
@@ -251,6 +257,29 @@ async def submit_complaint(
     db.refresh(complaint)
 
     return _format_complaint(complaint, db)
+
+
+@router.get(
+    "/mine",
+    summary="List complaints for current student (used by frontend)",
+)
+def get_my_complaints(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    query = db.query(models.Complaint).filter(
+        models.Complaint.student_id == current_user.id
+    ).order_by(models.Complaint.created_at.desc())
+    items = query.offset(offset).limit(limit).all()
+    formatted = [_format_complaint(c, db) for c in items]
+    return {
+        "items": formatted,
+        "count": len(formatted),
+        "total_count": query.count(),
+        "data_source": "simulated",
+    }
 
 
 @router.get(

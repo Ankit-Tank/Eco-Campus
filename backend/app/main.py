@@ -20,27 +20,10 @@ from app.services.simulator import calculate_sleep_duration, get_or_create_sim_s
 from app.routes import auth, dashboard, electricity, ghost_load, rooms, timetable
 from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live, actions, leaderboard
 
-app = FastAPI(
-    title=settings.app_name,
-    version=settings.app_version,
-    description="Intelligent Campus Energy & Sustainability Platform",
-    docs_url="/docs",
-    redoc_url="/redoc",
-)
+from contextlib import asynccontextmanager
 
 # ---------------------------------------------------------------------------
-# CORS — allow the Vite frontend dev server
-# ---------------------------------------------------------------------------
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ---------------------------------------------------------------------------
-# Background Simulation Task
+# Background Simulation Task & Lifespan
 # ---------------------------------------------------------------------------
 _sim_task: Optional[asyncio.Task] = None
 
@@ -62,25 +45,39 @@ async def run_simulation_background_task():
             await asyncio.sleep(2.0)
 
 
-# ---------------------------------------------------------------------------
-# Lifecycle
-# ---------------------------------------------------------------------------
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     create_all_tables()
     global _sim_task
     _sim_task = asyncio.create_task(run_simulation_background_task())
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    global _sim_task
+    yield
     if _sim_task:
         _sim_task.cancel()
         try:
             await _sim_task
         except asyncio.CancelledError:
             pass
+
+
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.app_version,
+    description="Intelligent Campus Energy & Sustainability Platform",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan,
+)
+
+# ---------------------------------------------------------------------------
+# CORS — allow the Vite frontend dev server
+# ---------------------------------------------------------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ---------------------------------------------------------------------------
@@ -112,23 +109,41 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 
 # ---------------------------------------------------------------------------
-# Routers
+# Static Files — uploads for complaints
 # ---------------------------------------------------------------------------
-app.include_router(auth.router,         prefix="/auth",        tags=["Auth"])
-app.include_router(dashboard.router,    prefix="/dashboard",   tags=["Dashboard"])
-app.include_router(electricity.router,  prefix="/electricity", tags=["Electricity"])
-app.include_router(ghost_load.router,   prefix="/ghost",       tags=["Ghost Load"])
-app.include_router(ghost_load.router,   prefix="/ghost-load",  tags=["Ghost Load"])
-app.include_router(rooms.router,        prefix="/rooms",       tags=["Rooms"])
-app.include_router(timetable.router,    prefix="/timetable",   tags=["Timetable"])
-app.include_router(actions.router,      prefix="/actions",     tags=["Actions"])
-app.include_router(savings.router,      prefix="/savings",     tags=["Savings"])
-app.include_router(water.router,        prefix="/water",       tags=["Water"])
-app.include_router(complaints.router,   prefix="/complaints",  tags=["Complaints"])
-app.include_router(reports.router,      prefix="/reports",     tags=["Reports"])
-app.include_router(app_settings.router, prefix="/settings",    tags=["Settings"])
-app.include_router(simulator.router,    prefix="/sim",         tags=["Simulator"])
-app.include_router(simulator.router,    prefix="/simulator",   tags=["Simulator"])
-app.include_router(live.router,         prefix="/live",        tags=["Live"])
-app.include_router(assistant.router,    prefix="/assistant",   tags=["Assistant"])
-app.include_router(leaderboard.router,  prefix="/leaderboard", tags=["Leaderboard"])
+import os
+from fastapi.staticfiles import StaticFiles
+
+uploads_dir = os.path.join(os.getcwd(), "uploads")
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+
+
+# ---------------------------------------------------------------------------
+# Routers (Registered both at root and with /api prefix for proxy transparency)
+# ---------------------------------------------------------------------------
+api_routers = [
+    (auth.router, "/auth", ["Auth"]),
+    (dashboard.router, "/dashboard", ["Dashboard"]),
+    (electricity.router, "/electricity", ["Electricity"]),
+    (ghost_load.router, "/ghost", ["Ghost Load"]),
+    (ghost_load.router, "/ghost-load", ["Ghost Load"]),
+    (rooms.router, "/rooms", ["Rooms"]),
+    (timetable.router, "/timetable", ["Timetable"]),
+    (actions.router, "/actions", ["Actions"]),
+    (savings.router, "/savings", ["Savings"]),
+    (water.router, "/water", ["Water"]),
+    (complaints.router, "/complaints", ["Complaints"]),
+    (reports.router, "/reports", ["Reports"]),
+    (app_settings.router, "/settings", ["Settings"]),
+    (simulator.router, "/sim", ["Simulator"]),
+    (simulator.router, "/simulator", ["Simulator"]),
+    (live.router, "/live", ["Live"]),
+    (assistant.router, "/assistant", ["Assistant"]),
+    (leaderboard.router, "/leaderboard", ["Leaderboard"]),
+]
+
+for router_obj, prefix, router_tags in api_routers:
+    app.include_router(router_obj, prefix=prefix, tags=list(router_tags))  # type: ignore[arg-type]
+    app.include_router(router_obj, prefix=f"/api{prefix}", tags=list(router_tags))  # type: ignore[arg-type]
+

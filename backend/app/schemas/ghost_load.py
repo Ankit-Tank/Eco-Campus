@@ -59,8 +59,11 @@ class GhostRankingResponse(BaseModel):
 
 class SwitchOffItem(BaseModel):
     priority: int
+    room_id: Optional[int] = None
     room_code: str
     room_name: str
+    equipment_id: Optional[int] = None
+    equipment_kind: Optional[str] = None
     ghost_kw: float
     actual_kw: float
     expected_kw: float

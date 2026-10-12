@@ -100,7 +100,7 @@ def validate_number_guard(answer: str, tool_data: Any) -> bool:
         matched = False
         for tn in tool_numbers:
             # Match with small tolerance for float representations or rounding
-            if abs(n - tn) < 0.15 or int(round(tn)) == int(round(n)):
+            if abs(n - tn) < 0.15 or round(tn) == round(n):
                 matched = True
                 break
         if not matched:

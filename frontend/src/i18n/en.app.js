@@ -31,6 +31,10 @@ const appEn = {
     alerts: 'Alerts',
     maintenance: 'Maintenance',
     reports: 'Reports',
+    leaderboard: 'Campus Leaderboard',
+    system: 'System Controls',
+    simulator: 'Simulator Console',
+    settings: 'Settings',
   },
 
   studentNav: {
@@ -38,6 +42,7 @@ const appEn = {
     chatbot: 'AI Chatbot',
     myReports: 'My Reports',
     impact: 'Impact',
+    leaderboard: 'Campus Leaderboard',
   },
 
   admin: {

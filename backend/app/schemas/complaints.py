@@ -40,6 +40,9 @@ class ComplaintResponse(BaseModel):
     updated_at: str
     resolution_notes: str = ""
     is_overdue: bool = False
+    title: Optional[str] = None
+    place: Optional[str] = None
+    image_url: Optional[str] = None
     history: List[ComplaintHistoryItem] = []
     data_source: str = "simulated"
 

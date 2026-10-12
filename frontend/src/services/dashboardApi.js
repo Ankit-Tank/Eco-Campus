@@ -31,3 +31,12 @@ export async function getStudentHome(user) {
   if (USE_MOCK) return mockStudent.getStudentHome(user)
   return request('/dashboard/student-home')
 }
+
+// GET /api/dashboard/summary (all users)
+export async function getDashboardSummary({ from, to } = {}) {
+  const params = new URLSearchParams()
+  if (from) params.append('from', from)
+  if (to) params.append('to', to)
+  return request(`/dashboard/summary?${params.toString()}`)
+}
+

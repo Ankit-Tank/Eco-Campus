@@ -21,6 +21,7 @@ class UserResponse(BaseModel):
     email: str
     role: str
     is_active: bool
+    name: Optional[str] = None
     data_source: str = "simulated"
 
 
@@ -29,3 +30,29 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user: UserResponse
     data_source: str = "simulated"
+
+
+class OtpSendRequest(BaseModel):
+    phone: str
+
+
+class OtpSendResponse(BaseModel):
+    resend_after_seconds: int = 30
+    dev_otp: Optional[str] = "123456"
+    data_source: str = "simulated"
+
+
+class StudentOtpVerifyRequest(BaseModel):
+    phone: str
+    otp: str
+
+
+class AdminForgotVerifyRequest(BaseModel):
+    phone: str
+    otp: str
+
+
+class AdminResetPasswordRequest(BaseModel):
+    reset_token: str
+    new_password: str
+

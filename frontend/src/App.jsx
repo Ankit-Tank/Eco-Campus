@@ -4,7 +4,14 @@ import Dashboard from './pages/Dashboard.jsx'
 import RequireAuth from './auth/RequireAuth.jsx'
 import AppShell from './layouts/AppShell.jsx'
 import AdminOverview from './pages/admin/AdminOverview.jsx'
-import AdminPlaceholder from './pages/admin/AdminPlaceholder.jsx'
+import AdminElectricity from './pages/admin/AdminElectricity.jsx'
+import AdminWater from './pages/admin/AdminWater.jsx'
+import AdminAlerts from './pages/admin/AdminAlerts.jsx'
+import AdminMaintenance from './pages/admin/AdminMaintenance.jsx'
+import AdminReports from './pages/admin/AdminReports.jsx'
+import AdminSimulator from './pages/admin/AdminSimulator.jsx'
+import AdminSettings from './pages/admin/AdminSettings.jsx'
+import LeaderboardView from './pages/LeaderboardView.jsx'
 import StudentHome from './pages/student/StudentHome.jsx'
 import StudentChat from './pages/student/StudentChat.jsx'
 import StudentMyReports from './pages/student/StudentMyReports.jsx'
@@ -29,11 +36,14 @@ export default function App() {
       >
         <Route index element={<Navigate to="overview" replace />} />
         <Route path="overview" element={<AdminOverview />} />
-        <Route path="electricity" element={<AdminPlaceholder title="adminNav.electricity" />} />
-        <Route path="water" element={<AdminPlaceholder title="adminNav.water" />} />
-        <Route path="alerts" element={<AdminPlaceholder title="adminNav.alerts" />} />
-        <Route path="maintenance" element={<AdminPlaceholder title="adminNav.maintenance" />} />
-        <Route path="reports" element={<AdminPlaceholder title="adminNav.reports" />} />
+        <Route path="electricity" element={<AdminElectricity />} />
+        <Route path="water" element={<AdminWater />} />
+        <Route path="alerts" element={<AdminAlerts />} />
+        <Route path="maintenance" element={<AdminMaintenance />} />
+        <Route path="leaderboard" element={<LeaderboardView />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="simulator" element={<AdminSimulator />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       {/* Student area */}
@@ -50,6 +60,7 @@ export default function App() {
         <Route path="chat" element={<StudentChat />} />
         <Route path="my-reports" element={<StudentMyReports />} />
         <Route path="impact" element={<StudentImpact />} />
+        <Route path="leaderboard" element={<LeaderboardView />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

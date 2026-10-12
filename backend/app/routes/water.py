@@ -217,3 +217,24 @@ def update_water_alert(
         assumptions={"bucket": b_res["assumption"]},
         data_source="simulated",
     )
+
+
+@router.get("/locations", summary="List all water monitoring locations")
+def get_water_locations(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Returns list of monitored water points (washrooms, tanks, cafeteria)."""
+    locations = db.query(models.WaterLocation).all()
+    return [
+        {
+            "id": loc.id,
+            "name": loc.name,
+            "building": loc.building,
+            "meter_type": loc.meter_type,
+            "baseline_night_lph": loc.baseline_night_lph,
+            "data_source": "simulated",
+        }
+        for loc in locations
+    ]
+

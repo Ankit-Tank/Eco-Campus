@@ -1,6 +1,5 @@
-// The only place that calls fetch(). Every file in services/ uses request() or post().
 import { API_BASE_URL, STORAGE_KEYS } from '../config.js'
-import { getToken } from '../auth/session.js'
+import { getToken, logout } from '../auth/session.js'
 
 // An error that carries the backend's error "code" so we can translate it.
 export class ApiError extends Error {
@@ -30,6 +29,12 @@ export async function request(path, options = {}) {
   }
 
   if (!response.ok) {
+    if (response.status === 401 && !path.includes('/auth/login') && !path.includes('/auth/student/otp') && !path.includes('/auth/admin/login')) {
+      logout()
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
+    }
     let message = ''
     let code = 'GENERIC'
     try {

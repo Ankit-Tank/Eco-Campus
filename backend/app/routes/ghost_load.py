@@ -340,21 +340,37 @@ def get_switch_off_list(
         })
 
     triage = get_switch_off_first_list(current_states, price_per_kwh=price_per_kwh)
+    room_by_code = {r.room_code: r for r in rooms}
+    items = []
+    for item in triage:
+        r = room_by_code.get(item["room_code"])
+        target_eq = None
+        target_name = (item.get("target_appliance") or "").lower()
+        if r:
+            r_eq_list = eq_by_room.get(r.id, [])
+            for eq in r_eq_list:
+                if eq.kind.lower() in target_name or ("ac" in target_name and eq.kind.lower() == "ac"):
+                    target_eq = eq
+                    break
+            if not target_eq and r_eq_list:
+                target_eq = max(r_eq_list, key=lambda e: e.rated_kw * e.count)
 
-    items = [
-        SwitchOffItem(
-            priority=item["priority"],
-            room_code=item["room_code"],
-            room_name=item["room_name"],
-            ghost_kw=item["ghost_kw"],
-            actual_kw=item["actual_kw"],
-            expected_kw=item["expected_kw"],
-            potential_hourly_saving_inr=item["potential_hourly_saving_inr"],
-            target_appliance=item["target_appliance"],
-            urgency=item["urgency"],
+        items.append(
+            SwitchOffItem(
+                priority=item["priority"],
+                room_id=r.id if r else None,
+                room_code=item["room_code"],
+                room_name=item["room_name"],
+                equipment_id=target_eq.id if target_eq else None,
+                equipment_kind=target_eq.kind.upper() if target_eq else item["target_appliance"],
+                ghost_kw=item["ghost_kw"],
+                actual_kw=item["actual_kw"],
+                expected_kw=item["expected_kw"],
+                potential_hourly_saving_inr=item["potential_hourly_saving_inr"],
+                target_appliance=item["target_appliance"],
+                urgency=item["urgency"],
+            )
         )
-        for item in triage
-    ]
 
     total_hourly_savings = sum(i.potential_hourly_saving_inr for i in items)
 
