@@ -25,6 +25,7 @@ from app.services.ghost_load import (
     determine_room_status,
 )
 from app.services.savings_verification import verify_all_pending_actions
+from app.services.water_analysis import analyze_night_flow
 
 # ---------------------------------------------------------------------------
 # In-memory interactive appliance overrides (SPEC §7)
@@ -274,6 +275,47 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
             )
             db.add(wr)
             water_readings_created += 1
+
+        # -------------------------------------------------------------------
+        # Automated Night-Flow Leak Detection (SPEC §9)
+        # -------------------------------------------------------------------
+        if 1 <= hour <= 4:
+            day_start = datetime(current_ts.year, current_ts.month, current_ts.day, 1, 0, 0)
+            window_readings = (
+                db.query(models.WaterReading)
+                .filter(
+                    models.WaterReading.timestamp >= day_start,
+                    models.WaterReading.timestamp <= current_ts,
+                )
+                .all()
+            )
+            detected_alerts = analyze_night_flow(window_readings)
+            for alert_data in detected_alerts:
+                existing_alert = (
+                    db.query(models.WaterAlert)
+                    .filter(
+                        models.WaterAlert.location_id == alert_data["location_id"],
+                        models.WaterAlert.window_start == alert_data["window_start"],
+                    )
+                    .first()
+                )
+                if not existing_alert:
+                    new_alert = models.WaterAlert(
+                        location_id=alert_data["location_id"],
+                        detected_at=current_ts,
+                        window_start=alert_data["window_start"],
+                        window_end=alert_data["window_end"],
+                        avg_flow_lph=alert_data["avg_flow_lph"],
+                        baseline_lph=alert_data["baseline_lph"],
+                        status="SUSPECTED",
+                        inspection_notes=alert_data["inspection_notes"],
+                        resolved_at=None,
+                    )
+                    db.add(new_alert)
+                elif existing_alert.status == "SUSPECTED":
+                    existing_alert.window_end = alert_data["window_end"]
+                    existing_alert.avg_flow_lph = alert_data["avg_flow_lph"]
+                    existing_alert.inspection_notes = alert_data["inspection_notes"]
 
     db.commit()
     db.refresh(state)

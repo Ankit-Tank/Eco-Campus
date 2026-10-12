@@ -1070,9 +1070,308 @@ Manually evaluate verification for a pending action once its post-action window 
 
 ---
 
-## 12. Future Modules (Upcoming Phases)
+## 12. Student Water Complaints & Facilities Management (`/complaints`)
 
-- **Phase 6:** Complaints & Feedback (`/complaints`) — `POST /complaints`, `GET /complaints`, `PUT /complaints/{id}/status`
-- **Phase 6:** Reports & CSV Export (`/reports`) — `GET /reports/electricity`, `GET /reports/water`, `GET /reports/export`
-- **Phase 6:** AI Sustainability Assistant (`/assistant`) — `POST /assistant/ask`
-- **Phase 7:** Interactive Simulator Control (`/simulator`) — `POST /simulator/action`, `POST /simulator/inject`
+Students can report real or simulated water leakage incidents across campus with optional photo evidence. Facilities administrators triage complaints through a defined lifecycle with immutable audit history.
+
+### `POST /complaints`
+Submit a new student water or facility complaint. Supports `multipart/form-data` with optional photo upload.
+
+**Headers:**
+`Authorization: Bearer <token>`
+`Content-Type: multipart/form-data`
+
+**Form Parameters:**
+- `building`: Campus building name (e.g. `Block C`)
+- `location_detail`: Specific location (e.g. `2nd Floor Washroom (West Wing)`)
+- `category`: Complaint category (`leaking_tap`, `broken_pipe`, `overflowing_tank`, `low_pressure`, `general_wastage`)
+- `description`: Detailed text description of the issue
+- `photo` *(optional)*: Photographic evidence (JPEG, PNG, WEBP, GIF; max 5MB)
+
+**Response `201 Created`:**
+```json
+{
+  "id": 2,
+  "complaint_code": "WC-0002",
+  "student_id": 2,
+  "student_email": "student@ghostwatt.demo",
+  "student_username": "student",
+  "building": "Block C",
+  "location_detail": "2nd Floor Washroom (West Wing)",
+  "category": "leaking_tap",
+  "description": "Urinal flush pipe continuously discharging water onto floor.",
+  "attachment_path": "uploads/complaints/a1b2c3d4_photo.jpg",
+  "assigned_to": null,
+  "assigned_to_email": null,
+  "status": "submitted",
+  "created_at": "2026-10-12T10:15:00",
+  "updated_at": "2026-10-12T10:15:00",
+  "resolution_notes": "",
+  "is_overdue": false,
+  "history": [
+    {
+      "id": 2,
+      "complaint_id": 2,
+      "changed_by": 2,
+      "changed_by_email": "student@ghostwatt.demo",
+      "old_status": null,
+      "new_status": "submitted",
+      "note": "Complaint submitted by student",
+      "changed_at": "2026-10-12T10:15:00"
+    }
+  ],
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /complaints`
+Retrieve complaints list.
+- **Students:** See strictly only their own submitted complaints.
+- **Administrators:** See campus-wide complaints with optional status, building, and category filters. Includes overdue metrics and frequently affected locations.
+
+**Query Parameters (Admin Only):**
+- `status` *(optional)*: Filter by lifecycle status (`submitted`, `acknowledged`, `assigned`, `in_progress`, `resolved`, `reopened`)
+- `building` *(optional)*: Filter by building (`Block A`, `Block B`, `Block C`)
+- `category` *(optional)*: Filter by issue category
+- `limit` *(optional)*: Max results (default `100`)
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "complaints": [
+    {
+      "id": 2,
+      "complaint_code": "WC-0002",
+      "student_id": 2,
+      "student_email": "student@ghostwatt.demo",
+      "student_username": "student",
+      "building": "Block C",
+      "location_detail": "2nd Floor Washroom (West Wing)",
+      "category": "leaking_tap",
+      "description": "Urinal flush pipe continuously discharging water.",
+      "attachment_path": "uploads/complaints/a1b2c3d4_photo.jpg",
+      "assigned_to": 1,
+      "assigned_to_email": "admin@ghostwatt.demo",
+      "status": "assigned",
+      "created_at": "2026-10-12T10:15:00",
+      "updated_at": "2026-10-12T10:30:00",
+      "resolution_notes": "",
+      "is_overdue": false,
+      "history": [],
+      "data_source": "simulated"
+    }
+  ],
+  "count": 1,
+  "overdue_count": 0,
+  "frequently_affected_locations": [
+    {
+      "building": "Block C",
+      "location_detail": "2nd Floor Washroom (West Wing)",
+      "count": 3
+    }
+  ],
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /complaints/{id}`
+Retrieve a specific complaint by ID. Enforces privacy: returns `403 Forbidden` if a student attempts to view another student's complaint.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+*(ComplaintResponse object)*
+
+**Error Response:**
+- `403 Forbidden`: `{"detail": "Forbidden: student cannot view another student's complaint"}`
+
+---
+
+### `PATCH /complaints/{id}` *(Admin Only)*
+Triage complaint lifecycle status, assign to facility staff, and add resolution notes. All updates are logged in `complaint_history`.
+
+**Valid Status Transitions:**
+`submitted` → `acknowledged`, `assigned`, `in_progress`, `resolved`  
+`acknowledged` → `assigned`, `in_progress`, `resolved`  
+`assigned` → `in_progress`, `resolved`  
+`in_progress` → `resolved`  
+`resolved` → `reopened`  
+`reopened` → `in_progress`, `assigned`, `resolved`
+
+**Headers:**
+`Authorization: Bearer <admin_token>`
+
+**Request Body:**
+```json
+{
+  "status": "in_progress",
+  "assigned_to": 1,
+  "resolution_notes": "Plumber on site repairing pipe coupling",
+  "notes": "Work commenced"
+}
+```
+
+**Response `200 OK`:**
+*(Updated ComplaintResponse object with updated history)*
+
+---
+
+### `GET /complaints/notifications/admin` *(Admin Only)*
+Inspect automated internal notification records generated upon new student complaint submissions.
+
+**Headers:**
+`Authorization: Bearer <admin_token>`
+
+**Response `200 OK`:**
+```json
+{
+  "notifications": [
+    {
+      "id": 1,
+      "title": "New Complaint: WC-0002",
+      "message": "Student student@ghostwatt.demo reported leaking_tap in Block C (2nd Floor Washroom)",
+      "notification_type": "complaint",
+      "reference_id": "WC-0002",
+      "is_read": false,
+      "created_at": "2026-10-12T10:15:00",
+      "data_source": "simulated"
+    }
+  ],
+  "unread_count": 1,
+  "count": 1,
+  "data_source": "simulated"
+}
+```
+
+---
+
+## 13. Sustainability Reports & CSV Export (`/reports`)
+
+Comprehensive executive reports combining electricity analytics, ghost load ranking, verified savings, water telemetry, and complaint metrics. Every single figure is explicitly tagged with its provenance (`simulated`, `calculated`, or `verified`).
+
+### `GET /reports/summary`
+Campus sustainability summary. Students receive a privacy-restricted version omitting administrative and internal staff details.
+
+**Query Parameters:**
+- `from` *(optional)*: Start date (ISO format)
+- `to` *(optional)*: End date (ISO format)
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "date_from": "2026-09-28T00:00:00",
+  "date_to": "2026-10-12T10:15:00",
+  "actual_kwh": 3719.64,
+  "expected_kwh": 2686.07,
+  "ghost_kwh": 1033.57,
+  "cost_inr": 8785.35,
+  "co2_kg": 733.835,
+  "top_ghost_rooms": [
+    {
+      "rank": 1,
+      "room_id": 1,
+      "room_code": "A-101",
+      "name": "Classroom 101",
+      "block": "A",
+      "ghost_kwh": 267.3,
+      "cost_inr": 2272.05,
+      "co2_kg": 189.783,
+      "explanation": "Air conditioning operating during overnight unoccupied hours with zero scheduled classes.",
+      "recommended_action": "Install 2-hour auto shut-off timers and enforce post-21:00 manual shutdown checklist.",
+      "tag": "calculated"
+    }
+  ],
+  "rooms_over_limit": [
+    {
+      "room_code": "A-101",
+      "name": "Classroom 101",
+      "actual_kwh": 412.5,
+      "expected_kwh": 145.2,
+      "ghost_kwh": 267.3,
+      "excess_percentage": 184.1,
+      "tag": "calculated"
+    }
+  ],
+  "verified_savings": {
+    "claimed_kwh": 3.6,
+    "verified_kwh": 2.7,
+    "monetary_saving_inr": 22.95,
+    "emissions_co2_kg": 1.917,
+    "action_count": 4,
+    "verified_count": 3,
+    "tag": "verified"
+  },
+  "water": {
+    "total_litres": 15840.0,
+    "tag_total": "simulated",
+    "night_excess_litres": 680.0,
+    "tag_excess": "calculated",
+    "leak_alerts_count": 1,
+    "active_alerts_count": 0,
+    "tag_alerts": "calculated"
+  },
+  "complaints": {
+    "total_complaints": 2,
+    "resolved_complaints": 1,
+    "open_complaints": 1,
+    "tag": "calculated",
+    "is_restricted": false,
+    "own_complaints": null,
+    "category_breakdown": {
+      "leaking_tap": 2
+    },
+    "building_breakdown": {
+      "Block C": 2
+    }
+  },
+  "data_tags": {
+    "actual_kwh": "simulated",
+    "expected_kwh": "calculated",
+    "ghost_kwh": "calculated",
+    "cost_inr": "calculated",
+    "co2_kg": "calculated",
+    "top_ghost_rooms": "calculated",
+    "rooms_over_limit": "calculated",
+    "verified_savings": "verified",
+    "total_water_litres": "simulated",
+    "night_excess_litres": "calculated",
+    "water_leak_alerts": "calculated",
+    "complaints": "calculated"
+  },
+  "is_restricted": false,
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /reports/export.csv`
+Downloadable CSV report format with provenance tags (`simulated`, `calculated`, `verified`) labeled on every line item.
+
+**Query Parameters:**
+- `from` *(optional)*: Start date (ISO format)
+- `to` *(optional)*: End date (ISO format)
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+- `Content-Type: text/csv`
+- `Content-Disposition: attachment; filename=ghostwatt_sustainability_report_YYYYMMDD_HHMMSS.csv`
+
+---
+
+## 14. Upcoming Modules
+
+- **AI Sustainability Assistant (`/assistant`)** — Natural language queries powered by the Groq API grounded in backend data.

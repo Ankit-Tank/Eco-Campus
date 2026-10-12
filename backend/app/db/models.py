@@ -381,6 +381,23 @@ class Setting(Base):
 
 
 # ---------------------------------------------------------------------------
+# Admin Notifications (simple internal notification log)
+# ---------------------------------------------------------------------------
+class AdminNotification(Base):
+    """Internal admin notifications for events like new student complaints."""
+
+    __tablename__ = "admin_notifications"
+
+    id                = Column(Integer, primary_key=True, index=True)
+    title             = Column(String(150), nullable=False)
+    message           = Column(Text, nullable=False)
+    notification_type = Column(String(50), default="complaint")  # complaint | leak | alert
+    reference_id      = Column(String(50), nullable=True)        # e.g. "WC-0001"
+    is_read           = Column(Boolean, default=False)
+    created_at        = Column(DateTime, default=_now)
+
+
+# ---------------------------------------------------------------------------
 # Simulation State (single row: id=1)
 # ---------------------------------------------------------------------------
 class SimState(Base):
