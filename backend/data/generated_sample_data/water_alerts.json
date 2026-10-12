@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "location_id": 4,
+    "detected_at": "2026-10-09T04:15:00",
+    "window_start": "2026-10-09T01:00:00",
+    "window_end": "2026-10-09T04:00:00",
+    "avg_flow_lph": 234.8,
+    "baseline_lph": 20.0,
+    "status": "SUSPECTED",
+    "inspection_notes": "Automated night-flow anomaly detected: sustained 234.8 L/h between 01:00 and 04:00 AM (baseline: 20.0 L/h, threshold: 60.0 L/h). Suspected broken flush valve or supply pipe fracture in Block C second-floor restroom."
+  }
+]

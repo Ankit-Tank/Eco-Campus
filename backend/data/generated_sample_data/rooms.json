@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "room_code": "A-101",
+    "block": "A",
+    "name": "Lecture Hall A-101",
+    "room_type": "classroom",
+    "capacity": 60,
+    "idle_baseline_kw": 0.12
+  },
+  {
+    "id": 2,
+    "room_code": "A-102",
+    "block": "A",
+    "name": "Classroom A-102",
+    "room_type": "classroom",
+    "capacity": 45,
+    "idle_baseline_kw": 0.1
+  },
+  {
+    "id": 3,
+    "room_code": "A-201",
+    "block": "A",
+    "name": "Seminar Hall A-201",
+    "room_type": "seminar",
+    "capacity": 120,
+    "idle_baseline_kw": 0.25
+  },
+  {
+    "id": 4,
+    "room_code": "A-202",
+    "block": "A",
+    "name": "Central Reading Room",
+    "room_type": "reading_room",
+    "capacity": 55,
+    "idle_baseline_kw": 0.15
+  },
+  {
+    "id": 5,
+    "room_code": "B-101",
+    "block": "B",
+    "name": "Classroom B-101",
+    "room_type": "classroom",
+    "capacity": 50,
+    "idle_baseline_kw": 0.1
+  },
+  {
+    "id": 6,
+    "room_code": "B-102",
+    "block": "B",
+    "name": "Classroom B-102",
+    "room_type": "classroom",
+    "capacity": 50,
+    "idle_baseline_kw": 0.1
+  },
+  {
+    "id": 7,
+    "room_code": "B-201",
+    "block": "B",
+    "name": "Computer Systems Lab",
+    "room_type": "lab",
+    "capacity": 40,
+    "idle_baseline_kw": 0.3
+  },
+  {
+    "id": 8,
+    "room_code": "B-202",
+    "block": "B",
+    "name": "IoT & Electronics Lab",
+    "room_type": "lab",
+    "capacity": 35,
+    "idle_baseline_kw": 0.2
+  },
+  {
+    "id": 9,
+    "room_code": "C-101",
+    "block": "C",
+    "name": "Classroom C-101",
+    "room_type": "classroom",
+    "capacity": 45,
+    "idle_baseline_kw": 0.1
+  },
+  {
+    "id": 10,
+    "room_code": "C-201",
+    "block": "C",
+    "name": "Auditorium C-201",
+    "room_type": "seminar",
+    "capacity": 150,
+    "idle_baseline_kw": 0.35
+  },
+  {
+    "id": 11,
+    "room_code": "C-301",
+    "block": "C",
+    "name": "Smart Classroom C-301",
+    "room_type": "classroom",
+    "capacity": 55,
+    "idle_baseline_kw": 0.12
+  },
+  {
+    "id": 12,
+    "room_code": "C-302",
+    "block": "C",
+    "name": "Data Science Studio C-302",
+    "room_type": "lab",
+    "capacity": 60,
+    "idle_baseline_kw": 0.25
+  }
+]

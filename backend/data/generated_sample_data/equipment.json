@@ -1,0 +1,416 @@
+[
+  {
+    "id": 1,
+    "room_id": 1,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 14,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 2,
+    "room_id": 1,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 8,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 3,
+    "room_id": 1,
+    "kind": "ac",
+    "rated_kw": 1.8,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 4,
+    "room_id": 1,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 5,
+    "room_id": 2,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 10,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 6,
+    "room_id": 2,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 7,
+    "room_id": 2,
+    "kind": "ac",
+    "rated_kw": 1.8,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 8,
+    "room_id": 2,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 0.7
+  },
+  {
+    "id": 9,
+    "room_id": 3,
+    "kind": "light",
+    "rated_kw": 0.05,
+    "count": 24,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 10,
+    "room_id": 3,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 12,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 11,
+    "room_id": 3,
+    "kind": "ac",
+    "rated_kw": 2.2,
+    "count": 4,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 12,
+    "room_id": 3,
+    "kind": "projector",
+    "rated_kw": 0.5,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 13,
+    "room_id": 4,
+    "kind": "light",
+    "rated_kw": 0.03,
+    "count": 20,
+    "state": "OFF",
+    "expected_in_class": 0.9
+  },
+  {
+    "id": 14,
+    "room_id": 4,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 8,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 15,
+    "room_id": 4,
+    "kind": "ac",
+    "rated_kw": 2.0,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 16,
+    "room_id": 4,
+    "kind": "pc",
+    "rated_kw": 0.12,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 0.6
+  },
+  {
+    "id": 17,
+    "room_id": 5,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 12,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 18,
+    "room_id": 5,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 19,
+    "room_id": 5,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 20,
+    "room_id": 6,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 12,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 21,
+    "room_id": 6,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 22,
+    "room_id": 6,
+    "kind": "ac",
+    "rated_kw": 1.8,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 23,
+    "room_id": 7,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 16,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 24,
+    "room_id": 7,
+    "kind": "ac",
+    "rated_kw": 2.0,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 25,
+    "room_id": 7,
+    "kind": "pc",
+    "rated_kw": 0.15,
+    "count": 30,
+    "state": "OFF",
+    "expected_in_class": 0.9
+  },
+  {
+    "id": 26,
+    "room_id": 7,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 27,
+    "room_id": 8,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 14,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 28,
+    "room_id": 8,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 29,
+    "room_id": 8,
+    "kind": "pc",
+    "rated_kw": 0.15,
+    "count": 15,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 30,
+    "room_id": 8,
+    "kind": "lab_equipment",
+    "rated_kw": 0.4,
+    "count": 10,
+    "state": "OFF",
+    "expected_in_class": 0.7
+  },
+  {
+    "id": 31,
+    "room_id": 9,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 10,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 32,
+    "room_id": 9,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 33,
+    "room_id": 9,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 34,
+    "room_id": 10,
+    "kind": "light",
+    "rated_kw": 0.05,
+    "count": 30,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 35,
+    "room_id": 10,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 16,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 36,
+    "room_id": 10,
+    "kind": "ac",
+    "rated_kw": 2.5,
+    "count": 4,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 37,
+    "room_id": 10,
+    "kind": "projector",
+    "rated_kw": 0.6,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 38,
+    "room_id": 11,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 12,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 39,
+    "room_id": 11,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 6,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 40,
+    "room_id": 11,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 41,
+    "room_id": 11,
+    "kind": "ac",
+    "rated_kw": 1.8,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 42,
+    "room_id": 12,
+    "kind": "light",
+    "rated_kw": 0.04,
+    "count": 14,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 43,
+    "room_id": 12,
+    "kind": "fan",
+    "rated_kw": 0.075,
+    "count": 8,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 44,
+    "room_id": 12,
+    "kind": "ac",
+    "rated_kw": 2.0,
+    "count": 2,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  },
+  {
+    "id": 45,
+    "room_id": 12,
+    "kind": "pc",
+    "rated_kw": 0.15,
+    "count": 25,
+    "state": "OFF",
+    "expected_in_class": 0.8
+  },
+  {
+    "id": 46,
+    "room_id": 12,
+    "kind": "projector",
+    "rated_kw": 0.35,
+    "count": 1,
+    "state": "OFF",
+    "expected_in_class": 1.0
+  }
+]

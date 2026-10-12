@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Admin Block Main Supply",
+    "building": "Admin Block",
+    "description": "Primary inlet meter for administration building and registrar offices",
+    "low_flow_threshold_lph": 50.0
+  },
+  {
+    "id": 2,
+    "name": "Block A Restrooms & Labs",
+    "building": "Block A",
+    "description": "Secondary distribution line for Block A washrooms and research facilities",
+    "low_flow_threshold_lph": 40.0
+  },
+  {
+    "id": 3,
+    "name": "Block B Science Labs & Faucets",
+    "building": "Block B",
+    "description": "Lab prep sinks and general plumbing line in Block B",
+    "low_flow_threshold_lph": 45.0
+  },
+  {
+    "id": 4,
+    "name": "Block C Washrooms & Cafeteria",
+    "building": "Block C",
+    "description": "Inlet line serving ground floor canteen and multi-floor washrooms",
+    "low_flow_threshold_lph": 60.0
+  },
+  {
+    "id": 5,
+    "name": "Hostel Block Main Storage Tank",
+    "building": "Hostel Block",
+    "description": "Overhead reservoir feed line for campus residential block",
+    "low_flow_threshold_lph": 80.0
+  },
+  {
+    "id": 6,
+    "name": "Sports Complex & Irrigation Line",
+    "building": "Sports Complex",
+    "description": "Outdoor sports facilities and surrounding grounds irrigation",
+    "low_flow_threshold_lph": 50.0
+  }
+]

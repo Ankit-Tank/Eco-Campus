@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@ghostwatt.demo",
+    "role": "admin",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "username": "student",
+    "email": "student@ghostwatt.demo",
+    "role": "student",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "username": "student2",
+    "email": "student2@ghostwatt.demo",
+    "role": "student",
+    "is_active": true
+  }
+]

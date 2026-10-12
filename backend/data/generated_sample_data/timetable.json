@@ -1,0 +1,1676 @@
+[
+  {
+    "id": 1,
+    "room_id": 1,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 2,
+    "room_id": 1,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 3,
+    "room_id": 1,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 4,
+    "room_id": 1,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 5,
+    "room_id": 1,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 6,
+    "room_id": 1,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 7,
+    "room_id": 1,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 8,
+    "room_id": 1,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 9,
+    "room_id": 1,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 10,
+    "room_id": 1,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 11,
+    "room_id": 1,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 12,
+    "room_id": 1,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 13,
+    "room_id": 1,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 14,
+    "room_id": 1,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 15,
+    "room_id": 1,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 16,
+    "room_id": 1,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 17,
+    "room_id": 1,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 18,
+    "room_id": 1,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 19,
+    "room_id": 1,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 20,
+    "room_id": 1,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 21,
+    "room_id": 1,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 22,
+    "room_id": 2,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 23,
+    "room_id": 2,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 24,
+    "room_id": 2,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 25,
+    "room_id": 2,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 26,
+    "room_id": 2,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 27,
+    "room_id": 2,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 28,
+    "room_id": 2,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 29,
+    "room_id": 2,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 30,
+    "room_id": 2,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 31,
+    "room_id": 2,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 32,
+    "room_id": 2,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 33,
+    "room_id": 2,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 34,
+    "room_id": 2,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 35,
+    "room_id": 2,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 36,
+    "room_id": 2,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 37,
+    "room_id": 2,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 38,
+    "room_id": 2,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 39,
+    "room_id": 2,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 40,
+    "room_id": 2,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 41,
+    "room_id": 2,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 42,
+    "room_id": 2,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 43,
+    "room_id": 3,
+    "day_of_week": 1,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 44,
+    "room_id": 3,
+    "day_of_week": 1,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 45,
+    "room_id": 3,
+    "day_of_week": 3,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 46,
+    "room_id": 3,
+    "day_of_week": 3,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 47,
+    "room_id": 3,
+    "day_of_week": 5,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 48,
+    "room_id": 3,
+    "day_of_week": 5,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 49,
+    "room_id": 4,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 50,
+    "room_id": 4,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 51,
+    "room_id": 4,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 52,
+    "room_id": 4,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 53,
+    "room_id": 4,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 54,
+    "room_id": 4,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 55,
+    "room_id": 4,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 56,
+    "room_id": 4,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 57,
+    "room_id": 4,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 58,
+    "room_id": 4,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 59,
+    "room_id": 4,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "13:00",
+    "activity": "General Study & Library Reference",
+    "expected_students": 45
+  },
+  {
+    "id": 60,
+    "room_id": 4,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Quiet Study & Research",
+    "expected_students": 35
+  },
+  {
+    "id": 61,
+    "room_id": 5,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 62,
+    "room_id": 5,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 63,
+    "room_id": 5,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 64,
+    "room_id": 5,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 65,
+    "room_id": 5,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 66,
+    "room_id": 5,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 67,
+    "room_id": 5,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 68,
+    "room_id": 5,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 69,
+    "room_id": 5,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 70,
+    "room_id": 5,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 71,
+    "room_id": 5,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 72,
+    "room_id": 5,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 73,
+    "room_id": 5,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 74,
+    "room_id": 5,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 75,
+    "room_id": 5,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 76,
+    "room_id": 5,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 77,
+    "room_id": 5,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 78,
+    "room_id": 5,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 79,
+    "room_id": 5,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 80,
+    "room_id": 5,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 81,
+    "room_id": 5,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 82,
+    "room_id": 6,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 83,
+    "room_id": 6,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 84,
+    "room_id": 6,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 85,
+    "room_id": 6,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 86,
+    "room_id": 6,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 87,
+    "room_id": 6,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 88,
+    "room_id": 6,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 89,
+    "room_id": 6,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 90,
+    "room_id": 6,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 91,
+    "room_id": 6,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 92,
+    "room_id": 6,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 93,
+    "room_id": 6,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 94,
+    "room_id": 6,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 95,
+    "room_id": 6,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 96,
+    "room_id": 6,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 97,
+    "room_id": 6,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 98,
+    "room_id": 6,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 99,
+    "room_id": 6,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 100,
+    "room_id": 6,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 101,
+    "room_id": 6,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 102,
+    "room_id": 6,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 103,
+    "room_id": 7,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 104,
+    "room_id": 7,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 105,
+    "room_id": 7,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 106,
+    "room_id": 7,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 107,
+    "room_id": 7,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 108,
+    "room_id": 7,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 109,
+    "room_id": 7,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 110,
+    "room_id": 7,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 111,
+    "room_id": 7,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 112,
+    "room_id": 7,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 113,
+    "room_id": 7,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 114,
+    "room_id": 7,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 115,
+    "room_id": 8,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 116,
+    "room_id": 8,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 117,
+    "room_id": 8,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 118,
+    "room_id": 8,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 119,
+    "room_id": 8,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 120,
+    "room_id": 8,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 121,
+    "room_id": 8,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 122,
+    "room_id": 8,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 123,
+    "room_id": 8,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 124,
+    "room_id": 8,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 125,
+    "room_id": 8,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 126,
+    "room_id": 8,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 127,
+    "room_id": 9,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 128,
+    "room_id": 9,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 129,
+    "room_id": 9,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 130,
+    "room_id": 9,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 131,
+    "room_id": 9,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 132,
+    "room_id": 9,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 133,
+    "room_id": 9,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 134,
+    "room_id": 9,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 135,
+    "room_id": 9,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 136,
+    "room_id": 9,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 137,
+    "room_id": 9,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 138,
+    "room_id": 9,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 139,
+    "room_id": 9,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 140,
+    "room_id": 9,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 141,
+    "room_id": 9,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 142,
+    "room_id": 9,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 143,
+    "room_id": 9,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 144,
+    "room_id": 9,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 145,
+    "room_id": 9,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 146,
+    "room_id": 9,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 147,
+    "room_id": 9,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 148,
+    "room_id": 10,
+    "day_of_week": 1,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 149,
+    "room_id": 10,
+    "day_of_week": 1,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 150,
+    "room_id": 10,
+    "day_of_week": 3,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 151,
+    "room_id": 10,
+    "day_of_week": 3,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 152,
+    "room_id": 10,
+    "day_of_week": 5,
+    "start_time": "09:30",
+    "end_time": "12:30",
+    "activity": "Department Guest Lecture & Seminar",
+    "expected_students": 90
+  },
+  {
+    "id": 153,
+    "room_id": 10,
+    "day_of_week": 5,
+    "start_time": "14:30",
+    "end_time": "16:30",
+    "activity": "Technical Presentation / Project Review",
+    "expected_students": 75
+  },
+  {
+    "id": 154,
+    "room_id": 11,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 155,
+    "room_id": 11,
+    "day_of_week": 0,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 156,
+    "room_id": 11,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 157,
+    "room_id": 11,
+    "day_of_week": 0,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Environmental Science Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 158,
+    "room_id": 11,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Computer Networks",
+    "expected_students": 35
+  },
+  {
+    "id": 159,
+    "room_id": 11,
+    "day_of_week": 1,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 38
+  },
+  {
+    "id": 160,
+    "room_id": 11,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Environmental Science",
+    "expected_students": 32
+  },
+  {
+    "id": 161,
+    "room_id": 11,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 35
+  },
+  {
+    "id": 162,
+    "room_id": 11,
+    "day_of_week": 2,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Environmental Science",
+    "expected_students": 38
+  },
+  {
+    "id": 163,
+    "room_id": 11,
+    "day_of_week": 2,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Embedded Systems",
+    "expected_students": 32
+  },
+  {
+    "id": 164,
+    "room_id": 11,
+    "day_of_week": 2,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Software Engineering Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 165,
+    "room_id": 11,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Environmental Science",
+    "expected_students": 35
+  },
+  {
+    "id": 166,
+    "room_id": 11,
+    "day_of_week": 3,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Embedded Systems",
+    "expected_students": 38
+  },
+  {
+    "id": 167,
+    "room_id": 11,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Software Engineering",
+    "expected_students": 32
+  },
+  {
+    "id": 168,
+    "room_id": 11,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Embedded Systems",
+    "expected_students": 35
+  },
+  {
+    "id": 169,
+    "room_id": 11,
+    "day_of_week": 4,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Software Engineering",
+    "expected_students": 38
+  },
+  {
+    "id": 170,
+    "room_id": 11,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Computer Networks",
+    "expected_students": 32
+  },
+  {
+    "id": 171,
+    "room_id": 11,
+    "day_of_week": 4,
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "activity": "Applied Mathematics Tutorial",
+    "expected_students": 25
+  },
+  {
+    "id": 172,
+    "room_id": 11,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "10:30",
+    "activity": "Software Engineering",
+    "expected_students": 35
+  },
+  {
+    "id": 173,
+    "room_id": 11,
+    "day_of_week": 5,
+    "start_time": "11:00",
+    "end_time": "12:30",
+    "activity": "Computer Networks",
+    "expected_students": 38
+  },
+  {
+    "id": 174,
+    "room_id": 11,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "15:30",
+    "activity": "Applied Mathematics",
+    "expected_students": 32
+  },
+  {
+    "id": 175,
+    "room_id": 12,
+    "day_of_week": 0,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 176,
+    "room_id": 12,
+    "day_of_week": 0,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 177,
+    "room_id": 12,
+    "day_of_week": 1,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 178,
+    "room_id": 12,
+    "day_of_week": 1,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 179,
+    "room_id": 12,
+    "day_of_week": 2,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 180,
+    "room_id": 12,
+    "day_of_week": 2,
+    "start_time": "10:00",
+    "end_time": "13:00",
+    "activity": "AI Hackathon & High-Performance Computing Workshop",
+    "expected_students": 60
+  },
+  {
+    "id": 181,
+    "room_id": 12,
+    "day_of_week": 3,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 182,
+    "room_id": 12,
+    "day_of_week": 3,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  },
+  {
+    "id": 183,
+    "room_id": 12,
+    "day_of_week": 4,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "Data Structures & Algorithms Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 184,
+    "room_id": 12,
+    "day_of_week": 4,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Advanced Operating Systems Lab",
+    "expected_students": 28
+  },
+  {
+    "id": 185,
+    "room_id": 12,
+    "day_of_week": 5,
+    "start_time": "09:00",
+    "end_time": "12:00",
+    "activity": "IoT Sensor Systems Lab",
+    "expected_students": 30
+  },
+  {
+    "id": 186,
+    "room_id": 12,
+    "day_of_week": 5,
+    "start_time": "14:00",
+    "end_time": "17:00",
+    "activity": "Database Engineering Practical",
+    "expected_students": 28
+  }
+]

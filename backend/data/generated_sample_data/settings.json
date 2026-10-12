@@ -1,0 +1,32 @@
+[
+  {
+    "key": "electricity_price_per_kwh",
+    "value": "8.50",
+    "description": "Campus electricity commercial tariff in INR per kWh"
+  },
+  {
+    "key": "emissions_factor_kg_per_kwh",
+    "value": "0.71",
+    "description": "Grid carbon emission factor in kg CO2 per kWh (Central Electricity Authority)"
+  },
+  {
+    "key": "fan_watt_equivalent",
+    "value": "75",
+    "description": "Rated power consumption of standard ceiling fan in Watts for human-readable metric"
+  },
+  {
+    "key": "bucket_litres",
+    "value": "15",
+    "description": "Standard bucket capacity in litres for water equivalence metric"
+  },
+  {
+    "key": "water_night_threshold_lph",
+    "value": "50.0",
+    "description": "Flow rate threshold (L/h) above which 1\u20134 AM night water flow is flagged as suspected leak"
+  },
+  {
+    "key": "water_low_flow_baseline_lph",
+    "value": "15.0",
+    "description": "Normal expected night baseline water flow rate (L/h) when buildings are unoccupied"
+  }
+]

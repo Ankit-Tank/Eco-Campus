@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-10-12T11:39:35.716519",
+  "total_rooms": 12,
+  "total_equipment_records": 46,
+  "total_timetable_entries": 186,
+  "total_meter_readings": 16128,
+  "total_water_locations": 6,
+  "total_water_readings": 2016,
+  "ghost_scenarios_injected": {
+    "A-102_overnight_ac": 160,
+    "B-201_evening_lab": 92,
+    "C-301_lunch_projector": 40,
+    "C-302_hackathon_high_load": 12
+  }
+}

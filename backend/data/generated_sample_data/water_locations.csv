@@ -1,0 +1,7 @@
+id,name,building,description,low_flow_threshold_lph
+1,Admin Block Main Supply,Admin Block,Primary inlet meter for administration building and registrar offices,50.0
+2,Block A Restrooms & Labs,Block A,Secondary distribution line for Block A washrooms and research facilities,40.0
+3,Block B Science Labs & Faucets,Block B,Lab prep sinks and general plumbing line in Block B,45.0
+4,Block C Washrooms & Cafeteria,Block C,Inlet line serving ground floor canteen and multi-floor washrooms,60.0
+5,Hostel Block Main Storage Tank,Hostel Block,Overhead reservoir feed line for campus residential block,80.0
+6,Sports Complex & Irrigation Line,Sports Complex,Outdoor sports facilities and surrounding grounds irrigation,50.0

@@ -1,0 +1,16 @@
+﻿# .gitignore — GhostWatt
+.env
+*.db
+node_modules/
+backend/uploads/*
+!backend/uploads/complaints/.gitkeep
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.DS_Store
+Thumbs.db
