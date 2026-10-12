@@ -1,4 +1,4 @@
-# Eco-Campus (GhostWatt)
+# Eco-Campus 
 
 Intelligent campus sustainability platform for monitoring electricity and water usage, detecting ghost loads, verifying savings, and supporting maintenance workflows with a grounded AI assistant.
 
