@@ -24,6 +24,7 @@ from app.services.ghost_load import (
     classify_ghost_reason,
     determine_room_status,
 )
+from app.services.savings_verification import verify_all_pending_actions
 
 # ---------------------------------------------------------------------------
 # In-memory interactive appliance overrides (SPEC §7)
@@ -277,9 +278,15 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
     db.commit()
     db.refresh(state)
 
+    # -----------------------------------------------------------------------
+    # Automated Savings Verification (SPEC §8)
+    # -----------------------------------------------------------------------
+    verified_savings = verify_all_pending_actions(db, current_ts)
+
     return {
         "virtual_now": current_ts.isoformat(),
         "readings_count": meter_readings_created,
         "rooms_ticked": meter_readings_created,
         "water_readings_count": water_readings_created,
+        "verified_savings_count": len(verified_savings),
     }

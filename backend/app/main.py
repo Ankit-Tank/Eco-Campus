@@ -17,7 +17,7 @@ from app.services.simulator import calculate_sleep_duration, get_or_create_sim_s
 
 # ---- Import routers ----
 from app.routes import auth, dashboard, electricity, ghost_load, rooms, timetable
-from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live
+from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live, actions
 
 app = FastAPI(
     title=settings.app_name,
@@ -105,6 +105,7 @@ app.include_router(ghost_load.router,   prefix="/ghost",       tags=["Ghost Load
 app.include_router(ghost_load.router,   prefix="/ghost-load",  tags=["Ghost Load"])
 app.include_router(rooms.router,        prefix="/rooms",       tags=["Rooms"])
 app.include_router(timetable.router,    prefix="/timetable",   tags=["Timetable"])
+app.include_router(actions.router,      prefix="/actions",     tags=["Actions"])
 app.include_router(savings.router,      prefix="/savings",     tags=["Savings"])
 app.include_router(water.router,        prefix="/water",       tags=["Water"])
 app.include_router(complaints.router,   prefix="/complaints",  tags=["Complaints"])

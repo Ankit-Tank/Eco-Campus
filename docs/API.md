@@ -889,9 +889,189 @@ Inspect current simulation state, speed factor, and active status.
 
 ---
 
-## 11. Future Modules (Upcoming Phases)
+## 11. Corrective Actions & Verified Savings Meter (`/actions` and `/savings`)
 
-- **Phase 5:** Verified Savings (`/savings`) — `GET /savings`, `POST /savings/verify`
+GhostWatt's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
+
+### `POST /actions/switch-off` *(Admin Only)*
+Trigger an immediate corrective action to switch off a running appliance in a target room. The action is recorded with status `PENDING`, a claimed saving estimate is computed, and the appliance is set to `OFF` effective from the next simulation tick.
+
+**Headers:**
+`Authorization: Bearer <admin_token>`
+
+**Request Body:**
+```json
+{
+  "room_id": 2,
+  "equipment_id": 5,
+  "notes": "Admin switching off overnight AC in A-102 via dashboard alert"
+}
+```
+
+**Response `201 Created`:**
+```json
+{
+  "id": 4,
+  "room_id": 2,
+  "room_code": "A-102",
+  "room_name": "Classroom 102",
+  "equipment_id": 5,
+  "equipment_kind": "ac",
+  "user_id": 1,
+  "user_email": "admin@ghostwatt.demo",
+  "action_type": "switch_off",
+  "timestamp": "2026-10-12T10:15:00",
+  "notes": "Admin switching off overnight AC in A-102 via dashboard alert",
+  "verification_status": "PENDING",
+  "claimed_reduction_kw": 3.6,
+  "claimed_kwh_per_interval": 0.9,
+  "data_source": "simulated"
+}
+```
+
+**Error Responses:**
+- `403 Forbidden`: Attempted by a student account (`{"detail": "Admin access required: operation forbidden for non-admin accounts"}`).
+- `404 Not Found`: Room or equipment ID does not exist.
+
+---
+
+### `GET /actions`
+Retrieve history of all corrective actions taken across campus, including author information, target equipment, and verification status.
+
+**Query Parameters:**
+- `room_id` *(optional)*: Filter by target room ID
+- `limit` *(optional)*: Maximum items to return (default: `100`)
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "actions": [
+    {
+      "id": 4,
+      "room_id": 2,
+      "room_code": "A-102",
+      "room_name": "Classroom 102",
+      "equipment_id": 5,
+      "equipment_kind": "ac",
+      "user_id": 1,
+      "user_email": "admin@ghostwatt.demo",
+      "action_type": "switch_off",
+      "timestamp": "2026-10-12T10:15:00",
+      "notes": "Admin switching off overnight AC in A-102 via dashboard alert",
+      "verification_status": "VERIFIED",
+      "claimed_reduction_kw": 3.6,
+      "claimed_kwh_per_interval": 0.9,
+      "data_source": "simulated"
+    }
+  ],
+  "count": 1,
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /savings/summary`
+Retrieve high-level Verified Savings metrics comparing claimed savings against verified savings backed by subsequent meter readings.
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "claimed_kwh": 3.6,
+  "verified_kwh": 2.7,
+  "monetary_saving_inr": 22.95,
+  "emissions_co2_kg": 1.917,
+  "total_actions": 4,
+  "verified_actions": 3,
+  "partial_actions": 0,
+  "unverified_actions": 1,
+  "pending_actions": 0,
+  "label": "Simulated Verified Savings",
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `GET /savings/records`
+Detailed audit records of interval-by-interval verified savings, including pre-action vs post-action demand averages, credited kWh, monetary savings in rupees, and avoided emissions.
+
+**Query Parameters:**
+- `room_id` *(optional)*: Filter by target room ID
+- `limit` *(optional)*: Maximum records to return (default: `100`)
+
+**Headers:**
+`Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+```json
+{
+  "records": [
+    {
+      "id": 1,
+      "action_id": 1,
+      "room_id": 2,
+      "room_code": "A-102",
+      "equipment": "AC",
+      "interval_start": "2026-10-11T22:00:00",
+      "pre_avg_kw": 3.71,
+      "post_avg_kw": 0.11,
+      "reduction_kw": 3.6,
+      "credited_kwh": 0.9,
+      "monetary_saving_inr": 7.65,
+      "emissions_kg": 0.639,
+      "verification_status": "VERIFIED",
+      "is_simulated": true,
+      "data_source": "simulated"
+    }
+  ],
+  "count": 1,
+  "total_credited_kwh": 0.9,
+  "total_monetary_saving_inr": 7.65,
+  "total_emissions_kg": 0.639,
+  "data_source": "simulated"
+}
+```
+
+---
+
+### `POST /savings/verify/{action_id}` *(Admin Only)*
+Manually evaluate verification for a pending action once its post-action window has closed.
+
+**Headers:**
+`Authorization: Bearer <admin_token>`
+
+**Response `200 OK`:**
+```json
+{
+  "id": 2,
+  "action_id": 4,
+  "room_id": 2,
+  "room_code": "A-102",
+  "equipment": "AC",
+  "interval_start": "2026-10-12T10:15:00",
+  "pre_avg_kw": 3.75,
+  "post_avg_kw": 0.15,
+  "reduction_kw": 3.6,
+  "credited_kwh": 0.9,
+  "monetary_saving_inr": 7.65,
+  "emissions_kg": 0.639,
+  "verification_status": "VERIFIED",
+  "is_simulated": true,
+  "data_source": "simulated"
+}
+```
+
+---
+
+## 12. Future Modules (Upcoming Phases)
+
 - **Phase 6:** Complaints & Feedback (`/complaints`) — `POST /complaints`, `GET /complaints`, `PUT /complaints/{id}/status`
 - **Phase 6:** Reports & CSV Export (`/reports`) — `GET /reports/electricity`, `GET /reports/water`, `GET /reports/export`
 - **Phase 6:** AI Sustainability Assistant (`/assistant`) — `POST /assistant/ask`

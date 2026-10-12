@@ -184,8 +184,12 @@ class Action(Base):
     timestamp           = Column(DateTime, default=_now)
     notes               = Column(Text, default="")
     verification_status = Column(
-        SAEnum("pending", "verified", "no_reduction", name="action_verify_status"),
-        default="pending",
+        SAEnum(
+            "PENDING", "VERIFIED", "PARTIAL", "NOT_VERIFIED", "NO_REDUCTION",
+            "pending", "verified", "partial", "not_verified", "no_reduction",
+            name="action_verify_status",
+        ),
+        default="PENDING",
     )
 
     room           = relationship("Room", back_populates="actions")
@@ -218,8 +222,13 @@ class SavingsRecord(Base):
     monetary_saving_inr = Column(Float, nullable=False)
     emissions_kg        = Column(Float, nullable=False)
     verification_status = Column(
-        SAEnum("verified", "no_reduction", name="savings_verify_status"),
+        SAEnum(
+            "PENDING", "VERIFIED", "PARTIAL", "NOT_VERIFIED", "NO_REDUCTION",
+            "pending", "verified", "partial", "not_verified", "no_reduction",
+            name="savings_verify_status",
+        ),
         nullable=False,
+        default="VERIFIED",
     )
     is_simulated        = Column(Boolean, default=True)
     created_at          = Column(DateTime, default=_now)
