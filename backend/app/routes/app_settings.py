@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/app_settings.py
+Eco-Campus — routes/app_settings.py
 Runtime configurable system parameters (tariffs, emission factors, thresholds).
 Read is available to authenticated users; update is strictly restricted to Administrators.
 """

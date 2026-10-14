@@ -66,7 +66,7 @@ export default function AdminReports() {
       await downloadReportCsv({
         from: range.from,
         to: range.to,
-        filename: `ghostwatt_sustainability_audit_${range.from}_${range.to}.csv`,
+        filename: `eco_campus_sustainability_audit_${range.from}_${range.to}.csv`,
       })
     } catch (err) {
       setDownloadError('Failed to download CSV: ' + err.message)

@@ -1,5 +1,5 @@
 """
-GhostWatt — services/savings_verification.py
+Eco-Campus — services/savings_verification.py
 Pure service functions for the Verified Savings Meter.
 
 SPEC §8 & Requirements:

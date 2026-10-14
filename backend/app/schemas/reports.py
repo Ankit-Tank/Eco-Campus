@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/reports.py
+Eco-Campus — schemas/reports.py
 Pydantic schemas for executive campus sustainability reports and exports.
 Every numerical figure is tagged as simulated, calculated, or verified.
 """

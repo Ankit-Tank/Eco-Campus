@@ -1,5 +1,5 @@
 """
-GhostWatt — app/db/models.py
+Eco-Campus — app/db/models.py
 SQLAlchemy ORM models for all entities defined in SPEC §16 / ARCHITECTURE.
 
 Tables

@@ -1,4 +1,4 @@
-# GhostWatt — API Reference
+# Eco-Campus — API Reference
 
 > **Base URL:** `http://localhost:8000`  
 > **Interactive Swagger UI:** `http://localhost:8000/docs`  
@@ -18,7 +18,7 @@ Returns runtime server status and operational mode. No authentication required.
 {
   "status": "ok",
   "version": "0.1.0",
-  "app": "GhostWatt",
+  "app": "Eco-Campus",
   "mode": "demo"
 }
 ```
@@ -918,7 +918,7 @@ This triggers an immediate `High Usage` / `TRIGGERED` alert status, enabling a r
 
 ## 11. Corrective Actions & Verified Savings Meter (`/actions` and `/savings`)
 
-GhostWatt's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
+Eco-Campus's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
 
 ### `POST /actions/switch-off` *(Admin Only)*
 Trigger an immediate corrective action to switch off a running appliance in a target room. The action is recorded with status `PENDING`, a claimed saving estimate is computed, and the appliance is set to `OFF` effective from the next simulation tick.
@@ -1425,7 +1425,7 @@ Downloadable CSV report format with provenance tags (`simulated`, `calculated`, 
 
 **Response `200 OK`:**
 - `Content-Type: text/csv`
-- `Content-Disposition: attachment; filename=ghostwatt_sustainability_report_YYYYMMDD_HHMMSS.csv`
+- `Content-Disposition: attachment; filename=eco_campus_sustainability_report_YYYYMMDD_HHMMSS.csv`
 
 ---
 

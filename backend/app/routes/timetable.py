@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/timetable.py
+Eco-Campus — routes/timetable.py
 Timetable schedule management CRUD endpoints.
 Read operations are open to authenticated users; write operations require administrator privileges.
 """

@@ -1,5 +1,5 @@
 """
-GhostWatt — services/ghost_load.py
+Eco-Campus — services/ghost_load.py
 Pure functions for Ghost Load Intelligence calculation, reasoning, hysteresis alerts,
 room status classification, ranking, and actionable switch-off recommendations.
 No FastAPI imports.

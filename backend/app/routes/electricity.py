@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/electricity.py
+Eco-Campus — routes/electricity.py
 Electricity time-series endpoint for campus, block, and room-level historical charts.
 """
 from datetime import datetime

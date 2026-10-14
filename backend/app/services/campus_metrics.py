@@ -1,5 +1,5 @@
 """
-GhostWatt - services/campus_metrics.py
+Eco-Campus - services/campus_metrics.py
 Reusable, DB-backed aggregation helpers shared by the dashboard endpoints.
 Pure service code (no FastAPI imports).
 """

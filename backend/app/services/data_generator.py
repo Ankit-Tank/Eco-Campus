@@ -1,5 +1,5 @@
 """
-GhostWatt — services/data_generator.py
+Eco-Campus — services/data_generator.py
 Reproducible seed data generator for rooms, equipment, weekly timetables,
 14-day 15-minute electricity meter readings with deliberate ghost load scenarios,
 hourly water readings with suspected leak patterns, users, settings, and sim state.

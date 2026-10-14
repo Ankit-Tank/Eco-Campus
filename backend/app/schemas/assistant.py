@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/assistant.py
+Eco-Campus — schemas/assistant.py
 Pydantic schemas for the AI Sustainability Assistant (/assistant/ask).
 """
 from typing import Any, Dict, Literal, Optional

@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/rooms.py
+Eco-Campus — schemas/rooms.py
 Pydantic schemas for Room and Equipment CRUD with strict input validation.
 """
 from typing import List, Optional

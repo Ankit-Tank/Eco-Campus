@@ -1,10 +1,10 @@
-﻿# GhostWatt — Intelligent Campus Energy & Sustainability Platform
+﻿# Eco-Campus — Intelligent Campus Energy & Sustainability Platform
 
 ## 1. Project Overview
 
-GhostWatt is a web-based campus sustainability platform designed to identify unnecessary electricity consumption, reduce resource wastage, and measure the environmental impact of corrective actions. Its primary focus is electricity monitoring through a unique feature called **Ghost Load Intelligence**, which compares actual electricity consumption against the amount of electricity reasonably expected to be used according to classroom timetables, occupancy, room type, and electrical equipment.
+Eco-Campus is a web-based campus sustainability platform designed to identify unnecessary electricity consumption, reduce resource wastage, and measure the environmental impact of corrective actions. Its primary focus is electricity monitoring through a unique feature called **Ghost Load Intelligence**, which compares actual electricity consumption against the amount of electricity reasonably expected to be used according to classroom timetables, occupancy, room type, and electrical equipment.
 
-Instead of simply displaying how much electricity a campus has consumed, GhostWatt identifies how much consumption exceeds the expected requirement, estimates its financial and environmental cost, and recommends actions to reduce it.
+Instead of simply displaying how much electricity a campus has consumed, Eco-Campus identifies how much consumption exceeds the expected requirement, estimates its financial and environmental cost, and recommends actions to reduce it.
 
 The secondary module focuses on water conservation. It monitors water consumption, flags unusual flow patterns that may indicate leaks, and allows students to submit water-wastage complaints directly to the administration.
 
@@ -16,7 +16,7 @@ The application will be developed as a functional software-only MVP for the Kaus
 
 ## 2. Login Page and Role-Based Authentication
 
-GhostWatt must begin with a modern, visually attractive login page that allows users to enter the system as either a **Student** or an **Admin**. The login page should display the GhostWatt logo, a tagline such as "Detect Waste. Save Energy. Build a Greener Campus.", a sustainability-themed illustration, role-selection cards, username or email and password fields, a show/hide password control, and a prominent login button.
+Eco-Campus must begin with a modern, visually attractive login page that allows users to enter the system as either a **Student** or an **Admin**. The login page should display the Eco-Campus logo, a tagline such as "Detect Waste. Save Energy. Build a Greener Campus.", a sustainability-themed illustration, role-selection cards, username or email and password fields, a show/hide password control, and a prominent login button.
 
 After authentication, both roles should access the same application platform and its common monitoring features, while administrative actions remain restricted to authorized administrators.
 
@@ -28,7 +28,7 @@ The application must enforce role-based permissions in the backend, rather than 
 
 ## 3. Common Dashboard After Login
 
-A persistent left sidebar should contain: Overview, Electricity Monitoring, Ghost Load Analysis, Rooms and Timetable, Verified Savings, Water Monitoring, Water Complaints, Reports, Ask GhostWatt, Settings.
+A persistent left sidebar should contain: Overview, Electricity Monitoring, Ghost Load Analysis, Rooms and Timetable, Verified Savings, Water Monitoring, Water Complaints, Reports, Ask Eco-Campus, Settings.
 
 The dashboard should contain summary cards for actual electricity consumption, expected electricity consumption, estimated Ghost Load, water consumption, and electricity-related carbon emissions.
 

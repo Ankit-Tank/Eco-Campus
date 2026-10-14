@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/electricity.py
+Eco-Campus — schemas/electricity.py
 Pydantic schemas for electricity time-series and meter readings.
 """
 from typing import List, Optional

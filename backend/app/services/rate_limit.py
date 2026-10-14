@@ -1,5 +1,5 @@
 """
-GhostWatt - services/rate_limit.py
+Eco-Campus - services/rate_limit.py
 Minimal in-memory sliding-window limiter used to slow down password / OTP guessing.
 (Single-process only - fine for the MVP; use Redis or a gateway limiter in production.)
 """

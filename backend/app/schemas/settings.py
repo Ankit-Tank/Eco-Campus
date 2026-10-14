@@ -1,5 +1,5 @@
 """
-GhostWatt - schemas/settings.py
+Eco-Campus - schemas/settings.py
 Pydantic schemas for runtime system settings with strict, finite, bounded value validation.
 """
 import math

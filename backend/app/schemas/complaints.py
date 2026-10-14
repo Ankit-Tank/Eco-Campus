@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/complaints.py
+Eco-Campus — schemas/complaints.py
 Pydantic schemas for student water complaints, lifecycle tracking, audit history,
 and administrative notification records.
 """

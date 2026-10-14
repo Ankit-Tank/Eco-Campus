@@ -1,5 +1,5 @@
 """
-GhostWatt - services/otp_store.py
+Eco-Campus - services/otp_store.py
 Small in-memory one-time-password store (pure Python, no FastAPI imports).
 
 - Codes expire after OTP_TTL_SECONDS and allow MAX_ATTEMPTS wrong guesses.
@@ -12,16 +12,16 @@ import logging
 import secrets
 import threading
 import time
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 DEMO_OTP = "123456"
 OTP_TTL_SECONDS = 300
 RESEND_AFTER_SECONDS = 30
 MAX_ATTEMPTS = 5
 
-_log = logging.getLogger("ghostwatt.otp")
+_log = logging.getLogger("eco_campus.otp")
 _lock = threading.Lock()
-_codes: Dict[str, Dict[str, float]] = {}
+_codes: Dict[str, Dict[str, Any]] = {}
 
 
 class OtpError(Exception):
@@ -68,7 +68,7 @@ def verify(purpose: str, phone: str, code: str, now: Optional[float] = None) -> 
         if entry["attempts"] >= MAX_ATTEMPTS:
             _codes.pop(k, None)
             raise OtpError("OTP_LOCKED", "Too many wrong attempts. Request a new code.")
-        if not secrets.compare_digest(str(code).strip(), str(entry["code"])):
+        if not secrets.compare_digest(code.strip(), str(entry["code"])):
             entry["attempts"] += 1
             raise OtpError("OTP_INVALID", "Invalid code. Please check and try again.")
         _codes.pop(k, None)

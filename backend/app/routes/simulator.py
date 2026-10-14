@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/simulator.py
+Eco-Campus — routes/simulator.py
 Simulation control endpoints (start, pause, speed adjustment, clock reset, state inspection).
 All write and state operations are strictly restricted to Administrators.
 """

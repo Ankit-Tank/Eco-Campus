@@ -1,5 +1,5 @@
 """
-GhostWatt — services/water_analysis.py
+Eco-Campus — services/water_analysis.py
 Pure functions for night-flow leak detection and water conservation analytics.
 No FastAPI imports.
 

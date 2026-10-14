@@ -1,5 +1,5 @@
 """
-GhostWatt - tests/test_audit_fixes.py
+Eco-Campus - tests/test_audit_fixes.py
 Regression tests for the security / integrity / integration fixes made during the full audit.
 Each test documents a bug that existed before.
 """

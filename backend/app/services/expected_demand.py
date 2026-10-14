@@ -1,5 +1,5 @@
 """
-GhostWatt — services/expected_demand.py
+Eco-Campus — services/expected_demand.py
 Pure function: compute expected kW and reason breakdown for a room at a given timestamp.
 No FastAPI imports.
 

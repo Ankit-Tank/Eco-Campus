@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_final_backend.py
+Eco-Campus — tests/test_final_backend.py
 Comprehensive test suite validating:
 1. POST /sim/scenario/demo (Admin reset to evening, A-102 AC ghost load injection, alert firing, switch-off, and rapid verification).
 2. Equivalents (ceiling fans and water buckets with assumption text) across all responses.

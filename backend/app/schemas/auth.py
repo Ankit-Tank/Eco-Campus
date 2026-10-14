@@ -1,5 +1,5 @@
 """
-GhostWatt - schemas/auth.py
+Eco-Campus - schemas/auth.py
 Pydantic schemas for authentication requests and responses.
 """
 from typing import Optional

@@ -1,5 +1,5 @@
 """
-GhostWatt — services/simulator.py
+Eco-Campus — services/simulator.py
 Simulation execution engine: virtual clock, equipment state evaluation,
 15-minute interval ticking, and automated meter & water telemetry persistence.
 

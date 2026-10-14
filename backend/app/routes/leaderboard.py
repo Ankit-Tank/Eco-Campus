@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/leaderboard.py
+Eco-Campus — routes/leaderboard.py
 Campus Block Sustainability Leaderboard (GET /leaderboard/blocks).
 SPEC §5 & User Requirements:
 - Compares Ghost Load score per block (Block A, Block B, Block C).

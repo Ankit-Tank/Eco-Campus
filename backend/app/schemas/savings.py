@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/savings.py
+Eco-Campus — schemas/savings.py
 Pydantic schemas for corrective actions, verified savings records, and summary metrics.
 """
 from typing import List, Optional

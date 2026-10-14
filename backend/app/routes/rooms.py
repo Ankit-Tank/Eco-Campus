@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/rooms.py
+Eco-Campus — routes/rooms.py
 Room and Equipment management CRUD endpoints.
 Read operations are open to authenticated users; write operations require administrator privileges.
 """

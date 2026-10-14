@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/assistant.py
+Eco-Campus — routes/assistant.py
 Endpoint for AI Sustainability Assistant (POST /assistant/ask).
 SPEC §11:
 - Whitelisted tool-calling with authenticated user context and role enforcement.

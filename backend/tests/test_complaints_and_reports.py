@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_complaints_and_reports.py
+Eco-Campus — tests/test_complaints_and_reports.py
 Test suite for student water complaints, lifecycle transitions, admin triage,
 executive sustainability reports, CSV export, and role-based privacy restrictions.
 

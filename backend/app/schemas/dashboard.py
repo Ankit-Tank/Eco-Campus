@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/dashboard.py
+Eco-Campus — schemas/dashboard.py
 Pydantic schemas for dashboard summary cards and high-level KPIs.
 """
 from typing import Dict, Optional

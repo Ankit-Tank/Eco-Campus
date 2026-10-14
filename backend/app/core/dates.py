@@ -1,5 +1,5 @@
 """
-GhostWatt - core/dates.py
+Eco-Campus - core/dates.py
 Shared helpers for query-string dates and the simulation clock.
 """
 from datetime import datetime, timedelta

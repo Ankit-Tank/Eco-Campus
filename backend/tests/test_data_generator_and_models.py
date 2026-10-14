@@ -1,5 +1,5 @@
 """
-Tests for GhostWatt DB Models, Constraints, and Seed Data Generator.
+Tests for Eco-Campus DB Models, Constraints, and Seed Data Generator.
 """
 import pytest
 from datetime import datetime, timezone

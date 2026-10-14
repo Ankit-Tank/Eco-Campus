@@ -1,5 +1,5 @@
 """
-GhostWatt — services/carbon_calculator.py
+Eco-Campus — services/carbon_calculator.py
 Human-readable environmental and financial equivalents. SPEC §13.
 No FastAPI imports.
 

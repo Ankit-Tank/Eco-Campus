@@ -1,6 +1,6 @@
-# LIBRARIES.md — GhostWatt External Dependencies & Model Inventory
+# LIBRARIES.md — Eco-Campus External Dependencies & Model Inventory
 
-> Complete inventory of backend libraries, external APIs, and AI models utilized in GhostWatt.
+> Complete inventory of backend libraries, external APIs, and AI models utilized in Eco-Campus.
 > All libraries are vetted for open-source licenses (MIT, Apache-2.0, BSD) suitable for academic, hackathon, and production deployment.
 
 ---
