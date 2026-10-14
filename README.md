@@ -329,7 +329,7 @@ The suite covers ghost load, expected demand and carbon calculation, water analy
   <img src="https://contrib.rocks/image?repo=Ankit-Tank/Eco-Campus" alt="Contributors" />
 </a>
 
-Built with 💚 by [**Krishna**](https://github.com/Ankit-Tank) and team.
+Built with 💚 by [**Ankit Tank**](https://github.com/Ankit-Tank) and team.
 
 ---
 
