@@ -1,292 +1,348 @@
-# Eco-Campus
+<!-- ===================== HEADER ===================== -->
+<div align="center">
 
-**Intelligent Campus Energy & Sustainability Platform**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1E8A5A,50:2FB57A,100:0E8F9E&height=200&section=header&text=Eco-Campus&fontSize=62&fontColor=ffffff&fontAlignY=38&desc=Smarter%20Campuses%20for%20a%20Greener%20Tomorrow&descSize=20&descAlignY=60&animation=fadeIn" alt="Eco-Campus banner" />
 
-> *Detect Waste. Verify Real Savings. Eliminate Nocturnal Leaks. Build a Greener Campus.*
+<img src="frontend/src/assets/logo.png" alt="Eco-Campus logo" width="120" />
 
-Eco-Campus is a full-featured campus sustainability intelligence engine built for the **Kaushal 8.0 Hackathon**. It continuously monitors electrical and water consumption across campus buildings, differentiates productive academic energy from **Ghost Load** (appliances left running in empty rooms), verifies real savings after corrective actions, triages water leaks, and provides a grounded AI assistant powered by the Groq API (every number comes from backend calculations).
+<a href="https://github.com/Ankit-Tank/Eco-Campus">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=1E8A5A&center=true&vCenter=true&width=640&lines=%E2%9A%A1+Monitor+campus+electricity+%26+water;%F0%9F%91%BB+Detect+ghost+loads+before+they+waste+power;%F0%9F%92%A7+Catch+leaks+with+night-flow+analysis;%F0%9F%8C%B1+Verify+savings.+Create+real+impact." alt="Typing animation" />
+</a>
+
+<br/>
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq_AI-F55036?style=for-the-badge)
+
+![License](https://img.shields.io/github/license/Krishnaa-21/Eco-Campus?style=flat-square&color=1E8A5A)
+![Last Commit](https://img.shields.io/github/last-commit/Krishnaa-21/Eco-Campus?style=flat-square&color=0E8F9E)
+![Stars](https://img.shields.io/github/stars/Krishnaa-21/Eco-Campus?style=flat-square&color=F5B301)
+![Forks](https://img.shields.io/github/forks/Krishnaa-21/Eco-Campus?style=flat-square&color=2FB57A)
+![Issues](https://img.shields.io/github/issues/Krishnaa-21/Eco-Campus?style=flat-square&color=E5484D)
+![Languages](https://img.shields.io/github/languages/top/Krishnaa-21/Eco-Campus?style=flat-square)
+
+<br/>
+
+**[✨ Features](#-features) · [📸 Screenshots](#-screenshots) · [🧠 How It Works](#-how-it-works) · [🛠️ Tech Stack](#️-tech-stack) · [🚀 Quick Start](#-quick-start) · [📚 Docs](#-documentation)**
+
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="docs/screenshots/login.jpg" alt="Eco-Campus login page" width="92%" />
+</div>
 
 ---
 
-## Table of Contents
-1. [Core Features](#core-features)
-2. [Quick Start & Setup](#quick-start--setup)
-3. [Demo Accounts & RBAC](#demo-accounts--rbac)
-4. [Environment Configuration](#environment-configuration)
-5. [Telemetry Simulator & Demo Scenario](#telemetry-simulator--demo-scenario)
-6. [Simulated vs Real Data Architecture](#simulated-vs-real-data-architecture)
-7. [Engineering Assumptions & Equivalents](#engineering-assumptions--equivalents)
-8. [Future Production Integrations (Meters, ERP, BMS)](#future-production-integrations-meters-erp-bms)
-9. [Documentation & References](#documentation--references)
+## 🌍 About
+
+**Eco-Campus** is an intelligent campus sustainability platform. It helps administrators **monitor electricity and water usage**, **detect ghost loads** (power drawn by rooms that should be idle), **verify the savings** that follow corrective action, and **run maintenance workflows**, all in one place. Students can report wastage they spot and see the impact of their reports. A **grounded AI assistant** answers questions using real campus data, not guesses.
+
+> 🟢 **Monitor** &nbsp;·&nbsp; 🔵 **Understand** &nbsp;·&nbsp; 🟡 **Reduce** &nbsp;·&nbsp; 🟣 **Together**
+
+> 💡 **Note:** The screenshots show seeded demo data, marked with a *Simulated data* badge in the app.
 
 ---
 
-## Core Features
+## ✨ Features
 
-- **Ghost Load Intelligence:** Calculates real-time expected demand by combining room baselines, installed appliance power ratings, and scheduled academic timetable occupancy. Excess consumption is classified into plain-English reasons (`NO_CLASS_AC_ON`, `LAB_AFTER_HOURS`, `OVER_EXPECTED_DURING_CLASS`, `OUTSIDE_SCHEDULE`).
-- **Closed-Loop Savings Verification:** When facility operators or students switch off forgotten equipment, Eco-Campus tracks post-action intervals. Savings are only credited if actual demand drops below the pre-action level and cannot be attributed to a class naturally ending.
-- **Water Night-Flow Leak Detection:** Analyzes nocturnal flow curves (01:00–04:00 AM) against the configurable low-flow threshold and baseline to identify pipe fractures and continuous overflows before structural damage occurs.
-- **Facility Maintenance Lifecycle:** Students submit water and electrical waste reports with location details and photos. Admins assign, triage, and resolve tickets with full immutable audit history.
-- **Campus Block Leaderboard:** Ranks Block A, Block B, and Block C based on efficiency scores (0–100) and sustainability letter grades (`A+` to `D`).
-- **Grounded AI Assistant:** Powered by Groq Cloud (default model `openai/gpt-oss-120b`, configurable with `GROQ_MODEL`) using strict tool calling and a numerical guardrail that discards hallucinations.
+| | Feature | What it does |
+|---|---|---|
+| 👻 | **Ghost Load Detection** | Compares actual load with a timetable-aware expected demand model to find wasted power in empty rooms |
+| ✅ | **Verified Savings** | Measures real savings by comparing consumption before and after an action |
+| 💧 | **Water Leak Detection** | Uses night-flow analysis to spot leaks, tracks tank levels per block and raises alerts |
+| 🔔 | **Smart Alerts** | Severity-based alerts that admins can *Acknowledge* or *Resolve* |
+| 🛠️ | **Maintenance Tracking** | Tickets with priority, reporter and status, from *Submitted* to *Resolved* |
+| 📊 | **Reports & CSV Export** | Energy, Water, Savings and Maintenance reports for any date range |
+| 🧑‍🎓 | **Student Reporting** | Students report wastage, track each report's status and see their environmental impact |
+| 🤖 | **Grounded AI Assistant** | Groq-powered chatbot that answers only from approved backend data tools, with a deterministic offline fallback |
+| 🏆 | **Block Leaderboard** | Ranks campus blocks by sustainability performance |
+| 🎛️ | **Live Simulator** | Virtual-time demo engine that injects readings for live walkthroughs |
+| 🌐 | **Bilingual UI** | Switch between **English** and **हिन्दी** in one click |
+| 🔐 | **Role-Based Access** | Separate Admin and Student experiences with JWT auth |
 
 ---
 
-## Quick Start & Setup
+## 📸 Screenshots
 
-### Prerequisites
-- **Python:** 3.11 or higher (Python 3.14 fully supported)
-- **Node.js:** 18+ (for frontend dashboard)
-- **SQLite:** 3.35+ (bundled with Python; WAL mode enabled automatically)
+### 🛡️ Admin Dashboard
 
-### Step 1: Clone and Set Up Virtual Environment
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-overview.jpg" alt="Admin overview" /><br/>
+      <b>📈 Overview</b><br/>
+      <sub>Consumption, CO₂ and money saved, plus actual vs estimated load</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-electricity.jpg" alt="Electricity page" /><br/>
+      <b>⚡ Electricity</b><br/>
+      <sub>Visual telemetry and the usage breakdown by type</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-water.jpg" alt="Water page" /><br/>
+      <b>💧 Water</b><br/>
+      <sub>Daily use against target, tank levels and open leaks</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-alerts.jpg" alt="Alerts page" /><br/>
+      <b>🔔 Alerts</b><br/>
+      <sub>Ghost loads and leaks, ready to acknowledge or resolve</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-maintenance.jpg" alt="Maintenance page" /><br/>
+      <b>🛠️ Maintenance</b><br/>
+      <sub>Tickets with priority, reporter and a status workflow</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/admin-reports.jpg" alt="Reports page" /><br/>
+      <b>📄 Reports</b><br/>
+      <sub>Preview any period and download it as CSV</sub>
+    </td>
+  </tr>
+</table>
 
-```bash
-# Clone the repository
-git clone https://github.com/Ankit-Tank/Eco-Campus.git
-cd Eco-Campus/backend
+### 🧑‍🎓 Student Portal
 
-# Create virtual environment
-python -m venv .venv
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/student-home.jpg" alt="Student home" /><br/>
+      <b>🏠 Home</b><br/>
+      <sub>Report a new issue and follow your recent reports</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/student-chatbot.jpg" alt="AI chatbot" /><br/>
+      <b>🤖 AI Chatbot</b><br/>
+      <sub>Ask about campus energy, water and your reports</sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="docs/screenshots/student-hindi.jpg" alt="Hindi interface" width="50%" /><br/>
+      <b>🇮🇳 हिन्दी Support</b><br/>
+      <sub>The full interface switches to Hindi instantly</sub>
+    </td>
+  </tr>
+</table>
 
-# Activate virtual environment
-# Windows (PowerShell):
-.venv\Scripts\Activate.ps1
-# Windows (cmd.exe):
-.venv\Scripts\activate.bat
-# Linux / macOS:
-source .venv/bin/activate
+---
+
+## 🧠 How It Works
+
+```mermaid
+flowchart LR
+    A[🔌 Meter readings] --> B[⚙️ Expected demand<br/>timetable-aware]
+    B --> C[👻 Ghost load<br/>max 0, actual − expected]
+    C --> D[🔔 Alerts]
+    D --> E[🛠️ Maintenance action]
+    E --> F[✅ Verified savings<br/>before vs after]
+    F --> G[📊 Dashboard and reports]
+    H[💧 Water flow] --> I[🚰 Night-flow leak analysis]
+    I --> D
+    G --> J[🤖 Grounded AI assistant]
 ```
 
-### Step 2: Install Dependencies
+**Ghost load** is calculated as `max(0, actual − expected)`. The expected value comes from each room's timetable, capacity and equipment ratings, so a classroom that is lit and cooled during a lecture is *not* flagged, but the same room running at midnight is.
 
-```bash
-pip install -r requirements.txt
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Layer | Technologies |
+|---|---|
+| **Backend** | Python · FastAPI · Uvicorn · SQLAlchemy · SQLite |
+| **Auth** | JWT (`python-jose`) · password hashing (`passlib` + bcrypt) |
+| **Data** | Pandas · NumPy |
+| **AI** | Groq API (server-side only) with tool calling |
+| **Frontend** | React 18 · Vite · React Router · Recharts · Lucide Icons |
+| **Styling & i18n** | Plain CSS · English / Hindi language resources |
+| **Testing** | pytest |
+
+</div>
+
+---
+
+## 📁 Project Structure
+
+```text
+Eco-Campus/
+├── backend/
+│   ├── app/
+│   │   ├── core/        # config, security, dependencies
+│   │   ├── db/          # engine + ORM models
+│   │   ├── routes/      # API routes by domain
+│   │   ├── schemas/     # request/response models
+│   │   └── services/    # business logic and analytics
+│   ├── scripts/         # seed script
+│   ├── tests/           # backend test suite
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── pages/       # admin and student pages
+│   │   ├── services/    # API clients + mock services
+│   │   ├── components/  # reusable UI blocks
+│   │   ├── auth/        # route guards and session helpers
+│   │   └── i18n/        # English / Hindi resources
+│   └── package.json
+├── docs/
+│   ├── screenshots/     # images used in this README
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── DEMO_SCRIPT.md
+│   └── SPEC.md
+└── README.md
 ```
 
-### Step 3: Configure Environment Variables
+---
 
-Create `.env` from the provided template:
+## 🚀 Quick Start
 
-```bash
-cp .env.example .env
-```
+### ⚡ Option A: Frontend only (fastest)
 
-Edit `.env` to configure your settings (see [Environment Configuration](#environment-configuration)):
-```env
-JWT_SECRET=<a long random string: python -c "import secrets; print(secrets.token_urlsafe(48))">
-GROQ_API_KEY=gsk_your_groq_api_key_here   # optional: without it the assistant uses template answers
-GROQ_MODEL=openai/gpt-oss-120b
-DEMO_MODE=true
-```
-
-### Step 4: Seed Database
-
-Seed the SQLite database with 12 campus rooms across 3 blocks (A, B, C), appliance inventory, academic timetables, and 14 days of realistic 15-minute telemetry:
-
-```bash
-python -m scripts.seed
-```
-
-### Step 5: Start Backend Server
-
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-- **API Base URL:** `http://localhost:8000`
-- **Interactive Swagger Docs:** `http://localhost:8000/docs`
-- **Alternative ReDoc:** `http://localhost:8000/redoc`
-
-### Step 6: Run Backend Test Suite
-
-Run the full pytest suite (179 tests: RBAC, algorithms, savings verification, simulator, API routes, and regression tests for the audit fixes). Tests run on a throwaway copy of the database, so they never change your demo data:
-
-```bash
-pytest -q
-```
-
-### Step 7: Start the Frontend
-
-In a second terminal:
+No backend needed. The UI runs on built-in mock data.
 
 ```bash
 cd frontend
 npm install
-npm run dev          # http://localhost:5173
+cp .env.example .env      # keep VITE_USE_MOCK=true
+npm run dev
 ```
 
-`frontend/.env` already has `VITE_USE_MOCK=false` (real backend). The dev server forwards `/api` and `/uploads` to `VITE_BACKEND_URL` (default `http://127.0.0.1:8000`).
+Open **http://localhost:5173** 🎉
 
-**Port 8000 blocked on Windows (`WinError 10013`)?** Start the backend on another port (for example `uvicorn app.main:app --reload --port 8001`) and set `VITE_BACKEND_URL=http://127.0.0.1:8001` in `frontend/.env`, then restart `npm run dev`.
+### 🔧 Option B: Full stack
 
-### Step 8: Frontend Checks (backend must be running)
+**1️⃣ Backend**
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cp .env.example .env             # add your GROQ_API_KEY for the AI assistant
+python -m scripts.seed
+uvicorn app.main:app --reload --port 8000
+```
+
+| Service | URL |
+|---|---|
+| API | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/docs |
+| ReDoc | http://localhost:8000/redoc |
+
+**2️⃣ Frontend**
 
 ```bash
 cd frontend
-npm run build          # production build
-npm run check:api      # runs the real frontend service functions against the live backend (both roles)
-npm run check:render   # mounts every page in a headless DOM against the live backend
+npm install
+cp .env.example .env
+# set VITE_USE_MOCK=false in .env to talk to the backend
+npm run dev
 ```
 
-These two checks create their own test data and move the simulation clock, so use a demo database you can re-seed (`python -m scripts.seed`).
+### 🎚️ Frontend run modes
 
----
-
-## Demo Accounts & RBAC
-
-Role-Based Access Control (RBAC) is enforced in FastAPI dependency layers (`require_admin` vs `get_current_user`), not merely in the UI.
-
-| Role | Email / Username | Password | Permissions |
-|---|---|---|---|
-| **Facility Administrator** | `admin@ghostwatt.demo` | `admin123` | Full access: simulator control, trigger demo scenario, approve actions, modify settings, triage water leaks, update complaints, view all reports |
-| **Student / Faculty** | `student@ghostwatt.demo` (password login) or mobile `9876543210` + OTP | `student123` / OTP `123456` (demo mode) | Analytics view, leaderboard, live snapshot, report appliances left on, submit water complaints (privacy-restricted to own tickets) |
-
-**Student sign-in** in the web app is mobile number + OTP. Every mobile number is its own student account (created on first sign-in), so students never share data. **Admin sign-in** is email + password; the admin's reset phone is `9876500000` (OTP `123456` in demo mode). The old hardcoded master passwords and `mock-*-token` bypasses were removed.
-
----
-
-## Environment Configuration
-
-| Variable | Default Value | Description |
+| Variable | Value | Effect |
 |---|---|---|
-| `APP_NAME` | `Eco-Campus` | Application display name |
-| `APP_VERSION` | `0.2.0` | Semantic platform version |
-| `DEBUG` | `false` | Enable verbose diagnostic logging |
-| `DB_URL` | `sqlite:///./eco-campus.db` | Database connection string (SQLite WAL mode) |
-| `JWT_SECRET` | *(random per start if unset)* | Secret for signing tokens. If you leave the placeholder, a random secret is generated each start (logins then expire on restart). Set a real value in `.env`. |
-| `JWT_ALGORITHM` | `HS256` | Token signing algorithm |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `480` | Token validity window |
-| `GROQ_API_KEY` | `""` | Groq Cloud API key for LPU AI Assistant |
-| `GROQ_MODEL` | `openai/gpt-oss-120b` | Groq model id used for tool calling (must be served by Groq and support tools) |
-| `DEMO_MODE` | `true` | `true`: the fixed demo OTP `123456` works and is shown on the login page. `false`: OTPs are random and printed to the server log (no SMS provider is wired in yet) |
-| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173,...` | Comma separated browser origins allowed to call the API directly |
-| `UPLOAD_DIR` | `backend/uploads` | Where complaint photos are stored |
-| `DEFAULT_ELECTRICITY_PRICE_PER_KWH` | `8.50` | Default commercial tariff in INR (₹) per kWh |
-| `DEFAULT_EMISSIONS_FACTOR_KG_PER_KWH` | `0.71` | Regional grid carbon intensity (kg CO₂ / kWh) |
-| `DEFAULT_FAN_WATT_EQUIVALENT` | `75.0` | Standard ceiling fan rated wattage (W) |
-| `DEFAULT_BUCKET_LITRES` | `15.0` | Volume of standard utility bucket in litres |
-| `DEFAULT_LOW_FLOW_THRESHOLD_LPH` | `50.0` | Nocturnal water leak threshold (Litres / hour) |
+| `VITE_USE_MOCK` | `true` | UI runs on mock data only |
+| `VITE_USE_MOCK` | `false` | Calls the FastAPI backend through the `/api` proxy |
+| `VITE_DEMO_MODE` | `true` | Pre-fills demo logins and shows the OTP hint |
 
-*Note: Calculation parameters stored in the database `settings` table take precedence at runtime over defaults.*
+> 🤖 **AI assistant:** without a `GROQ_API_KEY`, or if the API times out, the backend automatically falls back to a deterministic rule engine that uses the same approved data tools.
 
 ---
 
-## Telemetry Simulator & Demo Scenario
+## 🔑 Demo Accounts
 
-Eco-Campus includes an in-memory simulation engine that models time progression, appliance states, and sensor telemetry without requiring physical hardware.
+**Mock mode** (`VITE_USE_MOCK=true`)
 
-### Simulator Mechanics
-- **Virtual Clock:** Maintained in the `sim_state` database table (`virtual_now`, `speed`, `running`).
-- **Speed Multipliers:** Scalable from `1.0x` (real-time) to `120.0x` (1 real second = 2 simulated minutes).
-- **Interactive Appliance States:** Toggling appliances (`SET /sim/appliance`) immediately alters actual demand on subsequent ticks.
-- **Background Worker:** Asyncio background task advances the virtual clock at the configured rate and triggers automatic post-action savings verification.
+| Role | Login |
+|---|---|
+| 🧑‍🎓 User | Mobile `9876543210` + OTP `123456` |
+| 🛡️ Admin | `admin@ecocampus.demo` / `admin123` |
 
-### 3-Second Live Hackathon Demo Scenario
-To demonstrate the full detection-and-verification lifecycle in under 30 seconds:
+**Seeded backend** (`VITE_USE_MOCK=false`)
 
-1. **Trigger Demo Reset (Admin):**
-   ```http
-   POST /sim/scenario/demo
-   Authorization: Bearer <admin_token>
-   ```
-   - Resets virtual clock to an evening time (`21:30:00`).
-   - Sets simulator speed to `60.0x`.
-   - Forces an air conditioner in Classroom **A-102** to the `ON` state outside scheduled hours.
-   - Injects readings causing the **`High Usage` / `TRIGGERED`** alert to fire immediately.
-
-2. **Student Observes and Signals:**
-   ```http
-   POST /reports/appliance-left-on
-   Authorization: Bearer <student_token>
-   {
-     "room_id": 2,
-     "equipment_type": "ac",
-     "notes": "AC left running after evening tutorial."
-   }
-   ```
-   - Generates signal `AL-0001` visible on admin dashboard.
-
-3. **Admin Switches Off Appliance:**
-   ```http
-   POST /actions/switch-off
-   Authorization: Bearer <admin_token>
-   {
-     "room_id": 2,
-     "equipment_id": 4,
-     "notes": "Patrol guard turned off AC."
-   }
-   ```
-   - Action logged with `verification_status: "PENDING"`.
-
-4. **Automated Verification in Seconds:**
-   - Because the simulation clock runs at 60x, the 15-minute verification window elapses in ~2.5 seconds.
-   - Query `GET /actions/{id}` or `GET /savings/records`:
-   - Status updates to **`VERIFIED`**, crediting exact kWh reduction and rupees saved.
-
----
-
-## Simulated vs Real Data Architecture
-
-Eco-Campus was built for production readiness while demonstrating via simulated data:
-
-1. **Explicit Data Provenance:**
-   - Every JSON response returned by the backend includes `"data_source": "simulated"`.
-   - All rows generated by the simulator or seed script carry `is_simulated = True`.
-   - Financial and emissions calculations are tagged as `calculated`, and post-action savings are tagged as `verified`.
-2. **Deterministic Baseline Models:**
-   - Expected demand curves are computed using pure mathematical models based on room metadata, rated equipment wattage, and scheduled student capacity.
-   - In a live deployment, physical smart meters simply insert rows into the existing `meter_readings` table—no algorithm rewrites required.
-
----
-
-## Engineering Assumptions & Equivalents
-
-All sustainability metrics returned by Eco-Campus include human-readable equivalence metrics and explicit assumption strings:
-
-| Metric | Factor / Baseline | Explanation & Assumption String |
+| Role | Email | Password |
 |---|---|---|
-| **Ceiling Fan Equivalent** | `75 W` continuous | Computes how many standard 75W ceiling fans could be operated continuously using the wasted energy: `(kW * 1000) / 75.0`. |
-| **Water Bucket Equivalent** | `15 Litres` per bucket | Converts lost water volume into standard utility buckets: `litres / 15.0`. |
-| **Commercial Electricity Tariff** | `₹8.50 / kWh` | Representative Indian state commercial educational institution tariff. |
-| **Grid Carbon Intensity** | `0.71 kg CO₂ / kWh` | Central Electricity Authority (CEA) baseline carbon intensity factor for regional power grids. |
-| **Night Leak Threshold** | `50 L/h` between 01:00–04:00 (configurable in Settings) | Flow rate exceeding this volume during inactive night hours flags a suspected leak. |
-| **Hysteresis Alert Rule** | `2 consecutive intervals` | Alerts trigger only when a room exceeds its ghost threshold for two sequential 15-minute readings to prevent false alarms from transient spikes. |
+| 🛡️ Admin | `admin@ghostwatt.demo` | `admin123` |
+| 🧑‍🎓 Student | `student@ghostwatt.demo` | `student123` |
+
+> ⚠️ These are demo credentials for local use only. Never use them in production.
 
 ---
 
-## Future Production Integrations (Meters, ERP, BMS)
+## 🧩 Core Backend Domains
 
-Eco-Campus is architected to seamlessly transition from synthetic simulation to real campus operational technology:
+| Domain | Responsibility |
+|---|---|
+| `auth` | Login, profile and token handling |
+| `dashboard` | Sustainability summary and KPI endpoints |
+| `electricity` · `ghost_load` | Consumption and anomaly intelligence |
+| `water` | Leak analysis and alerts |
+| `reports` · `complaints` | Reporting workflows |
+| `actions` · `savings` | Switch-off actions and savings verification |
+| `simulator` · `live` | Virtual-time demo orchestration |
+| `assistant` | Grounded assistant APIs |
+| `leaderboard` | Block-level sustainability ranking |
 
+---
+
+## 🧪 Testing
+
+```bash
+cd backend
+pytest -v
 ```
-[ Modbus/BACnet Meters ] ──> [ MQTT / HTTP Adapter ] ──┐
-[ Water Pulse Counters ] ──> [ LoRaWAN Gateway      ] ──┼──> [ Eco-Campus Backend ]
-[ Campus ERP Timetables] ──> [ REST / Webhook Sync  ] ──┤      (FastAPI + SQLite/Postgres)
-[ Building Management  ] <── [ Modbus Relay Coils   ] ──┘
-```
 
-1. **Real Electricity Meters (Modbus / BACnet):**
-   - Sub-meters (Schneider, Siemens, Secure Meters) transmit active power (kW) and energy (kWh) over RS-485 Modbus RTU or BACnet/IP.
-   - A lightweight edge agent publishes 15-minute interval readings directly into Eco-Campus via a telemetry ingestion endpoint (`POST /ingest/readings`).
-2. **Campus ERP Timetable Sync:**
-   - Connects to university academic management systems (SAP, Ellucian, Google Classroom, custom ERP) via webhooks or daily automated cron sync.
-   - Dynamically updates room timetable slots and expected student counts without manual intervention.
-3. **Building Management System (BMS) Closed-Loop Actuation:**
-   - Eco-Campus's verified switch-off engine can trigger automated relay coils or smart circuit breakers (e.g. KNX, Zigbee, or Modbus relays) to power down unattended rooms automatically after grace periods.
-4. **Ultrasonic Water Flow Meters & LoRaWAN:**
-   - Digital water meters with pulse outputs or LoRaWAN transmitters stream hourly consumption from overhead tanks and main washroom risers.
+The suite covers ghost load, expected demand and carbon calculation, water analysis, savings verification, the simulator, assistant behaviour and role permissions.
 
 ---
 
-## Documentation & References
+## 📚 Documentation
 
-- [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) — 3-Minute Hackathon Demo Script & Judge FAQ
-- [docs/API.md](docs/API.md) — Complete API Reference with JSON Request & Response Schemas
-- [LIBRARIES.md](LIBRARIES.md) — External Dependencies, Groq API details, and Model Inventory
-- [docs/SPEC.md](docs/SPEC.md) — Full System Specification & Functional Requirements
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Technical Architecture and Component Breakdown
+| 📖 Document | Description |
+|---|---|
+| [Architecture](docs/ARCHITECTURE.md) | System design, data flow and folder layout |
+| [API Reference](docs/API.md) | Endpoint documentation |
+| [Specification](docs/SPEC.md) | Full system specification |
+| [Demo Script](docs/DEMO_SCRIPT.md) | Step-by-step walkthrough for presentations |
+| [Libraries](LIBRARIES.md) | Dependencies and AI model inventory |
 
 ---
 
-*Eco-Campus — Kaushal 8.0 Hackathon Submission*
+## 👥 Contributors
+
+<a href="https://github.com/Ankit-Tank/Eco-Campus/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Ankit-Tank/Eco-Campus" alt="Contributors" />
+</a>
+
+Built with 💚 by [**Krishna**](https://github.com/Ankit-Tank) and team.
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
+
+---
+
+<div align="center">
+
+### 🌱 If Eco-Campus inspires you, drop a ⭐ and help make campuses greener!
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0E8F9E,50:2FB57A,100:1E8A5A&height=120&section=footer" alt="footer wave" />
+
+</div>
