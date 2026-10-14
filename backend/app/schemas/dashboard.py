@@ -27,7 +27,7 @@ class PublicImpactCard(BaseModel):
     key: str
     value: float
     unit: str
-    change_pct: float = 0.0
+    change_pct: Optional[float] = None
     equivalent_value: Optional[float] = None
 
 
@@ -82,6 +82,8 @@ class AdminOverviewResponse(BaseModel):
     blocks: list[AdminOverviewBlock]
     total_kwh: float
     buildings: list[AdminOverviewBuilding]
+    window_from: Optional[str] = None  # first day of the window actually shown (YYYY-MM-DD)
+    window_to: Optional[str] = None    # last day = the simulation clock's date
     data_source: str = "simulated"
 
 

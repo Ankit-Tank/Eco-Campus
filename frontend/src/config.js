@@ -25,5 +25,5 @@ export const STORAGE_KEYS = {
 // backend/scripts/seed.py must create users with exactly these values.
 export const DEMO_ACCOUNTS = {
   student: { phone: '9876543210' },
-  admin: { email: 'admin@ecocampus.demo', password: 'admin123', phone: '9876500000' },
+  admin: { email: 'admin@ghostwatt.demo', password: 'admin123', phone: '9876500000' },
 }

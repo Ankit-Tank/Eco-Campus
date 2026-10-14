@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
+from app.core.dates import ordered_range, parse_dt, sim_now
 from app.core.deps import get_db, get_current_user
 from app.db import models
 from app.schemas.reports import (
@@ -70,23 +71,14 @@ def _compute_report_data(
     min_date = db.query(models.MeterReading.timestamp).order_by(models.MeterReading.timestamp.asc()).first()
     max_date = db.query(models.MeterReading.timestamp).order_by(models.MeterReading.timestamp.desc()).first()
 
-    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
-    default_start = min_date[0] if min_date else (now_utc - timedelta(days=14))
-    default_end = max_date[0] if max_date else now_utc
+    clock = sim_now(db)
+    default_start = min_date[0] if min_date else (clock - timedelta(days=14))
+    # Default window ends at the simulation clock, never at stale "future" readings
+    default_end = min(max_date[0], clock) if max_date else clock
 
-    start_dt = default_start
-    if date_from_str:
-        try:
-            start_dt = datetime.fromisoformat(date_from_str)
-        except ValueError:
-            pass
-
-    end_dt = default_end
-    if date_to_str:
-        try:
-            end_dt = datetime.fromisoformat(date_to_str)
-        except ValueError:
-            pass
+    start_dt = parse_dt(date_from_str, "from") or default_start
+    end_dt = parse_dt(date_to_str, "to", end_of_day=True) or default_end
+    ordered_range(start_dt, end_dt)
 
     price_kwh, emissions_factor = get_settings_rates(db)
 

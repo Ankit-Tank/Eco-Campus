@@ -10,15 +10,20 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_db, require_admin
 from app.db import models
+from app.core.dates import parse_dt
 from app.schemas.simulator import (
     DemoScenarioResponse,
+    SimApplianceRequest,
+    SimApplianceResponse,
     SimResetRequest,
     SimSpeedRequest,
     SimStateResponse,
+    SimTickRequest,
 )
 from app.services.simulator import (
     get_or_create_sim_state,
     reset_sim,
+    set_appliance,
     set_sim_running,
     set_sim_speed,
     setup_demo_scenario,
@@ -91,14 +96,9 @@ def reset_simulation(
 ):
     """Admin-only endpoint to reset the virtual clock anchor and halt execution."""
     target_date = None
-    if payload and payload.to_date:
-        try:
-            target_date = datetime.fromisoformat(payload.to_date)
-        except ValueError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid ISO format for to_date: {payload.to_date}",
-            )
+    if payload and (payload.to_date or payload.timestamp):
+        # parse_dt answers HTTP 422 with a clear message for invalid values
+        target_date = parse_dt(payload.to_date or payload.timestamp, "to_date")
 
     state = reset_sim(db, to_date=target_date)
     return SimStateResponse(
@@ -126,17 +126,46 @@ def get_simulation_state(
 
 @router.post("/tick", response_model=SimStateResponse, summary="Manually trigger one 15-minute simulation tick (Admin only)")
 def manual_tick(
+    payload: Optional[SimTickRequest] = None,
     db: Session = Depends(get_db),
     admin_user: models.User = Depends(require_admin),
 ):
-    """Admin-only endpoint to step the virtual clock forward by exactly 15 minutes."""
-    tick(db, delta_minutes=15)
+    """Admin-only endpoint to step the virtual clock forward (default one 15-minute interval)."""
+    minutes = payload.delta_minutes if payload else 15
+    for _ in range(max(1, minutes // 15)):
+        tick(db, delta_minutes=15)
     state = get_or_create_sim_state(db)
     return SimStateResponse(
         virtual_now=state.virtual_now.isoformat(),
         speed=state.speed,
         running=state.running,
         data_source="simulated",
+    )
+
+
+@router.post(
+    "/appliance",
+    response_model=SimApplianceResponse,
+    summary="Force a simulated appliance ON or OFF (Admin only)",
+)
+def set_simulated_appliance(
+    payload: SimApplianceRequest,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    """Interactive simulator control: the next simulation tick reflects the new appliance state."""
+    new_state = payload.state.strip().upper()
+    if new_state not in ("ON", "OFF"):
+        raise HTTPException(status_code=422, detail="state must be 'ON' or 'OFF'")
+    equipment = db.query(models.Equipment).filter(models.Equipment.id == payload.equipment_id).first()
+    if equipment is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Equipment {payload.equipment_id} not found")
+    room = db.query(models.Room).filter(models.Room.id == equipment.room_id).first()
+    equipment.state = new_state
+    set_appliance(room.room_code, equipment.kind, new_state == "ON")
+    db.commit()
+    return SimApplianceResponse(
+        equipment_id=equipment.id, room_code=room.room_code, kind=equipment.kind, state=new_state
     )
 
 

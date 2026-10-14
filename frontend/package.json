@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:api": "vite-node scripts/api-contract.mjs",
+    "check:render": "vite-node scripts/render-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -17,6 +19,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^5.4.11"
+    "jsdom": "^25.0.1",
+    "vite": "^5.4.11",
+    "vite-node": "^2.1.9"
   }
 }

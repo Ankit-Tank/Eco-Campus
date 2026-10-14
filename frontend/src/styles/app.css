@@ -1288,3 +1288,128 @@
     height: calc(100vh - 150px);
   }
 }
+
+/* ---------- Additions from the integration audit (same colours / tokens as the rest of the app) ---------- */
+
+.status--acknowledged,
+.status--assigned {
+  color: var(--in-progress);
+}
+
+.report-item {
+  list-style: none;
+  border-bottom: 1px solid #eef1f5;
+}
+.report-item:last-child {
+  border-bottom: 0;
+}
+.report-row--button {
+  width: 100%;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.report-row--button:hover {
+  background: #f7f9fc;
+}
+.report-row--button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+.report-detail {
+  padding: 4px 8px 18px 8px;
+}
+.report-detail-photo {
+  display: block;
+  max-width: min(320px, 100%);
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  margin-bottom: 10px;
+}
+.report-detail-desc {
+  margin: 0 0 8px;
+}
+.report-detail-head {
+  margin: 14px 0 6px;
+  font-size: 15px;
+}
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid var(--card-border);
+}
+.timeline li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  padding: 4px 0 8px 12px;
+}
+.timeline-when,
+.timeline-note {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+.inline-form .field {
+  min-width: 110px;
+  flex: 1 1 130px;
+}
+.inline-form .field.field--wide {
+  flex: 2 1 220px;
+}
+.btn--small {
+  padding: 7px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.btn--danger {
+  background: #fff;
+  border-color: #f2c1bc;
+  color: var(--bad);
+}
+.btn--danger:hover:not(:disabled) {
+  background: #fdf1f0;
+}
+.section-gap {
+  margin-top: 22px;
+}
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill-muted {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #eef1f5;
+  color: #4b5666;
+  font-size: 12px;
+  font-weight: 600;
+}
+.alert-note {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fdf1f0;
+  color: var(--bad);
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+.ok-note {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ecf7f1;
+  color: var(--good);
+  font-size: 14px;
+  margin: 0 0 12px;
+}

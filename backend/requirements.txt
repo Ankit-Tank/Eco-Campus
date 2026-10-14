@@ -1,8 +1,9 @@
-﻿fastapi
+fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic-settings
 python-jose[cryptography]
+bcrypt
 passlib[bcrypt]
 pandas
 numpy

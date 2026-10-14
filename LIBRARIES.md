@@ -33,23 +33,28 @@
 | Component | Specification | Details |
 |---|---|---|
 | **API Provider** | [Groq Cloud](https://groq.com/) | Hardware-accelerated Language Processing Unit (LPU) cloud inference engine delivering ultra-low token latency (< 500 ms round trip). |
-| **Model ID** | `qwen/qwen3.8-27b` | **Qwen 3.8 27B Parameter Model** on Groq Cloud. |
-| **Model License** | Apache-2.0 / Open Weights | Permissive open-weights license permitting commercial, academic, and hackathon applications. |
-| **Rationale & Selection** | Why `qwen/qwen3.8-27b`? | 1. **Reliable Tool Calling:** Consistently selects the exact appropriate tool function (`top_ghost_rooms`, `explain_room_alert`, `verified_savings`, `block_wastage`, `open_complaints`, `recommended_actions`) without formatting hallucinations.<br>2. **Extreme Speed on Groq LPU:** Delivers 500+ tokens/second, enabling real-time conversational responses during live campus facility walkthroughs.<br>3. **High Reasoning Fidelity:** Exceptional instruction following for numerical synthesis, enabling the model to faithfully summarize tool metrics without inventing figures.<br>4. **Number Guard Compliance:** Synthesizes clear explanations using strictly the values provided by the backend functions. |
+| **Model ID** | `openai/gpt-oss-120b` (default, set with `GROQ_MODEL`) | OpenAI's open-weight GPT-OSS 120B, listed as a production model on Groq's public model list (console.groq.com/docs/models). Any other Groq model that supports tool calling can be used by changing `GROQ_MODEL`. |
+| **Model License** | Apache-2.0 (open weights) | Check OpenAI's gpt-oss license terms for your use. |
+| **Why this setup** | Grounded, not free-form | The backend picks a whitelisted tool (`top_ghost_rooms`, `explain_room_alert`, `verified_savings`, `block_wastage`, `open_complaints`, `recommended_actions`), calculates every number itself, and the model only words the explanation. A number guard discards any answer containing a figure that is not in the tool output. |
+| **Verification note** | Not tested with a live key in the audit | The audit environment had no Groq key or internet access to Groq, so the live call path was not exercised; the fallback path (no key / error) is covered by tests. Confirm your model id with `GET https://api.groq.com/openai/v1/models`. If the model id is wrong the assistant still answers using the template fallback and labels the answer `fallback`. |
 | **Security & Key Isolation** | Zero Browser Exposure | `GROQ_API_KEY` is loaded strictly on the backend via environment variables and never exposed to the frontend or bundled into client assets. |
 | **Offline Fallback** | Deterministic Rule Engine | If the Groq API key is absent, rate-limited, or timed out (> 8 s), the backend automatically falls back to deterministic template generation using the exact same whitelisted backend tools. |
 
 ---
 
-## 3. Frontend Technology (Planned Stack)
+## 3. Frontend Libraries (as installed in `frontend/package.json`)
 
-| Library | Version / Channel | Purpose | License |
+| Library | Version | Purpose | License |
 |---|---|---|---|
-| [React](https://react.dev/) | 18+ | Component-driven user interface architecture | MIT |
-| [Vite](https://vitejs.dev/) | Latest | Next-generation frontend build tooling and rapid HMR development server | MIT |
-| [Recharts](https://recharts.org/) | Latest | Declarative SVG charting library for electricity series and baseline comparison curves | MIT |
-| [Lucide React](https://lucide.dev/) | Latest | Clean, lightweight icon suite for energy, water, alerts, and navigation | ISC |
+| [React](https://react.dev/) / react-dom | `^18.3.1` | Component-driven user interface | MIT |
+| [React Router](https://reactrouter.com/) | `^6.28.0` | Client-side routing and role-based route guards | MIT |
+| [Vite](https://vitejs.dev/) + [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react) | `^5.4.11` / `^4.3.4` | Build tool and dev server (proxies `/api` and `/uploads` to the backend) | MIT |
+| [Recharts](https://recharts.org/) | `^2.15.0` | SVG charts for electricity series and baselines | MIT |
+| [Lucide React](https://lucide.dev/) | `^0.468.0` | Icons | ISC |
+| Google Fonts (Bricolage Grotesque, Figtree) | CDN | Typography (loaded by the browser from fonts.googleapis.com) | OFL |
+
+Development / testing only: [vite-node](https://github.com/vitest-dev/vitest/tree/main/packages/vite-node) `^2.1.9` (runs `npm run check:api` and `npm run check:render`) and [jsdom](https://github.com/jsdom/jsdom) `^25.0.1` (headless DOM for the page-render check). Both are MIT licensed and are not part of the production bundle.
 
 ---
 
-*Last updated: Backend Complete & Production-Verified*
+*Last updated: full backend + frontend integration audit.*

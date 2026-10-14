@@ -178,11 +178,11 @@ export default function AdminSettings() {
                   type="number"
                   step="1"
                   min="5"
-                  value={settings.low_flow_threshold_lph || '50.0'}
-                  onChange={handleChange('low_flow_threshold_lph')}
+                  value={settings.water_night_threshold_lph || '50.0'}
+                  onChange={handleChange('water_night_threshold_lph')}
                   required
                 />
-                <span className="note-text">Flow exceeding this rate during inactive night hours (02:00–05:00) triggers alarms.</span>
+                <span className="note-text">Flow exceeding this rate during the night window (01:00–04:00) raises a possible-leak alert.</span>
               </div>
 
               <div className="field" style={{ marginTop: 14 }}>
@@ -192,11 +192,11 @@ export default function AdminSettings() {
                   type="number"
                   step="1"
                   min="0"
-                  value={settings.night_flow_baseline_lph || '15.0'}
-                  onChange={handleChange('night_flow_baseline_lph')}
+                  value={settings.water_low_flow_baseline_lph || '15.0'}
+                  onChange={handleChange('water_low_flow_baseline_lph')}
                   required
                 />
-                <span className="note-text">Normal background flow in risers from pilot valves and security washrooms.</span>
+                <span className="note-text">Normal background flow used when a location has no baseline of its own.</span>
               </div>
             </section>
           </div>

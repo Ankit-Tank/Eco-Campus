@@ -12,6 +12,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.dates import resolve_period
 from app.core.deps import get_db, get_current_user
 from app.db import models
 from app.schemas.leaderboard import BlockLeaderboardItem, BlockLeaderboardResponse
@@ -45,18 +46,8 @@ def get_block_leaderboard(
     - Sustainability score = 100 - waste_percentage (clamped 0-100)
     - Letter grade: A+ (>=90), A (>=80), B (>=70), C (>=60), D (<60)
     """
-    state = db.query(models.SimState).filter(models.SimState.id == 1).first()
-    virtual_now = state.virtual_now if state else datetime.now(timezone.utc).replace(tzinfo=None)
-
-    p_clean = period.lower().strip()
-    if p_clean in ("today", "24h", "1d"):
-        start_dt = virtual_now - timedelta(days=1)
-    elif p_clean in ("14d", "2w"):
-        start_dt = virtual_now - timedelta(days=14)
-    elif p_clean == "all":
-        start_dt = datetime(2026, 1, 1)
-    else:
-        start_dt = virtual_now - timedelta(days=7)
+    start_dt, virtual_now = resolve_period(db, period)
+    window_days = ((virtual_now - start_dt).total_seconds() / 86400.0) if start_dt else None
 
     price_kwh, emissions_factor = get_settings_rates(db)
     s_rows = db.query(models.Setting).all()
@@ -66,7 +57,8 @@ def get_block_leaderboard(
     readings = (
         db.query(models.MeterReading, models.Room)
         .join(models.Room, models.MeterReading.room_id == models.Room.id)
-        .filter(models.MeterReading.timestamp >= start_dt)
+        .filter(models.MeterReading.timestamp <= virtual_now)
+        .filter(models.MeterReading.timestamp >= start_dt if start_dt is not None else True)
         .all()
     )
 
@@ -101,7 +93,10 @@ def get_block_leaderboard(
         block_data[blk]["ghost_kwh"] += gh_kw * 0.25
 
     items = []
-    duration_hours = max(1.0, 7.0 * 24.0)
+    if window_days is None:  # "all": use the span actually covered by readings
+        spans = [mr.timestamp for mr, _ in readings]
+        window_days = ((max(spans) - min(spans)).total_seconds() / 86400.0) if spans else 1.0
+    duration_hours = max(1.0, window_days * 24.0)
 
     for blk_key, data in block_data.items():
         actual = data["actual_kwh"]

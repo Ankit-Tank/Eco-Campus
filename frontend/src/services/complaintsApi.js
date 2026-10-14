@@ -26,9 +26,10 @@ export function getComplaint(id) {
 }
 
 // POST /api/complaints (multipart form data)
-export function createComplaint({ title, category, location, description, image }) {
+export function createComplaint({ title, category, building, location, description, image }) {
   const form = new FormData()
   if (title) form.append('title', title)
+  if (building) form.append('building', building)
   if (category) form.append('category', category)
   if (location) form.append('location', location)
   if (description) form.append('description', description)
@@ -56,7 +57,23 @@ export function getAdminNotifications({ limit = 20 } = {}) {
   return request(`/complaints/admin/notifications?limit=${limit}`)
 }
 
-// POST /api/reports/appliance-left-on (student appliance left on signal)
-export function reportApplianceLeftOn({ room_id, equipment_type, notes = '' }) {
-  return post('/reports/appliance-left-on', { room_id: Number(room_id), equipment_type, notes })
+// PATCH /api/complaints/admin/notifications/:id/read  (admin)
+export function markNotificationRead(id) {
+  return request(`/complaints/admin/notifications/${id}/read`, { method: 'PATCH' })
 }
+
+// POST /api/complaints/admin/notifications/read-all  (admin)
+export function markAllNotificationsRead() {
+  return post('/complaints/admin/notifications/read-all', {})
+}
+
+// GET /api/complaints/assignees  (admin): staff a complaint can be assigned to
+export function getAssignees() {
+  return request('/complaints/assignees')
+}
+
+// POST /api/complaints/:id/reopen  (the student who filed it, or an admin)
+export function reopenComplaint(id, reason = '') {
+  return post(`/complaints/${id}/reopen`, { reason })
+}
+// (The "appliance left on" signal lives in reportsApi.js)

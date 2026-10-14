@@ -83,6 +83,10 @@ class ComplaintPatch(BaseModel):
     )
 
 
+class ComplaintReopen(BaseModel):
+    reason: Optional[str] = Field(None, max_length=500, description="Why the issue is being reopened")
+
+
 class AdminNotificationItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

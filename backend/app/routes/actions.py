@@ -20,7 +20,7 @@ from app.schemas.savings import (
     ActionResponse,
     ActionSwitchOffRequest,
 )
-from app.services.simulator import get_or_create_sim_state, set_appliance
+from app.services.simulator import get_or_create_sim_state, get_room_state, set_appliance
 
 router = APIRouter()
 
@@ -94,6 +94,14 @@ def switch_off_appliance(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Equipment with id {payload.equipment_id} not found in room {room.room_code}",
+        )
+
+    # An appliance that was already switched off cannot be "switched off" again: doing so would
+    # create a second claimed saving for the same appliance.
+    if get_room_state(room.room_code).get(equipment.kind.lower()) is False:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"{equipment.kind.upper()} in {room.room_code} is already switched off.",
         )
 
     # Simulation timestamp from virtual clock

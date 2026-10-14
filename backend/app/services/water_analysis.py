@@ -48,6 +48,7 @@ def analyze_night_flow(
     baseline_lph: Optional[float] = None,
     threshold_lph: float = 50.0,
     threshold_multiplier: float = 2.0,
+    default_baseline_lph: float = 20.0,
 ) -> List[Dict[str, Any]]:
     """
     Inspect a series of hourly water readings for night-flow anomalies (1 AM – 4 AM).
@@ -98,7 +99,7 @@ def analyze_night_flow(
         if baseline_lph is not None:
             effective_baseline = baseline_lph
         else:
-            effective_baseline = float(_get_val(group_sorted[0], "expected_baseline_lph", 20.0) or 20.0)
+            effective_baseline = float(_get_val(group_sorted[0], "expected_baseline_lph", default_baseline_lph) or default_baseline_lph)
 
         expected_litres = round(effective_baseline * duration_hours, 1)
         excess_litres = max(0.0, round(actual_litres - expected_litres, 1))

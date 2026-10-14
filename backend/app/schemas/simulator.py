@@ -19,6 +19,25 @@ class SimSpeedRequest(BaseModel):
 
 class SimResetRequest(BaseModel):
     to_date: Optional[str] = Field(None, description="Optional target datetime string in ISO format")
+    timestamp: Optional[str] = Field(None, description="Alias of to_date (used by the frontend)")
+
+
+class SimTickRequest(BaseModel):
+    delta_minutes: int = Field(15, ge=15, le=240, description="Minutes to advance (multiple of 15)")
+
+
+class SimApplianceRequest(BaseModel):
+    equipment_id: int = Field(..., description="Equipment row to switch")
+    state: str = Field(..., description="ON or OFF")
+
+
+class SimApplianceResponse(BaseModel):
+    equipment_id: int
+    room_code: str
+    kind: str
+    state: str
+    note: str = "Takes effect from the next simulation tick."
+    data_source: str = "simulated"
 
 
 class LiveRoomSnapshot(BaseModel):

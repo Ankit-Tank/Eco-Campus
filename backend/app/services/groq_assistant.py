@@ -185,7 +185,7 @@ def ask(
     """
     # 1. Environment lookup for credentials
     api_key = os.environ.get("GROQ_API_KEY", "").strip() or getattr(settings, "groq_api_key", "").strip()
-    model = os.environ.get("GROQ_MODEL", "").strip() or getattr(settings, "groq_model", "qwen/qwen3.8-27b").strip()
+    model = os.environ.get("GROQ_MODEL", "").strip() or getattr(settings, "groq_model", "openai/gpt-oss-120b").strip()
 
     if not api_key or api_key in ("invalid_key", "test_invalid_key", "disabled"):
         logger.info("Groq API key unavailable or test-invalid; invoking fallback.")

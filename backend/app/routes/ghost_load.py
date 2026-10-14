@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.dates import ordered_range, parse_dt, resolve_period, sim_now
 from app.core.deps import get_db, get_current_user
 from app.db import models
 from app.schemas.ghost_load import (
@@ -168,6 +169,7 @@ def get_ghost_current(
 
 @router.get("/ranking", response_model=GhostRankingResponse, summary="Rank rooms descending by total ghost energy")
 def get_ghost_ranking(
+    period: Optional[str] = Query(None, description="Optional window ending at the simulation clock: today, week, 7d, 14d, 30d, all"),
     date_from: Optional[str] = Query(None, alias="from", description="Start datetime (ISO string)"),
     date_to: Optional[str] = Query(None, alias="to", description="End datetime (ISO string)"),
     db: Session = Depends(get_db),
@@ -195,16 +197,15 @@ def get_ghost_ranking(
         tt_by_room.setdefault(t.room_id, []).append(t)
 
     query = db.query(models.MeterReading)
-    if date_from:
-        try:
-            query = query.filter(models.MeterReading.timestamp >= datetime.fromisoformat(date_from))
-        except ValueError:
-            pass
-    if date_to:
-        try:
-            query = query.filter(models.MeterReading.timestamp <= datetime.fromisoformat(date_to))
-        except ValueError:
-            pass
+    dt_from = parse_dt(date_from, "from")
+    dt_to = parse_dt(date_to, "to", end_of_day=True)
+    if period and not (dt_from or dt_to):
+        dt_from, dt_to = resolve_period(db, period)
+    dt_to = dt_to or sim_now(db)
+    ordered_range(dt_from, dt_to)
+    if dt_from:
+        query = query.filter(models.MeterReading.timestamp >= dt_from)
+    query = query.filter(models.MeterReading.timestamp <= dt_to)
 
     meter_readings = query.all()
 
@@ -428,10 +429,7 @@ def explain_room_ghost_load(
     ).all()
 
     if ts:
-        try:
-            target_ts = datetime.fromisoformat(ts)
-        except ValueError:
-            target_ts = datetime.now()
+        target_ts = parse_dt(ts, "ts")
     else:
         # Default to latest reading timestamp
         latest_mr = (

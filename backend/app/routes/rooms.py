@@ -232,6 +232,18 @@ def delete_room(
             detail=f"Room with ID {room_id} not found",
         )
 
+    # A room that already has meter history or recorded actions must not be erased (it would
+    # destroy the audit trail and verified savings). Deactivate it instead (PUT is_active=false).
+    has_history = (
+        db.query(models.MeterReading.id).filter(models.MeterReading.room_id == room_id).first() is not None
+        or db.query(models.Action.id).filter(models.Action.room_id == room_id).first() is not None
+    )
+    if has_history:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This room has meter history or recorded actions and cannot be deleted. Deactivate it instead (is_active = false).",
+        )
+
     db.delete(room)
     db.commit()
     return None

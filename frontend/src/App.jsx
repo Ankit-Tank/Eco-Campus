@@ -16,6 +16,8 @@ import StudentHome from './pages/student/StudentHome.jsx'
 import StudentChat from './pages/student/StudentChat.jsx'
 import StudentMyReports from './pages/student/StudentMyReports.jsx'
 import StudentImpact from './pages/student/StudentImpact.jsx'
+import StudentCampus from './pages/student/StudentCampus.jsx'
+import AdminRooms from './pages/admin/AdminRooms.jsx'
 
 export default function App() {
   return (
@@ -40,6 +42,7 @@ export default function App() {
         <Route path="water" element={<AdminWater />} />
         <Route path="alerts" element={<AdminAlerts />} />
         <Route path="maintenance" element={<AdminMaintenance />} />
+        <Route path="rooms" element={<AdminRooms />} />
         <Route path="leaderboard" element={<LeaderboardView />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="simulator" element={<AdminSimulator />} />
@@ -59,6 +62,7 @@ export default function App() {
         <Route path="home" element={<StudentHome />} />
         <Route path="chat" element={<StudentChat />} />
         <Route path="my-reports" element={<StudentMyReports />} />
+        <Route path="campus" element={<StudentCampus />} />
         <Route path="impact" element={<StudentImpact />} />
         <Route path="leaderboard" element={<LeaderboardView />} />
       </Route>

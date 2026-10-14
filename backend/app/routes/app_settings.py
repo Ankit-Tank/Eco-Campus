@@ -57,7 +57,7 @@ def update_settings(
         if key in numeric_keys:
             try:
                 num = float(val)
-                if num <= 0:
+                if num <= 0 or num != num or num in (float("inf"), float("-inf")):
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"Setting '{key}' must be a strictly positive number (> 0), got {num}",

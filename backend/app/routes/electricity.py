@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.dates import ordered_range, parse_dt, sim_now
 from app.core.deps import get_db, get_current_user
 from app.db import models
 from app.schemas.electricity import ElectricitySeriesResponse, MeterReadingPoint
@@ -44,17 +45,13 @@ def get_electricity_series(
         else:
             query = query.filter(models.Room.room_code == room)
 
-    if date_from:
-        try:
-            query = query.filter(models.MeterReading.timestamp >= datetime.fromisoformat(date_from))
-        except ValueError:
-            pass
-
-    if date_to:
-        try:
-            query = query.filter(models.MeterReading.timestamp <= datetime.fromisoformat(date_to))
-        except ValueError:
-            pass
+    dt_from = parse_dt(date_from, "from")
+    # Without an explicit end the series stops at the simulation clock (never shows "future" rows)
+    dt_to = parse_dt(date_to, "to", end_of_day=True) or sim_now(db)
+    ordered_range(dt_from, dt_to)
+    if dt_from:
+        query = query.filter(models.MeterReading.timestamp >= dt_from)
+    query = query.filter(models.MeterReading.timestamp <= dt_to)
 
     # Order chronologically
     all_matching = query.order_by(models.MeterReading.timestamp.asc()).all()

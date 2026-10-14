@@ -1,4 +1,4 @@
-import { Home, Bot, FileText, BarChart3, Zap, Droplet, Bell, Wrench, Trophy, Sliders, Settings } from 'lucide-react'
+import { Home, Bot, FileText, BarChart3, Zap, Droplet, Bell, Wrench, Trophy, Sliders, Settings, Building2, Activity } from 'lucide-react'
 
 // Sidebar menus. "label" is a key in src/i18n. A "group" has a heading you can open or close.
 // Keep the "to" paths in sync with src/App.jsx.
@@ -16,6 +16,7 @@ export const ADMIN_NAV = [
     items: [
       { to: '/admin/alerts', label: 'adminNav.alerts', Icon: Bell },
       { to: '/admin/maintenance', label: 'adminNav.maintenance', Icon: Wrench },
+      { to: '/admin/rooms', label: 'adminNav.rooms', Icon: Building2 },
       { to: '/admin/leaderboard', label: 'adminNav.leaderboard', Icon: Trophy },
     ],
   },
@@ -33,6 +34,7 @@ export const STUDENT_NAV = [
   { to: '/student/home', label: 'studentNav.home', Icon: Home },
   { to: '/student/chat', label: 'studentNav.chatbot', Icon: Bot },
   { to: '/student/my-reports', label: 'studentNav.myReports', Icon: FileText },
+  { to: '/student/campus', label: 'studentNav.campus', Icon: Activity },
   { to: '/student/impact', label: 'studentNav.impact', Icon: BarChart3 },
   { to: '/student/leaderboard', label: 'studentNav.leaderboard', Icon: Trophy },
 ]
