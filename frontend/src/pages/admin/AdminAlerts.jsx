@@ -153,7 +153,7 @@ export default function AdminAlerts() {
                           <span style={{ color: '#dc2626', fontWeight: 700 }}>+{formatNumber(r.ghost_kw, 2)} kW</span>
                         </div>
                         <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
-                          Cause: <span style={{ color: '#b91c1c', fontWeight: 600 }}>{r.dominant_reason_code || 'UNSCHEDULED_LOAD'}</span>
+                          Cause: <span style={{ color: '#b91c1c', fontWeight: 600 }}>{r.reason_code || r.dominant_reason_code || 'UNSCHEDULED_LOAD'}</span>
                         </div>
                         <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>
                           Actual: {formatNumber(r.actual_kw, 1)} kW | Expected: {formatNumber(r.expected_kw, 1)} kW

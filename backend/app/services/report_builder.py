@@ -1,5 +1,5 @@
 ﻿"""
-GhostWatt — services/report_builder.py
+Eco-Campus — services/report_builder.py
 Aggregate DB data into report dictionaries. SPEC §12.
 Placeholder — Phase 6 implementation.
 NO FastAPI imports.

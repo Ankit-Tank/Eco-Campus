@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_assistant.py
+Eco-Campus — tests/test_assistant.py
 Comprehensive test suite for the AI Sustainability Assistant (POST /assistant/ask).
 
 SPEC §11 & User Requirements:

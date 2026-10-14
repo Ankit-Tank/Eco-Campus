@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_savings_verification.py
+Eco-Campus — tests/test_savings_verification.py
 Comprehensive test suite for Verified Savings Meter and Corrective Actions.
 
 SPEC §8 & Prompt Requirements:

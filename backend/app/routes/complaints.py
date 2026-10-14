@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/complaints.py
+Eco-Campus — routes/complaints.py
 Endpoints for student water complaints, administrative lifecycle management,
 file uploads, audit history, and admin notification logging.
 
@@ -17,7 +17,6 @@ SPEC §10 & Prompt Requirements:
 """
 from datetime import datetime, timezone
 import os
-import shutil
 from typing import Any, List, Optional
 import uuid
 
@@ -34,6 +33,7 @@ from fastapi import (
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.config import settings as app_config
 from app.core.deps import get_db, get_current_user, require_admin
 from app.db import models
 from app.schemas.complaints import (
@@ -42,26 +42,48 @@ from app.schemas.complaints import (
     ComplaintHistoryItem,
     ComplaintListResponse,
     ComplaintPatch,
+    ComplaintReopen,
     ComplaintResponse,
     FrequentlyAffectedLocation,
 )
 
 router = APIRouter()
 
-# Directory for uploaded complaint photographs
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads", "complaints")
+# Directory for uploaded complaint photographs (absolute path under backend/uploads)
+UPLOAD_DIR = str(app_config.uploads_path / "complaints")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
 
+# Water issues + the electricity / facility issues the student form also offers.
 VALID_CATEGORIES = {
     "leaking_tap",
     "broken_pipe",
     "overflowing_tank",
     "low_pressure",
     "general_wastage",
+    "lights_left_on",
+    "ac_running",
+    "electrical_damage",
+    "appliance_left_on",
+    "other",
 }
+# Friendly aliases sent by the UI -> stored value
+CATEGORY_ALIASES = {"water_wastage": "general_wastage"}
+
+
+def _looks_like_image(ext: str, head: bytes) -> bool:
+    """Cheap magic-byte check so a renamed script/HTML file is not stored as an image."""
+    if ext in (".jpg", ".jpeg"):
+        return head.startswith(b"\xff\xd8\xff")
+    if ext == ".png":
+        return head.startswith(b"\x89PNG\r\n\x1a\n")
+    if ext == ".gif":
+        return head.startswith((b"GIF87a", b"GIF89a"))
+    if ext == ".webp":
+        return head[:4] == b"RIFF" and head[8:12] == b"WEBP"
+    return False
 
 VALID_STATUS_LIFECYCLE = {
     "submitted": {"acknowledged", "assigned", "in_progress", "resolved"},
@@ -127,7 +149,7 @@ def _format_complaint(c: models.Complaint, db: Session) -> ComplaintResponse:
         updated_at=c.updated_at.isoformat() if c.updated_at else "",
         resolution_notes=c.resolution_notes or "",
         is_overdue=is_overdue,
-        title=c.description[:40] if c.description else c.category.replace("_", " ").title(),
+        title=((c.description or "").split("\n", 1)[0][:80] or c.category.replace("_", " ").title()),
         place=f"{c.building} - {c.location_detail}" if c.location_detail else c.building,
         image_url=f"/uploads/complaints/{os.path.basename(c.attachment_path)}" if c.attachment_path else None,
         history=history_items,
@@ -163,14 +185,33 @@ async def submit_complaint(
     6. Creates an internal admin notification record.
     """
     actual_photo = photo if (photo and photo.filename) else image
-    actual_desc = description or title or "Reported facility issue"
+    title_in, desc_in = (title or "").strip(), (description or "").strip()
+    # Keep BOTH: the first line is the short title, the rest is the longer description.
+    actual_desc = f"{title_in}\n{desc_in}" if title_in and desc_in and title_in != desc_in else (desc_in or title_in)
 
-    loc = location or location_detail
-    if not loc or not loc.strip():
-        loc = building or "Main Campus"
-    bldg = building or (loc.split("-")[0].strip() if "-" in loc else "Campus")
+    loc = (location or location_detail or "").strip()
+    if not loc and building and building.strip():
+        loc = building.strip()
+    if not loc:
+        raise HTTPException(
+            status_code=422,
+            detail="Please tell us where the issue is (building / exact location).",
+        )
+    bldg = (building or "").strip() or (loc.split("-")[0].strip() if "-" in loc else "Campus")
+
+    if len((actual_desc or "").strip()) < 3:
+        raise HTTPException(
+            status_code=422,
+            detail="Please add a short title or description of the issue.",
+        )
+    if len(actual_desc) > 1000 or len(loc) > 200 or len(bldg) > 50:
+        raise HTTPException(
+            status_code=422,
+            detail="Description (max 1000), location (max 200) or building (max 50) is too long.",
+        )
 
     cat_clean = category.strip().lower().replace(" ", "_").replace("-", "_")
+    cat_clean = CATEGORY_ALIASES.get(cat_clean, cat_clean)
     if cat_clean not in VALID_CATEGORIES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -188,16 +229,21 @@ async def submit_complaint(
                 detail=f"Invalid file type '{ext}'. Allowed image formats: {sorted(ALLOWED_EXTENSIONS)}",
             )
 
-        # Read contents to validate size
-        content = await actual_photo.read()
+        # Read at most limit+1 bytes so an oversized upload is never fully loaded into memory
+        content = await actual_photo.read(MAX_FILE_SIZE_BYTES + 1)
         if len(content) > MAX_FILE_SIZE_BYTES:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"File exceeds maximum allowed size of 5 MB (received {len(content)} bytes)",
+                detail="File exceeds maximum allowed size of 5 MB",
+            )
+        if not _looks_like_image(ext_lower, content[:16]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The uploaded file is not a valid JPG, PNG, GIF or WEBP image.",
             )
 
-        # Save to disk
-        safe_filename = f"{uuid.uuid4().hex[:10]}_{actual_photo.filename}"
+        # Save to disk under a server-generated name (never trust the client's filename)
+        safe_filename = f"{uuid.uuid4().hex}{ext_lower}"
         disk_path = os.path.join(UPLOAD_DIR, safe_filename)
         with open(disk_path, "wb") as f:
             f.write(content)
@@ -330,6 +376,62 @@ def get_admin_notifications(
         count=len(items),
         data_source="simulated",
     )
+
+
+@router.patch(
+    "/admin/notifications/{notification_id}/read",
+    summary="Mark one admin notification as read (Admin only)",
+)
+def mark_notification_read(
+    notification_id: int,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    notif = db.query(models.AdminNotification).filter(models.AdminNotification.id == notification_id).first()
+    if not notif:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Notification not found")
+    notif.is_read = True
+    db.commit()
+    return {"id": notif.id, "is_read": True, "data_source": "simulated"}
+
+
+@router.post(
+    "/admin/notifications/read-all",
+    summary="Mark every admin notification as read (Admin only)",
+)
+def mark_all_notifications_read(
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    updated = (
+        db.query(models.AdminNotification)
+        .filter(models.AdminNotification.is_read == False)  # noqa: E712
+        .update({models.AdminNotification.is_read: True})
+    )
+    db.commit()
+    return {"updated": updated, "data_source": "simulated"}
+
+
+@router.get(
+    "/assignees",
+    summary="List staff accounts a complaint can be assigned to (Admin only)",
+)
+def list_assignees(
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(require_admin),
+):
+    staff = (
+        db.query(models.User)
+        .filter(models.User.role == "admin", models.User.is_active == True)  # noqa: E712
+        .order_by(models.User.id.asc())
+        .all()
+    )
+    return {
+        "assignees": [
+            {"id": u.id, "email": u.email, "name": u.full_name or u.username} for u in staff
+        ],
+        "data_source": "simulated",
+    }
 
 
 @router.get(
@@ -482,6 +584,11 @@ def update_complaint(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Assigned user id {payload.assigned_to} not found",
             )
+        if staff.role != "admin" or not staff.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Complaints can only be assigned to active admin / maintenance staff accounts.",
+            )
         complaint.assigned_to = payload.assigned_to
         audit_notes.append(f"Assigned to {staff.email}")
 
@@ -516,5 +623,58 @@ def update_complaint(
     return _format_complaint(complaint, db)
 
 
-# NOTE: /admin/notifications is now defined above, before /{complaint_id},
-# to prevent FastAPI from matching 'admin' as a complaint integer ID.
+@router.post(
+    "/{complaint_id}/reopen",
+    response_model=ComplaintResponse,
+    summary="Reopen a resolved complaint (owner student or admin)",
+)
+def reopen_complaint(
+    complaint_id: int,
+    payload: Optional[ComplaintReopen] = None,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """The student who filed a complaint (or an admin) can reopen it if the problem came back."""
+    complaint = db.query(models.Complaint).filter(models.Complaint.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Complaint with id {complaint_id} not found")
+    if current_user.role != "admin" and complaint.student_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden: you can only reopen your own complaints")
+    if complaint.status != "resolved":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Only resolved complaints can be reopened (current status: '{complaint.status}').",
+        )
+
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    old_status = complaint.status
+    complaint.status = "reopened"
+    complaint.updated_at = now
+    reason = (payload.reason.strip() if payload and payload.reason else "") or "Issue reported again by the reporter"
+    db.add(
+        models.ComplaintHistory(
+            complaint_id=complaint.id,
+            changed_by=current_user.id,
+            old_status=old_status,
+            new_status="reopened",
+            note=reason[:500],
+            changed_at=now,
+        )
+    )
+    db.add(
+        models.AdminNotification(
+            title=f"Complaint reopened: {complaint.complaint_code}",
+            message=f"{current_user.email} reopened {complaint.complaint_code} ({complaint.building} - {complaint.location_detail})",
+            notification_type="complaint",
+            reference_id=complaint.complaint_code,
+            is_read=False,
+            created_at=now,
+        )
+    )
+    db.commit()
+    db.refresh(complaint)
+    return _format_complaint(complaint, db)
+
+
+# NOTE: static routes (/mine, /assignees, /admin/notifications...) are defined before
+# /{complaint_id} so FastAPI never tries to parse them as an integer complaint ID.

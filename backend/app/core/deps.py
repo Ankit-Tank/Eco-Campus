@@ -1,5 +1,5 @@
 """
-GhostWatt — app/core/deps.py
+Eco-Campus — app/core/deps.py
 Reusable FastAPI dependency functions for database sessions and role-based access control.
 """
 from fastapi import Depends, HTTPException, status
@@ -34,17 +34,10 @@ def get_current_user(
     db: Session = Depends(get_db),
 ) -> models.User:
     """Validate JWT access token and return the authenticated User model."""
-    # Seamless support for demo mock tokens saved in developer browsers
-    if token == "mock-admin-token":
-        admin_user = db.query(models.User).filter(models.User.role == "admin").first()
-        if admin_user:
-            return admin_user
-    elif token == "mock-student-token":
-        student_user = db.query(models.User).filter(models.User.role == "student").first()
-        if student_user:
-            return student_user
-
     payload = decode_access_token(token)
+    # Purpose-scoped tokens (e.g. password reset) are not login sessions.
+    if payload is not None and payload.get("purpose"):
+        payload = None
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

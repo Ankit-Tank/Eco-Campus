@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_permissions.py
+Eco-Campus — tests/test_permissions.py
 Role-based access control (RBAC), authentication enforcement, and input validation tests.
 
 Specifications verified:

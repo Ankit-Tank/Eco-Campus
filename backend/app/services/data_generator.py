@@ -1,5 +1,5 @@
 """
-GhostWatt — services/data_generator.py
+Eco-Campus — services/data_generator.py
 Reproducible seed data generator for rooms, equipment, weekly timetables,
 14-day 15-minute electricity meter readings with deliberate ghost load scenarios,
 hourly water readings with suspected leak patterns, users, settings, and sim state.
@@ -467,6 +467,8 @@ def generate_all(
             password_hash=hash_password("admin123"),
             role="admin",
             is_active=True,
+            phone="9876500000",
+            full_name="Demo Admin",
         ),
         models.User(
             username="student",
@@ -474,6 +476,8 @@ def generate_all(
             password_hash=hash_password("student123"),
             role="student",
             is_active=True,
+            phone="9876543210",
+            full_name="Demo Student",
         ),
         models.User(
             username="student2",
@@ -481,6 +485,8 @@ def generate_all(
             password_hash=hash_password("student123"),
             role="student",
             is_active=True,
+            phone="9876543211",
+            full_name="Demo Student 2",
         ),
     ]
     db.add_all(users)

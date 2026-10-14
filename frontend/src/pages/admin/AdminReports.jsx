@@ -14,9 +14,22 @@ import {
 } from 'lucide-react'
 import { useLanguage } from '../../i18n/LanguageContext.jsx'
 import { downloadReportCsv, getReportsSummary } from '../../services/reportsApi.js'
+import { getSimState } from '../../services/simulatorApi.js'
 import { formatNumber, lastDays } from '../../utils/format.js'
 import ErrorState from '../../components/ui/ErrorState.jsx'
 import Skeleton from '../../components/ui/Skeleton.jsx'
+
+// Reports cover the last N days ending at the SIMULATION clock (not today's real date), because
+// that is where the generated readings live.
+async function simAnchoredRange(days) {
+  try {
+    const sim = await getSimState()
+    if (sim?.virtual_now) return lastDays(days, new Date(sim.virtual_now))
+  } catch {
+    // fall back to today's date below
+  }
+  return lastDays(days)
+}
 
 export default function AdminReports() {
   const { t } = useLanguage()
@@ -25,12 +38,13 @@ export default function AdminReports() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [downloading, setDownloading] = useState(false)
+  const [downloadError, setDownloadError] = useState('')
 
   async function loadData() {
     setError(null)
     setLoading(true)
     try {
-      const range = lastDays(days)
+      const range = await simAnchoredRange(days)
       const res = await getReportsSummary({ from: range.from, to: range.to })
       setData(res)
     } catch (err) {
@@ -46,15 +60,16 @@ export default function AdminReports() {
 
   async function handleExportCsv() {
     setDownloading(true)
+    setDownloadError('')
     try {
-      const range = lastDays(days)
+      const range = await simAnchoredRange(days)
       await downloadReportCsv({
         from: range.from,
         to: range.to,
-        filename: `ghostwatt_sustainability_audit_${range.from}_${range.to}.csv`,
+        filename: `eco_campus_sustainability_audit_${range.from}_${range.to}.csv`,
       })
     } catch (err) {
-      alert('Failed to download CSV: ' + err.message)
+      setDownloadError('Failed to download CSV: ' + err.message)
     } finally {
       setDownloading(false)
     }
@@ -90,6 +105,12 @@ export default function AdminReports() {
           </button>
         </div>
       </header>
+
+      {downloadError && (
+        <p className="alert-note" role="alert">
+          {downloadError}
+        </p>
+      )}
 
       {error && <ErrorState error={error} onRetry={loadData} />}
 

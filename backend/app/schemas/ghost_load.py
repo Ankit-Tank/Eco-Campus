@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/ghost_load.py
+Eco-Campus — schemas/ghost_load.py
 Pydantic schemas for Ghost Load current status, rankings, switch-off lists, and room explainability.
 """
 from typing import Any, Dict, List, Optional

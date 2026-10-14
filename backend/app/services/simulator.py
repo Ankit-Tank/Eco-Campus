@@ -1,5 +1,5 @@
 """
-GhostWatt — services/simulator.py
+Eco-Campus — services/simulator.py
 Simulation execution engine: virtual clock, equipment state evaluation,
 15-minute interval ticking, and automated meter & water telemetry persistence.
 
@@ -14,6 +14,7 @@ SPEC §7:
 """
 from datetime import datetime, timedelta
 import random
+import threading
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 
@@ -32,6 +33,31 @@ from app.services.water_analysis import analyze_night_flow
 # Maps room_code -> {equipment_kind: bool (True = forced ON, False = forced OFF)}
 # ---------------------------------------------------------------------------
 _appliance_state: Dict[str, Dict[str, bool]] = {}
+
+# tick() can be called by the background clock AND by POST /sim/tick at the same moment.
+# Serialising it keeps the virtual clock and the stored readings consistent.
+_tick_lock = threading.Lock()
+
+
+def restore_overrides_from_actions(db: Session, lookback_hours: int = 24) -> int:
+    """
+    The interactive appliance overrides live in memory. After a server restart, re-apply the
+    switch-offs recorded in the actions table (within the last `lookback_hours` of simulated time)
+    so a restart does not silently turn a switched-off appliance back on.
+    """
+    state = get_or_create_sim_state(db)
+    since = state.virtual_now - timedelta(hours=lookback_hours)
+    restored = 0
+    for act in (
+        db.query(models.Action)
+        .filter(models.Action.action_type == "switch_off", models.Action.timestamp >= since, models.Action.timestamp <= state.virtual_now)
+        .all()
+    ):
+        room = db.query(models.Room).filter(models.Room.id == act.room_id).first()
+        if room and act.equipment:
+            set_appliance(room.room_code, act.equipment.lower(), False)
+            restored += 1
+    return restored
 
 
 def get_room_state(room_code: str) -> Dict[str, bool]:
@@ -217,6 +243,11 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
 
     Returns summary dictionary of generated telemetry.
     """
+    with _tick_lock:
+        return _tick_locked(db, delta_minutes)
+
+
+def _tick_locked(db: Session, delta_minutes: int) -> Dict[str, Any]:
     state = get_or_create_sim_state(db)
     state.virtual_now = state.virtual_now + timedelta(minutes=delta_minutes)
     current_ts = state.virtual_now
@@ -237,6 +268,11 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
         tt_by_room.setdefault(t.room_id, []).append(t)
 
     meter_readings_created = 0
+    # Readings already stored for this timestamp (re-running a period must overwrite, not duplicate)
+    existing_meter = {
+        mr.room_id: mr
+        for mr in db.query(models.MeterReading).filter(models.MeterReading.timestamp == current_ts).all()
+    }
 
     for room in rooms:
         r_eq = eq_by_room.get(room.id, [])
@@ -305,15 +341,21 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
         actual_kw = max(idle_kw, round(idle_kw + on_kw + noise, 3))
         interval_kwh = round(actual_kw * 0.25, 4)
 
-        mr = models.MeterReading(
-            room_id=room.id,
-            timestamp=current_ts,
-            actual_demand_kw=actual_kw,
-            interval_kwh=interval_kwh,
-            source="simulated",
-            is_simulated=True,
-        )
-        db.add(mr)
+        prior = existing_meter.get(room.id)
+        if prior is not None:
+            prior.actual_demand_kw = actual_kw
+            prior.interval_kwh = interval_kwh
+        else:
+            db.add(
+                models.MeterReading(
+                    room_id=room.id,
+                    timestamp=current_ts,
+                    actual_demand_kw=actual_kw,
+                    interval_kwh=interval_kwh,
+                    source="simulated",
+                    is_simulated=True,
+                )
+            )
         meter_readings_created += 1
 
     # -----------------------------------------------------------------------
@@ -322,6 +364,10 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
     water_readings_created = 0
     if current_ts.minute == 0:
         water_locations = db.query(models.WaterLocation).all()
+        existing_water = {
+            w.location_id: w
+            for w in db.query(models.WaterReading).filter(models.WaterReading.timestamp == current_ts).all()
+        }
         for loc in water_locations:
             baseline = 20.0 if "Block C" in loc.name else 15.0
             if 0 <= hour < 5:
@@ -344,22 +390,30 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
                 flow = 230.0 + random.gauss(0.0, 8.0)
 
             flow = max(round(flow, 1), 2.0)
-            wr = models.WaterReading(
-                location_id=loc.id,
-                timestamp=current_ts,
-                flow_rate_lph=flow,
-                interval_litres=round(flow * 1.0, 1),
-                expected_baseline_lph=baseline,
-                source="simulated",
-                is_simulated=True,
-            )
-            db.add(wr)
+            prior_w = existing_water.get(loc.id)
+            if prior_w is not None:
+                prior_w.flow_rate_lph = flow
+                prior_w.interval_litres = round(flow * 1.0, 1)
+                prior_w.expected_baseline_lph = baseline
+            else:
+                db.add(
+                    models.WaterReading(
+                        location_id=loc.id,
+                        timestamp=current_ts,
+                        flow_rate_lph=flow,
+                        interval_litres=round(flow * 1.0, 1),
+                        expected_baseline_lph=baseline,
+                        source="simulated",
+                        is_simulated=True,
+                    )
+                )
             water_readings_created += 1
 
         # -------------------------------------------------------------------
         # Automated Night-Flow Leak Detection (SPEC §9)
         # -------------------------------------------------------------------
         if 1 <= hour <= 4:
+            db.flush()  # session has autoflush off: make this tick's readings visible to the query below
             day_start = datetime(current_ts.year, current_ts.month, current_ts.day, 1, 0, 0)
             window_readings = (
                 db.query(models.WaterReading)
@@ -369,7 +423,21 @@ def tick(db: Session, delta_minutes: int = 15) -> Dict[str, Any]:
                 )
                 .all()
             )
-            detected_alerts = analyze_night_flow(window_readings)
+            # Thresholds are the administrator's configurable settings (Settings page), not constants.
+            cfg = {s.key: s.value for s in db.query(models.Setting).all()}
+
+            def _num(key: str, default: float) -> float:
+                try:
+                    v = float(cfg.get(key, default))
+                    return v if v > 0 else default
+                except (TypeError, ValueError):
+                    return default
+
+            detected_alerts = analyze_night_flow(
+                window_readings,
+                threshold_lph=_num("water_night_threshold_lph", 50.0),
+                default_baseline_lph=_num("water_low_flow_baseline_lph", 20.0),
+            )
             for alert_data in detected_alerts:
                 existing_alert = (
                     db.query(models.WaterAlert)

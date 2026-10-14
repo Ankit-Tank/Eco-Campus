@@ -1,4 +1,4 @@
-# GhostWatt — API Reference
+# Eco-Campus — API Reference
 
 > **Base URL:** `http://localhost:8000`  
 > **Interactive Swagger UI:** `http://localhost:8000/docs`  
@@ -18,7 +18,7 @@ Returns runtime server status and operational mode. No authentication required.
 {
   "status": "ok",
   "version": "0.1.0",
-  "app": "GhostWatt",
+  "app": "Eco-Campus",
   "mode": "demo"
 }
 ```
@@ -918,7 +918,7 @@ This triggers an immediate `High Usage` / `TRIGGERED` alert status, enabling a r
 
 ## 11. Corrective Actions & Verified Savings Meter (`/actions` and `/savings`)
 
-GhostWatt's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
+Eco-Campus's core differentiator is closing the loop between identifying excess consumption and verifying that corrective actions actually reduced electricity usage without claiming credit for natural schedule transitions.
 
 ### `POST /actions/switch-off` *(Admin Only)*
 Trigger an immediate corrective action to switch off a running appliance in a target room. The action is recorded with status `PENDING`, a claimed saving estimate is computed, and the appliance is set to `OFF` effective from the next simulation tick.
@@ -1281,7 +1281,7 @@ Triage complaint lifecycle status, assign to facility staff, and add resolution 
 
 ---
 
-### `GET /complaints/notifications/admin` *(Admin Only)*
+### `GET /complaints/admin/notifications` *(Admin Only)*
 Inspect automated internal notification records generated upon new student complaint submissions.
 
 **Headers:**
@@ -1425,7 +1425,7 @@ Downloadable CSV report format with provenance tags (`simulated`, `calculated`, 
 
 **Response `200 OK`:**
 - `Content-Type: text/csv`
-- `Content-Disposition: attachment; filename=ghostwatt_sustainability_report_YYYYMMDD_HHMMSS.csv`
+- `Content-Disposition: attachment; filename=eco_campus_sustainability_report_YYYYMMDD_HHMMSS.csv`
 
 ---
 
@@ -1690,3 +1690,48 @@ Returns a ranked list of campus blocks with sustainability scores (0–100, high
 }
 ```
 
+
+---
+
+## 15. Audit Additions & Changes (v0.2.0)
+
+All endpoints are also reachable under the `/api` prefix (for example `/api/auth/login`), which is what the Vite proxy uses.
+
+### Authentication (`/auth`)
+| Method | Path | Notes |
+|---|---|---|
+| `POST` | `/auth/login`, `/auth/admin/login` | Password is checked only against the stored bcrypt hash. 8 failed attempts per client+account in 5 minutes return `429` with `Retry-After`. `/auth/admin/login` also requires the admin role (`403` otherwise). |
+| `POST` | `/auth/student/otp/send` `{phone}` | Accepts `+919876543210`, `9876543210`, etc. `422` for an invalid number, `429` if re-requested within 30 s. Returns `{resend_after_seconds, dev_otp?}`; `dev_otp` only when `DEMO_MODE=true`. |
+| `POST` | `/auth/student/otp/verify` `{phone, otp}` | Signs in (or creates) the student that owns that number. 5 wrong codes lock the OTP; a code expires after 5 minutes. An admin's number returns `403`. |
+| `POST` | `/auth/admin/forgot-password/send-otp` `{phone}` | Same response shape for unknown numbers (no admin enumeration). |
+| `POST` | `/auth/admin/forgot-password/verify-otp` `{phone, otp}` | Returns `{reset_token}` bound to that admin (15 min). The token is **not** a login token. |
+| `POST` | `/auth/admin/forgot-password/reset` `{reset_token, new_password}` | Password must be at least 8 characters. Each token works once. |
+
+### Dashboard (`/dashboard`)
+- `GET /dashboard/admin-overview?from&to&zone` *(admin)*: every figure is calculated from meter readings, expected demand and savings records. The window is the last N days (N from `from`/`to`, default 14) **ending at the simulation clock**; the response includes `window_from` / `window_to`. Zones are derived from the rooms table (`academic_<block>`). Unknown zone returns `422`. An empty period returns zeros.
+- `GET /dashboard/student-home`: the caller's own complaints; `impact` is meter-verified credited kWh in rooms the student reported plus excess litres of confirmed leaks in buildings where their report was resolved. New students see zeros.
+- `GET /dashboard/public-impact`: verified kWh, verified CO2 (kg) and confirmed-leak litres straight from the database (no login).
+
+### Complaints (`/complaints`)
+- Accepted categories: `leaking_tap, broken_pipe, overflowing_tank, low_pressure, general_wastage` (alias `water_wastage`), `lights_left_on, ac_running, electrical_damage, appliance_left_on, other`.
+- `location` (or `building`) and a title or description are required (`422`). Title and description are both kept (first line = title).
+- Photos: JPG/PNG/GIF/WEBP up to 5 MB, content checked, stored under a server-generated name; `image_url` is `/uploads/complaints/<name>`.
+- `GET /complaints/assignees` *(admin)*: staff that can be assigned. `PATCH /complaints/{id}` rejects `assigned_to` values that are not active admin accounts.
+- `POST /complaints/{id}/reopen` `{reason?}` *(owner or admin)*: only `resolved` complaints (`400` otherwise).
+- `PATCH /complaints/admin/notifications/{id}/read` and `POST /complaints/admin/notifications/read-all` *(admin)*.
+
+### Simulator (`/sim`)
+- `POST /sim/appliance` `{equipment_id, state: "ON"|"OFF"}` *(admin)*: forces an appliance for the next tick.
+- `POST /sim/reset` accepts `to_date` or `timestamp`; invalid values return `422`.
+- `POST /sim/tick` accepts an optional `{delta_minutes}` (15 to 240, advanced in 15-minute steps).
+- Re-running a period overwrites readings instead of duplicating them. The database enforces one reading per room/location and timestamp.
+- `POST /actions/switch-off` returns `409` for an appliance that is already switched off.
+
+### Validation and consistency
+- Invalid `from` / `to` / `ts` / `period` values return `422` (previously ignored). `from` later than `to` returns `422`. A date-only `to` includes the whole day.
+- Periods accepted by `period=`: `today`, `day`, `week`, `7d`, `14d`, `30d`, `month`, `all`. `/ghost/ranking` now honours `period`.
+- Series and totals without an explicit `to` stop at the simulation clock.
+- `PUT /settings` rejects non-finite, non-positive or out-of-range numbers (`422`). Water settings keys: `water_night_threshold_lph`, `water_low_flow_baseline_lph`; leak detection now uses them.
+- `DELETE /rooms/{id}` returns `409` for a room that has meter history or actions (deactivate it with `PUT {is_active: false}`).
+- Timetable times must be valid 24-hour `HH:MM` values.
+- `GET /health` also reports `database: ok | unreachable`.

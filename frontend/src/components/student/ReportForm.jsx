@@ -1,15 +1,16 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, ChevronDown, ImageIcon, X } from 'lucide-react'
 import { ISSUE_TYPES } from './categoryIcons.js'
 import { useLanguage } from '../../i18n/LanguageContext.jsx'
 import { createComplaint } from '../../services/complaintsApi.js'
+import { getRooms } from '../../services/roomsApi.js'
 import { getErrorMessage } from '../../utils/errors.js'
 
 const MAX_DESCRIPTION = 500
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const IMAGE_TYPES = ['image/jpeg', 'image/png']
 
-const EMPTY = { title: '', category: '', place: '', description: '' }
+const EMPTY = { title: '', category: '', building: '', place: '', description: '' }
 
 // "onSubmitted" runs after the backend saved the report, so the page can refresh its lists.
 export default function ReportForm({ onSubmitted }) {
@@ -22,6 +23,21 @@ export default function ReportForm({ onSubmitted }) {
   const [message, setMessage] = useState(null) // { type: 'success' | 'error', text }
   const [dragging, setDragging] = useState(false)
   const fileInput = useRef(null)
+  const [blocks, setBlocks] = useState([]) // building options come from the rooms the campus actually has
+
+  useEffect(() => {
+    let cancelled = false
+    getRooms()
+      .then((res) => {
+        if (cancelled) return
+        const list = [...new Set((res.items || []).map((r) => r.block))].sort()
+        setBlocks(list)
+      })
+      .catch(() => {}) // the field is optional, so a failure just hides it
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const setField = (name) => (e) => {
     setValues({ ...values, [name]: e.target.value })
@@ -65,6 +81,7 @@ export default function ReportForm({ onSubmitted }) {
       await createComplaint({
         title: values.title.trim(),
         category: values.category,
+        building: values.building ? `Block ${values.building}` : undefined,
         location: values.place.trim(),
         description: values.description.trim(),
         image,
@@ -93,6 +110,25 @@ export default function ReportForm({ onSubmitted }) {
           <input id="rf-title" value={values.title} onChange={setField('title')} placeholder={t('student.form.titlePlaceholder')} maxLength={120} aria-invalid={!!errors.title} />
           {errors.title && <p className="field-error">{errors.title}</p>}
         </div>
+
+        {blocks.length > 0 && (
+          <div className="field">
+            <label htmlFor="rf-building">
+              {t('buildingField.label')} <span className="muted">{t('buildingField.optional')}</span>
+            </label>
+            <div className="select-field">
+              <select id="rf-building" value={values.building} onChange={setField('building')} className={values.building ? '' : 'is-placeholder'}>
+                <option value="">{t('buildingField.any')}</option>
+                {blocks.map((b) => (
+                  <option key={b} value={b}>
+                    {`Block ${b}`}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} aria-hidden="true" />
+            </div>
+          </div>
+        )}
 
         <div className="field-row">
           <div className="field">

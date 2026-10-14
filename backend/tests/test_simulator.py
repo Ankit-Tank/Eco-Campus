@@ -1,5 +1,5 @@
 """
-GhostWatt — tests/test_simulator.py
+Eco-Campus — tests/test_simulator.py
 Unit and integration tests for virtual clock, simulation ticking, equipment model,
 speed control, live snapshot performance, and RBAC enforcement.
 """

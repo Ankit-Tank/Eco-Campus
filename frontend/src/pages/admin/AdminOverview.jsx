@@ -8,7 +8,7 @@ import Skeleton from '../../components/ui/Skeleton.jsx'
 import { useApi } from '../../hooks/useApi.js'
 import { useLanguage } from '../../i18n/LanguageContext.jsx'
 import { getAdminOverview } from '../../services/dashboardApi.js'
-import { downloadCsv, formatNumber, formatRange, lastDays } from '../../utils/format.js'
+import { downloadCsv, formatNumber, formatRange, lastDays, scaleCo2Tonnes, scaleEnergyMwh } from '../../utils/format.js'
 
 const RANGE_OPTIONS = [7, 14, 30]
 
@@ -51,6 +51,10 @@ export default function AdminOverview() {
   // Refreshes quietly every 15 seconds. Real-time (1-2 s) polling can be added later for the Ghost Load page.
   const { status, data, error, reload } = useApi(() => getAdminOverview({ ...range, zone }), [zone, range.from, range.to], { interval: 15000 })
 
+  // The backend anchors the window to the simulation clock; label ranges with the dates they really cover.
+  const labelEnd = data?.window_to ? new Date(`${data.window_to}T00:00:00`) : new Date()
+  const shownRange = lastDays(days, labelEnd)
+
   function handleExport() {
     if (!data) return
     const rows = [
@@ -60,11 +64,14 @@ export default function AdminOverview() {
       [t('admin.buildings.name'), t('admin.buildings.active'), t('admin.buildings.daily'), t('admin.buildings.insight')],
       ...data.buildings.map((b) => [b.name, b.active_kw, b.daily_var_pct, t(`admin.insight.${b.status}`)]),
     ]
-    downloadCsv(`${t('admin.csv.file')}-${range.from}_${range.to}.csv`, rows)
+    downloadCsv(`${t('admin.csv.file')}-${data.window_from || shownRange.from}_${data.window_to || shownRange.to}.csv`, rows)
   }
 
   const kpis = data?.kpis
   const down = kpis && kpis.consumption_change_pct <= 0
+  const conserved = scaleEnergyMwh(kpis?.conserved_mwh)
+  const consumption = scaleEnergyMwh(kpis?.consumption_mwh)
+  const co2 = scaleCo2Tonnes(kpis?.co2_saved_tonnes)
 
   return (
     <>
@@ -95,7 +102,7 @@ export default function AdminOverview() {
             <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
               {RANGE_OPTIONS.map((n) => (
                 <option key={n} value={n}>
-                  {formatRange(lastDays(n).from, lastDays(n).to, language)}
+                  {formatRange(lastDays(n, labelEnd).from, lastDays(n, labelEnd).to, language)}
                 </option>
               ))}
             </select>
@@ -116,12 +123,12 @@ export default function AdminOverview() {
           <section className="kpi-strip" aria-label={t('admin.title')}>
             <Kpi label={t('admin.kpi.conserved')} note={t('admin.kpi.conservedNote')}>
               <strong>
-                {formatNumber(kpis.conserved_mwh, 1)} {t('units2.mwh')}
+                {formatNumber(conserved.value, 1)} {t(conserved.unit)}
               </strong>
             </Kpi>
             <Kpi label={t('admin.kpi.consumption')}>
               <strong>
-                {formatNumber(kpis.consumption_mwh, 1)} {t('units2.mwh')}
+                {formatNumber(consumption.value, 1)} {t(consumption.unit)}
               </strong>
               <span className={`trend ${down ? 'trend--good' : 'trend--bad'}`}>
                 <span aria-hidden="true">{down ? '⌄' : '⌃'}</span> {kpis.consumption_change_pct > 0 ? '+' : ''}
@@ -131,7 +138,7 @@ export default function AdminOverview() {
             </Kpi>
             <Kpi label={t('admin.kpi.co2')}>
               <strong>
-                {formatNumber(kpis.co2_saved_tonnes, 1)} {t('units2.tco2e')}
+                {formatNumber(co2.value, 1)} {t(co2.unit)}
               </strong>
             </Kpi>
           </section>

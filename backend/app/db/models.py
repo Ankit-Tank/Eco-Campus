@@ -1,5 +1,5 @@
 """
-GhostWatt — app/db/models.py
+Eco-Campus — app/db/models.py
 SQLAlchemy ORM models for all entities defined in SPEC §16 / ARCHITECTURE.
 
 Tables
@@ -46,6 +46,8 @@ class User(Base):
         default="student",
     )
     is_active     = Column(Boolean, default=True)
+    phone         = Column(String(20), unique=True, nullable=True)   # 10-digit mobile used for OTP login
+    full_name     = Column(String(120), nullable=True)
     created_at    = Column(DateTime, default=_now)
 
     # Relationships
@@ -323,6 +325,7 @@ class Complaint(Base):
         SAEnum(
             "leaking_tap", "broken_pipe", "overflowing_tank",
             "low_pressure", "general_wastage", "appliance_left_on",
+            "lights_left_on", "ac_running", "electrical_damage", "other",
             name="complaint_category",
         ),
         nullable=False,

@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/complaints.py
+Eco-Campus — schemas/complaints.py
 Pydantic schemas for student water complaints, lifecycle tracking, audit history,
 and administrative notification records.
 """
@@ -81,6 +81,10 @@ class ComplaintPatch(BaseModel):
         None,
         description="Audit note logged in complaint history",
     )
+
+
+class ComplaintReopen(BaseModel):
+    reason: Optional[str] = Field(None, max_length=500, description="Why the issue is being reopened")
 
 
 class AdminNotificationItem(BaseModel):

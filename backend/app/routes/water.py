@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/water.py
+Eco-Campus — routes/water.py
 Water consumption time-series and night-flow leak detection alert endpoints.
 Read operations are open to authenticated users; alert modifications require administrator privileges.
 """
@@ -8,7 +8,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.core.dates import ordered_range, parse_dt, sim_now
 from app.core.deps import get_db, get_current_user, require_admin
+from app.services.campus_metrics import get_rates
 from app.db import models
 from app.services.carbon_calculator import bucket_equivalents
 from app.schemas.water import (
@@ -41,18 +43,14 @@ def get_water_series(
     if location_id is not None:
         query = query.filter(models.WaterReading.location_id == location_id)
 
-    if date_from:
-        try:
-            query = query.filter(models.WaterReading.timestamp >= datetime.fromisoformat(date_from))
-        except ValueError:
-            pass
+    dt_from = parse_dt(date_from, "from")
+    dt_to = parse_dt(date_to, "to", end_of_day=True) or sim_now(db)
+    ordered_range(dt_from, dt_to)
+    if dt_from:
+        query = query.filter(models.WaterReading.timestamp >= dt_from)
+    query = query.filter(models.WaterReading.timestamp <= dt_to)
 
-    if date_to:
-        try:
-            query = query.filter(models.WaterReading.timestamp <= datetime.fromisoformat(date_to))
-        except ValueError:
-            pass
-
+    bucket_litres = get_rates(db)["bucket_litres"]
     results = query.order_by(models.WaterReading.timestamp.asc()).all()
 
     points = []
@@ -71,7 +69,7 @@ def get_water_series(
             )
         )
 
-    bucket_res = bucket_equivalents(total_litres, 15.0)
+    bucket_res = bucket_equivalents(total_litres, bucket_litres)
 
     return WaterSeriesResponse(
         series=points,
@@ -108,6 +106,7 @@ def get_water_alerts(
         query = query.filter(models.WaterAlert.location_id == location_id)
 
     results = query.order_by(models.WaterAlert.detected_at.desc()).all()
+    bucket_litres = get_rates(db)["bucket_litres"]
 
     alerts_list = []
     for alert, loc in results:
@@ -117,7 +116,7 @@ def get_water_alerts(
         excess_litres = max(0.0, round(actual_litres - expected_litres, 1))
         resolved_str = alert.resolved_at.isoformat() if alert.resolved_at else None
 
-        b_res = bucket_equivalents(excess_litres, 15.0)
+        b_res = bucket_equivalents(excess_litres, bucket_litres)
 
         alerts_list.append(
             WaterAlertResponse(
@@ -194,7 +193,7 @@ def update_water_alert(
     excess_litres = max(0.0, round(actual_litres - expected_litres, 1))
     resolved_str = alert.resolved_at.isoformat() if alert.resolved_at else None
 
-    b_res = bucket_equivalents(excess_litres, 15.0)
+    b_res = bucket_equivalents(excess_litres, get_rates(db)["bucket_litres"])
 
     return WaterAlertResponse(
         id=alert.id,

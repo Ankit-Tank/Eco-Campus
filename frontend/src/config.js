@@ -1,6 +1,6 @@
 // Small settings in one place. (The backend equivalent is backend/app/core/config.py)
 
-export const APP_NAME = 'EcoCampus'
+export const APP_NAME = 'Eco-Campus'
 
 // Read from the .env file. See .env.example
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
@@ -25,5 +25,5 @@ export const STORAGE_KEYS = {
 // backend/scripts/seed.py must create users with exactly these values.
 export const DEMO_ACCOUNTS = {
   student: { phone: '9876543210' },
-  admin: { email: 'admin@ecocampus.demo', password: 'admin123', phone: '9876500000' },
+  admin: { email: 'admin@ghostwatt.demo', password: 'admin123', phone: '9876500000' },
 }

@@ -1,5 +1,5 @@
 """
-GhostWatt — services/assistant_tools.py
+Eco-Campus — services/assistant_tools.py
 Approved data-fetch functions and grounded response templates for the AI assistant.
 
 SPEC §11 & User Requirements:

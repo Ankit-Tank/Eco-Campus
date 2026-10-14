@@ -24,7 +24,7 @@ export function getExportCsvUrl({ from, to } = {}) {
   return `${API_BASE_URL}/reports/export.csv?${params.toString()}`
 }
 
-export async function downloadReportCsv({ from, to, filename = 'ghostwatt_sustainability_report.csv' } = {}) {
+export async function downloadReportCsv({ from, to, filename = 'eco_campus_sustainability_report.csv' } = {}) {
   const params = new URLSearchParams()
   if (from) params.append('from', from)
   if (to) params.append('to', to)

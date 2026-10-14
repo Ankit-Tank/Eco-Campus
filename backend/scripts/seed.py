@@ -1,5 +1,5 @@
 """
-GhostWatt — scripts/seed.py
+Eco-Campus — scripts/seed.py
 CLI script to seed the database with reproducible demo data.
 
 Usage:
@@ -24,7 +24,7 @@ from app.services.data_generator import generate_all
 def run_seed(seed: int = 42) -> dict:
     """Execute idempotent database reset and seeding."""
     print("=" * 70)
-    print("  GHOSTWATT DATABASE SEEDING ENGINE")
+    print("  ECO-CAMPUS DATABASE SEEDING ENGINE")
     print("=" * 70)
     print(f"[*] Initializing database session (Seeded RNG: {seed})...")
 
@@ -92,7 +92,7 @@ def run_seed(seed: int = 42) -> dict:
     print(f"    - All data marked with : source='simulated', is_simulated=True")
     print(f"    - CSV/JSON dumps saved : {result['export_dir']}")
     print("=" * 70)
-    print("  GHOSTWATT SEEDING COMPLETED SUCCESSFULLY")
+    print("  ECO-CAMPUS SEEDING COMPLETED SUCCESSFULLY")
     print("=" * 70)
 
     return result

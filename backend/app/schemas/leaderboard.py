@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/leaderboard.py
+Eco-Campus — schemas/leaderboard.py
 Pydantic schemas for the campus block sustainability leaderboard.
 """
 from typing import Dict, List, Optional

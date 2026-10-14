@@ -15,7 +15,10 @@ import {
 import { useLanguage } from '../../i18n/LanguageContext.jsx'
 import {
   getAdminNotifications,
+  getAssignees,
   getComplaints,
+  markAllNotificationsRead,
+  markNotificationRead,
   patchComplaint,
 } from '../../services/complaintsApi.js'
 import { formatDate } from '../../utils/format.js'
@@ -29,6 +32,9 @@ export default function AdminMaintenance() {
   const [complaints, setComplaints] = useState([])
   const [notifications, setNotifications] = useState([])
   const [overdueCount, setOverdueCount] = useState(0)
+  const [hotspots, setHotspots] = useState([])
+  const [assignees, setAssignees] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -36,22 +42,28 @@ export default function AdminMaintenance() {
   const [selected, setSelected] = useState(null)
   const [patchStatus, setPatchStatus] = useState('')
   const [patchNotes, setPatchNotes] = useState('')
+  const [patchAssignee, setPatchAssignee] = useState('')
+  const [patchError, setPatchError] = useState('')
   const [savingPatch, setSavingPatch] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
 
   async function loadData() {
     setError(null)
     try {
-      const [compRes, notifRes] = await Promise.all([
+      const [compRes, notifRes, staffRes] = await Promise.all([
         getComplaints({ status: statusFilter === 'all' ? undefined : statusFilter }),
         getAdminNotifications().catch((e) => {
           console.warn('Admin notifications not available:', e)
-          return { notifications: [] }
+          return { notifications: [], unread_count: 0 }
         }),
+        getAssignees().catch(() => ({ assignees: [] })),
       ])
       setComplaints(compRes.complaints || [])
       setOverdueCount(compRes.overdue_count || 0)
-      setNotifications(notifRes?.notifications || [])
+      setHotspots(compRes.frequently_affected_locations || [])
+      setNotifications((notifRes?.notifications || []).filter((n) => !n.is_read))
+      setUnreadCount(notifRes?.unread_count || 0)
+      setAssignees(staffRes?.assignees || [])
     } catch (err) {
       setError(err)
     } finally {
@@ -67,24 +79,49 @@ export default function AdminMaintenance() {
     setSelected(c)
     setPatchStatus(c.status)
     setPatchNotes(c.resolution_notes || '')
+    setPatchAssignee(c.assigned_to ? String(c.assigned_to) : '')
+    setPatchError('')
     setSuccessMsg('')
+  }
+
+  async function readOne(id) {
+    try {
+      await markNotificationRead(id)
+      await loadData()
+    } catch (err) {
+      setError(err)
+    }
+  }
+
+  async function readAll() {
+    try {
+      await markAllNotificationsRead()
+      await loadData()
+    } catch (err) {
+      setError(err)
+    }
   }
 
   async function handleUpdateComplaint(e) {
     e.preventDefault()
     if (!selected) return
     setSavingPatch(true)
+    setPatchError('')
     try {
+      // Choosing a technician for a ticket that is still new means it has been dispatched.
+      const newlyAssigned = patchAssignee && String(selected.assigned_to || '') !== patchAssignee
+      const nextStatus = newlyAssigned && ['submitted', 'acknowledged'].includes(patchStatus) ? 'assigned' : patchStatus
       await patchComplaint(selected.id, {
-        status: patchStatus,
+        status: nextStatus,
+        assigned_to: patchAssignee ? Number(patchAssignee) : undefined,
         resolution_notes: patchNotes,
         notes: patchNotes,
       })
-      setSuccessMsg(`Complaint ${selected.complaint_code} updated to ${patchStatus}!`)
+      setSuccessMsg(`Complaint ${selected.complaint_code} updated to ${nextStatus}!`)
       setSelected(null)
       await loadData()
     } catch (err) {
-      alert(err.message || 'Failed to update complaint')
+      setPatchError(err.message || 'Failed to update complaint')
     } finally {
       setSavingPatch(false)
     }
@@ -133,11 +170,28 @@ export default function AdminMaintenance() {
 
       {/* Admin Notifications Banner */}
       {notifications.length > 0 && (
-        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Bell size={20} color="#d97706" />
-          <div style={{ flex: 1, fontSize: 13, color: '#92400e' }}>
-            <strong>{notifications.length} recent system notifications:</strong> Latest: "{notifications[0].title} — {notifications[0].message}"
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, padding: '12px 16px', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Bell size={20} color="#d97706" />
+            <div style={{ flex: 1, fontSize: 13, color: '#92400e' }}>
+              <strong>{unreadCount} unread notification{unreadCount === 1 ? '' : 's'}</strong>
+            </div>
+            <button type="button" className="btn btn--outline btn--small" onClick={readAll}>
+              {t('maint.markAllRead')}
+            </button>
           </div>
+          <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0, fontSize: 13, color: '#92400e' }}>
+            {notifications.slice(0, 4).map((n) => (
+              <li key={n.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '4px 0' }}>
+                <span style={{ flex: 1 }}>
+                  {n.title} — {n.message}
+                </span>
+                <button type="button" className="btn btn--outline btn--small" onClick={() => readOne(n.id)} aria-label={`Mark "${n.title}" as read`}>
+                  <CheckCircle size={14} />
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -163,6 +217,13 @@ export default function AdminMaintenance() {
             <Wrench size={20} color="#4b5563" />
           </div>
 
+          {hotspots.length > 0 && (
+            <p className="note-text" style={{ margin: '0 0 12px' }}>
+              <strong>{t('maint.hotspots')}:</strong>{' '}
+              {hotspots.slice(0, 3).map((h) => `${h.building} · ${h.location_detail} (${h.count} ${t('maint.reports')})`).join('  |  ')}
+            </p>
+          )}
+
           {complaints.length === 0 ? (
             <p className="empty-text" style={{ padding: 24 }}>No complaints match the selected filter.</p>
           ) : (
@@ -175,6 +236,7 @@ export default function AdminMaintenance() {
                     <th style={{ padding: '10px 12px' }}>Location</th>
                     <th style={{ padding: '10px 12px' }}>Reporter</th>
                     <th style={{ padding: '10px 12px' }}>Status</th>
+                    <th style={{ padding: '10px 12px' }}>{t('maint.assignTo')}</th>
                     <th style={{ padding: '10px 12px' }}>Reported At</th>
                     <th style={{ padding: '10px 12px' }}>Action</th>
                   </tr>
@@ -203,6 +265,9 @@ export default function AdminMaintenance() {
                       </td>
                       <td style={{ padding: '12px' }}>
                         <StatusBadge status={c.status} />
+                      </td>
+                      <td style={{ padding: '12px', fontSize: 13, color: '#4b5563' }}>
+                        {c.assigned_to_email || <span className="pill-muted">{t('maint.unassigned')}</span>}
                       </td>
                       <td style={{ padding: '12px', fontSize: 13, color: '#64748b' }}>
                         {formatDate(c.created_at, language)}
@@ -243,7 +308,7 @@ export default function AdminMaintenance() {
 
               <div style={{ padding: '12px 16px', background: '#f8fafc', borderRadius: 8, marginBottom: 16 }}>
                 <div style={{ fontSize: 13, color: '#64748b' }}>Location: <strong>{selected.building} · {selected.location_detail}</strong></div>
-                <div style={{ fontSize: 14, color: '#1e293b', marginTop: 8, fontWeight: 500 }}>
+                <div style={{ fontSize: 14, color: '#1e293b', marginTop: 8, fontWeight: 500, whiteSpace: 'pre-line' }}>
                   "{selected.description}"
                 </div>
               </div>
@@ -294,6 +359,20 @@ export default function AdminMaintenance() {
                 </div>
 
                 <div className="field" style={{ marginTop: 12 }}>
+                  <label htmlFor="patch-assignee">{t('maint.assignTo')}</label>
+                  <div className="select-field">
+                    <select id="patch-assignee" value={patchAssignee} onChange={(e) => setPatchAssignee(e.target.value)}>
+                      <option value="">{t('maint.unassigned')}</option>
+                      {assignees.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.name} ({a.email})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="field" style={{ marginTop: 12 }}>
                   <label htmlFor="patch-notes">Resolution Notes / Action Taken</label>
                   <textarea
                     id="patch-notes"
@@ -303,6 +382,12 @@ export default function AdminMaintenance() {
                     placeholder="e.g. Technician replaced leaking valve. Water supply restored."
                   />
                 </div>
+
+                {patchError && (
+                  <p className="alert-note" role="alert" style={{ marginTop: 12 }}>
+                    {patchError}
+                  </p>
+                )}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16 }}>
                   <button type="button" className="btn btn--outline" onClick={() => setSelected(null)}>Close</button>
