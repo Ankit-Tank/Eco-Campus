@@ -1,5 +1,5 @@
 """
-GhostWatt - app/main.py
+Eco-Campus - app/main.py
 FastAPI application entry point.
 - CORS origins come from CORS_ORIGINS (defaults to the Vite dev / preview servers)
 - Background simulation worker started on startup (runs off the event loop)
@@ -31,7 +31,7 @@ from app.services.simulator import (
 from app.routes import auth, dashboard, electricity, ghost_load, rooms, timetable
 from app.routes import savings, water, complaints, reports, app_settings, simulator, assistant, live, actions, leaderboard
 
-log = logging.getLogger("ghostwatt")
+log = logging.getLogger("eco_campus")
 
 # ---------------------------------------------------------------------------
 # Background simulation task & lifespan

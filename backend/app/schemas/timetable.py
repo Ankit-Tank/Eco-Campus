@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/timetable.py
+Eco-Campus — schemas/timetable.py
 Pydantic schemas for Timetable entries with input validation.
 """
 from typing import List, Optional

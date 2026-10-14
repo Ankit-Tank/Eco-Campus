@@ -1,4 +1,4 @@
-"""GhostWatt - core/phone.py: Indian mobile number normalisation (pure functions)."""
+"""Eco-Campus - core/phone.py: Indian mobile number normalisation (pure functions)."""
 import re
 from typing import Optional
 

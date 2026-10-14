@@ -1,8 +1,8 @@
 """
-GhostWatt - tests/conftest.py
+Eco-Campus - tests/conftest.py
 Shared pytest fixtures.
 
-The suite runs against a THROWAWAY COPY of backend/ghostwatt.db (or a freshly seeded database when
+The suite runs against a THROWAWAY COPY of backend/eco-campus.db (or a freshly seeded database when
 that file does not exist), so tests can create complaints / actions / settings without touching the
 real demo database. The environment is configured BEFORE the app is imported.
 """
@@ -13,9 +13,9 @@ import tempfile
 from pathlib import Path
 
 _BACKEND = Path(__file__).resolve().parents[1]
-_TMP = Path(tempfile.mkdtemp(prefix="ghostwatt_tests_"))
+_TMP = Path(tempfile.mkdtemp(prefix="eco_campus_tests_"))
 _TEST_DB = _TMP / "test.db"
-_SOURCE_DB = _BACKEND / "ghostwatt.db"
+_SOURCE_DB = _BACKEND / "eco-campus.db"
 
 os.environ["DB_URL"] = f"sqlite:///{_TEST_DB.as_posix()}"
 os.environ["UPLOAD_DIR"] = str(_TMP / "uploads")

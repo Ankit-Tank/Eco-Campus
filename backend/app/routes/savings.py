@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/savings.py
+Eco-Campus — routes/savings.py
 Endpoints for Verified Savings metrics and audit records.
 
 SPEC §8 & Prompt Requirements:

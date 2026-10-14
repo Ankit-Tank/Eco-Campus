@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/complaints.py
+Eco-Campus — routes/complaints.py
 Endpoints for student water complaints, administrative lifecycle management,
 file uploads, audit history, and admin notification logging.
 

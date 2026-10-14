@@ -1,8 +1,8 @@
-# GhostWatt — 3-Minute Hackathon Demo Script
+# Eco-Campus — 3-Minute Hackathon Demo Script
 
-> **Demo Persona:** Sustainability Officer & Facility Manager demonstrating GhostWatt to university leadership and hackathon judges.  
+> **Demo Persona:** Sustainability Officer & Facility Manager demonstrating Eco-Campus to university leadership and hackathon judges.  
 > **Total Duration:** 3 minutes (180 seconds).  
-> **Objective:** Prove that GhostWatt solves the invisible campus energy crisis by isolating Ghost Load from scheduled classes, closing the loop with verified physical savings, detecting nocturnal water leaks, and providing an AI assistant with zero hallucinations.
+> **Objective:** Prove that Eco-Campus solves the invisible campus energy crisis by isolating Ghost Load from scheduled classes, closing the loop with verified physical savings, detecting nocturnal water leaks, and providing an AI assistant with zero hallucinations.
 
 ---
 
@@ -36,7 +36,7 @@ Before starting the presentation:
 **Spoken Narration:**
 > "Universities spend tens of lakhs every month on electricity, but campus facilities have a blind spot: they can't tell the difference between productive energy used during a lecture and **Ghost Load**—air conditioners, projectors, and computers humming in empty rooms after hours.
 >
-> GhostWatt changes this. Instead of dumb threshold alarms, GhostWatt compares real-time meter telemetry against live academic timetables and occupancy models to isolate pure waste."
+> Eco-Campus changes this. Instead of dumb threshold alarms, Eco-Campus compares real-time meter telemetry against live academic timetables and occupancy models to isolate pure waste."
 
 **Screen Action / Endpoint Call:**
 - Call `GET /live/snapshot` or `GET /dashboard/summary`:
@@ -52,7 +52,7 @@ Before starting the presentation:
 ### Act II: Live Ghost Load Detection & Closed-Loop Verification (0:45 – 1:45)
 
 **Spoken Narration:**
-> "Let's see GhostWatt in action with a live scenario. It's 9:30 PM on campus. All classes have ended, but an air conditioner was left running in Classroom A-102."
+> "Let's see Eco-Campus in action with a live scenario. It's 9:30 PM on campus. All classes have ended, but an air conditioner was left running in Classroom A-102."
 
 **Step 1 — Inject Live Demo Event:**
 - Execute:
@@ -101,7 +101,7 @@ Before starting the presentation:
   - *"Watch the verification engine: because our simulation runs at 60x, the 15-minute post-action window elapses in seconds."*
   - Status transitions to **`VERIFIED`**.
   - Show `credited_kwh`, `monetary_saving_inr`, and `emissions_kg`.
-  - Point out: *"GhostWatt never credits savings if a drop was caused by a class ending. Every rupee saved is mathematically proven."*
+  - Point out: *"Eco-Campus never credits savings if a drop was caused by a class ending. Every rupee saved is mathematically proven."*
 
 ---
 
@@ -140,7 +140,7 @@ Before starting the presentation:
   - Ultra-fast response (< 500 ms) powered by Groq.
   - Inspect `data_used`: proves the model called `top_ghost_rooms("24h")`.
   - Highlight the **Number Guard**:
-    - *"Every single number in the assistant's answer was validated against the database. If the model hallucinates a number, GhostWatt's guardrail discards the text and falls back to a deterministic template."*
+    - *"Every single number in the assistant's answer was validated against the database. If the model hallucinates a number, Eco-Campus's guardrail discards the text and falls back to a deterministic template."*
 
 **Step 2 — Student Privacy Refusal:**
 - Call `POST /assistant/ask` with student token:
@@ -153,7 +153,7 @@ Before starting the presentation:
   - Clean refusal: *"Access denied: Students are only permitted to view their own complaints."*
 
 **Closing Line:**
-> "GhostWatt doesn't just display energy charts—it verifies physical savings, eliminates water waste, and empowers every student and facility manager on campus. Thank you!"
+> "Eco-Campus doesn't just display energy charts—it verifies physical savings, eliminates water waste, and empowers every student and facility manager on campus. Thank you!"
 
 ---
 
@@ -161,7 +161,7 @@ Before starting the presentation:
 
 | Question | Winning Answer |
 |---|---|
-| **"How does this differ from standard BMS / IoT dashboards?"** | Conventional dashboards only display raw kW. They cannot tell if a 5 kW load is a scheduled lab session or forgotten appliances. GhostWatt integrates timetable intelligence, calculates expected demand dynamically, and features an automated verification engine that proves savings post-action. |
+| **"How does this differ from standard BMS / IoT dashboards?"** | Conventional dashboards only display raw kW. They cannot tell if a 5 kW load is a scheduled lab session or forgotten appliances. Eco-Campus integrates timetable intelligence, calculates expected demand dynamically, and features an automated verification engine that proves savings post-action. |
 | **"How do you prevent false savings when classes end?"** | Our savings verification formula calculates: `reduction = min(max(0, pre_avg - post_avg), max(0, pre_avg - expected_kw))`. If expected demand drops because a class ended, zero savings are credited. |
 | **"Can this integrate with real campus infrastructure?"** | Yes. The modular architecture connects to Modbus/BACnet energy meters via standard MQTT/HTTP ingestion adapters, ERP timetables via REST sync, and existing campus BMS controllers. |
 | **"Why Groq and Qwen 3.8?"** | Groq LPU hardware gives sub-second token latency, critical for interactive conversational queries during facility audits. Qwen 3.8 excels at strict tool calling and zero hallucination adherence. |

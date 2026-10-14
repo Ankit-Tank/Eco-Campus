@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/live.py
+Eco-Campus — routes/live.py
 High-performance live campus telemetry snapshot endpoint.
 Open to all authenticated users (students and admins).
 Sub-100ms response time using optimized single-query lookups and in-memory calculations.

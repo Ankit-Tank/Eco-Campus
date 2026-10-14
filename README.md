@@ -1,10 +1,10 @@
-# GhostWatt
+# Eco-Campus
 
 **Intelligent Campus Energy & Sustainability Platform**
 
 > *Detect Waste. Verify Real Savings. Eliminate Nocturnal Leaks. Build a Greener Campus.*
 
-GhostWatt is a full-featured campus sustainability intelligence engine built for the **Kaushal 8.0 Hackathon**. It continuously monitors electrical and water consumption across campus buildings, differentiates productive academic energy from **Ghost Load** (appliances left running in empty rooms), verifies real savings after corrective actions, triages water leaks, and provides a grounded AI assistant powered by the Groq API (every number comes from backend calculations).
+Eco-Campus is a full-featured campus sustainability intelligence engine built for the **Kaushal 8.0 Hackathon**. It continuously monitors electrical and water consumption across campus buildings, differentiates productive academic energy from **Ghost Load** (appliances left running in empty rooms), verifies real savings after corrective actions, triages water leaks, and provides a grounded AI assistant powered by the Groq API (every number comes from backend calculations).
 
 ---
 
@@ -24,7 +24,7 @@ GhostWatt is a full-featured campus sustainability intelligence engine built for
 ## Core Features
 
 - **Ghost Load Intelligence:** Calculates real-time expected demand by combining room baselines, installed appliance power ratings, and scheduled academic timetable occupancy. Excess consumption is classified into plain-English reasons (`NO_CLASS_AC_ON`, `LAB_AFTER_HOURS`, `OVER_EXPECTED_DURING_CLASS`, `OUTSIDE_SCHEDULE`).
-- **Closed-Loop Savings Verification:** When facility operators or students switch off forgotten equipment, GhostWatt tracks post-action intervals. Savings are only credited if actual demand drops below the pre-action level and cannot be attributed to a class naturally ending.
+- **Closed-Loop Savings Verification:** When facility operators or students switch off forgotten equipment, Eco-Campus tracks post-action intervals. Savings are only credited if actual demand drops below the pre-action level and cannot be attributed to a class naturally ending.
 - **Water Night-Flow Leak Detection:** Analyzes nocturnal flow curves (01:00–04:00 AM) against the configurable low-flow threshold and baseline to identify pipe fractures and continuous overflows before structural damage occurs.
 - **Facility Maintenance Lifecycle:** Students submit water and electrical waste reports with location details and photos. Admins assign, triage, and resolve tickets with full immutable audit history.
 - **Campus Block Leaderboard:** Ranks Block A, Block B, and Block C based on efficiency scores (0–100) and sustainability letter grades (`A+` to `D`).
@@ -43,8 +43,8 @@ GhostWatt is a full-featured campus sustainability intelligence engine built for
 
 ```bash
 # Clone the repository
-git clone https://github.com/Ankit-Tank/GhostWatt.git
-cd GhostWatt/backend
+git clone https://github.com/Ankit-Tank/Eco-Campus.git
+cd Eco-Campus/backend
 
 # Create virtual environment
 python -m venv .venv
@@ -150,10 +150,10 @@ Role-Based Access Control (RBAC) is enforced in FastAPI dependency layers (`requ
 
 | Variable | Default Value | Description |
 |---|---|---|
-| `APP_NAME` | `GhostWatt` | Application display name |
+| `APP_NAME` | `Eco-Campus` | Application display name |
 | `APP_VERSION` | `0.2.0` | Semantic platform version |
 | `DEBUG` | `false` | Enable verbose diagnostic logging |
-| `DB_URL` | `sqlite:///./ghostwatt.db` | Database connection string (SQLite WAL mode) |
+| `DB_URL` | `sqlite:///./eco-campus.db` | Database connection string (SQLite WAL mode) |
 | `JWT_SECRET` | *(random per start if unset)* | Secret for signing tokens. If you leave the placeholder, a random secret is generated each start (logins then expire on restart). Set a real value in `.env`. |
 | `JWT_ALGORITHM` | `HS256` | Token signing algorithm |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `480` | Token validity window |
@@ -174,7 +174,7 @@ Role-Based Access Control (RBAC) is enforced in FastAPI dependency layers (`requ
 
 ## Telemetry Simulator & Demo Scenario
 
-GhostWatt includes an in-memory simulation engine that models time progression, appliance states, and sensor telemetry without requiring physical hardware.
+Eco-Campus includes an in-memory simulation engine that models time progression, appliance states, and sensor telemetry without requiring physical hardware.
 
 ### Simulator Mechanics
 - **Virtual Clock:** Maintained in the `sim_state` database table (`virtual_now`, `speed`, `running`).
@@ -228,7 +228,7 @@ To demonstrate the full detection-and-verification lifecycle in under 30 seconds
 
 ## Simulated vs Real Data Architecture
 
-GhostWatt was built for production readiness while demonstrating via simulated data:
+Eco-Campus was built for production readiness while demonstrating via simulated data:
 
 1. **Explicit Data Provenance:**
    - Every JSON response returned by the backend includes `"data_source": "simulated"`.
@@ -242,7 +242,7 @@ GhostWatt was built for production readiness while demonstrating via simulated d
 
 ## Engineering Assumptions & Equivalents
 
-All sustainability metrics returned by GhostWatt include human-readable equivalence metrics and explicit assumption strings:
+All sustainability metrics returned by Eco-Campus include human-readable equivalence metrics and explicit assumption strings:
 
 | Metric | Factor / Baseline | Explanation & Assumption String |
 |---|---|---|
@@ -257,23 +257,23 @@ All sustainability metrics returned by GhostWatt include human-readable equivale
 
 ## Future Production Integrations (Meters, ERP, BMS)
 
-GhostWatt is architected to seamlessly transition from synthetic simulation to real campus operational technology:
+Eco-Campus is architected to seamlessly transition from synthetic simulation to real campus operational technology:
 
 ```
 [ Modbus/BACnet Meters ] ──> [ MQTT / HTTP Adapter ] ──┐
-[ Water Pulse Counters ] ──> [ LoRaWAN Gateway      ] ──┼──> [ GhostWatt Backend ]
+[ Water Pulse Counters ] ──> [ LoRaWAN Gateway      ] ──┼──> [ Eco-Campus Backend ]
 [ Campus ERP Timetables] ──> [ REST / Webhook Sync  ] ──┤      (FastAPI + SQLite/Postgres)
 [ Building Management  ] <── [ Modbus Relay Coils   ] ──┘
 ```
 
 1. **Real Electricity Meters (Modbus / BACnet):**
    - Sub-meters (Schneider, Siemens, Secure Meters) transmit active power (kW) and energy (kWh) over RS-485 Modbus RTU or BACnet/IP.
-   - A lightweight edge agent publishes 15-minute interval readings directly into GhostWatt via a telemetry ingestion endpoint (`POST /ingest/readings`).
+   - A lightweight edge agent publishes 15-minute interval readings directly into Eco-Campus via a telemetry ingestion endpoint (`POST /ingest/readings`).
 2. **Campus ERP Timetable Sync:**
    - Connects to university academic management systems (SAP, Ellucian, Google Classroom, custom ERP) via webhooks or daily automated cron sync.
    - Dynamically updates room timetable slots and expected student counts without manual intervention.
 3. **Building Management System (BMS) Closed-Loop Actuation:**
-   - GhostWatt's verified switch-off engine can trigger automated relay coils or smart circuit breakers (e.g. KNX, Zigbee, or Modbus relays) to power down unattended rooms automatically after grace periods.
+   - Eco-Campus's verified switch-off engine can trigger automated relay coils or smart circuit breakers (e.g. KNX, Zigbee, or Modbus relays) to power down unattended rooms automatically after grace periods.
 4. **Ultrasonic Water Flow Meters & LoRaWAN:**
    - Digital water meters with pulse outputs or LoRaWAN transmitters stream hourly consumption from overhead tanks and main washroom risers.
 
@@ -289,4 +289,4 @@ GhostWatt is architected to seamlessly transition from synthetic simulation to r
 
 ---
 
-*GhostWatt — Kaushal 8.0 Hackathon Submission*
+*Eco-Campus — Kaushal 8.0 Hackathon Submission*

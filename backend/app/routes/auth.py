@@ -1,5 +1,5 @@
 """
-GhostWatt - routes/auth.py
+Eco-Campus - routes/auth.py
 Authentication endpoints.
 
 Security notes

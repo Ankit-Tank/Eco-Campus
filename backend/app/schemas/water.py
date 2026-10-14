@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/water.py
+Eco-Campus — schemas/water.py
 Pydantic schemas for water readings, time-series, and leak alerts.
 """
 from typing import List, Optional

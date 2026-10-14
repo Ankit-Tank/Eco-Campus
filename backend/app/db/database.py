@@ -1,5 +1,5 @@
 """
-GhostWatt — app/db/database.py
+Eco-Campus — app/db/database.py
 SQLAlchemy engine with SQLite WAL mode, session factory, and session helpers.
 """
 from contextlib import contextmanager

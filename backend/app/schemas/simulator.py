@@ -1,5 +1,5 @@
 """
-GhostWatt — schemas/simulator.py
+Eco-Campus — schemas/simulator.py
 Pydantic schemas for simulation clock management, control endpoints, and live snapshots.
 """
 from typing import List, Optional

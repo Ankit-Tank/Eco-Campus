@@ -1,5 +1,5 @@
 """
-GhostWatt — app/core/deps.py
+Eco-Campus — app/core/deps.py
 Reusable FastAPI dependency functions for database sessions and role-based access control.
 """
 from fastapi import Depends, HTTPException, status

@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/reports.py
+Eco-Campus — routes/reports.py
 Campus sustainability reports and CSV data export.
 
 SPEC §12 & Prompt Requirements:
@@ -466,7 +466,7 @@ def export_report_csv(
                 writer.writerow(["Complaints Breakdown", f"Category: {cat}", cnt, "count", c.tag, "Admin campus breakdown"])
 
     csv_content = output.getvalue()
-    filename = f"ghostwatt_sustainability_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"eco_campus_sustainability_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"
 
     return Response(
         content=csv_content,

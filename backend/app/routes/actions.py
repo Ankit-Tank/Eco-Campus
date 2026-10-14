@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/actions.py
+Eco-Campus — routes/actions.py
 Endpoints for corrective actions (switch-off appliances) and action history.
 
 SPEC §8 & Prompt Requirements:

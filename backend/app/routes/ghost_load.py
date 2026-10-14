@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/ghost_load.py
+Eco-Campus — routes/ghost_load.py
 Ghost Load Intelligence endpoints: current status, period rankings,
 actionable switch-off priorities, and room-level explainability breakdown.
 """

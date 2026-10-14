@@ -1,6 +1,6 @@
 // Small settings in one place. (The backend equivalent is backend/app/core/config.py)
 
-export const APP_NAME = 'EcoCampus'
+export const APP_NAME = 'Eco-Campus'
 
 // Read from the .env file. See .env.example
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'

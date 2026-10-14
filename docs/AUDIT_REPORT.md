@@ -1,4 +1,4 @@
-# GhostWatt / Eco-Campus: Full Audit Report
+# Eco-Campus: Full Audit Report
 
 Scope: backend first, then frontend, then the integration between them, against the Kaushal 8.0 PS-04 requirements (`docs/SPEC.md`).
 No git commits, pushes or remote changes were made; every change is in the local project files.
@@ -39,7 +39,7 @@ No git commits, pushes or remote changes were made; every change is in the local
 - D7: Switching the same appliance off twice created a second "claimed" saving.
 - D8: Simulator ticks could run concurrently (background clock and `/sim/tick`), appliance switch-offs were lost on restart, and DB work ran on the event loop.
 - D9: The dev database file and uploads folder were resolved relative to the current directory (starting uvicorn from another folder created an empty database).
-- D10: The old test suite wrote into the real `ghostwatt.db` (the shipped DB has tariff 9.25 and CO2 0.75 instead of the documented defaults, plus test complaints/actions).
+- D10: The old test suite wrote into the real `eco-campus.db` (the shipped DB has tariff 9.25 and CO2 0.75 instead of the documented defaults, plus test complaints/actions).
 - D11: Title and description of a complaint: when both were entered, the title was thrown away.
 
 ### Fabricated numbers (violates "every number comes from data")

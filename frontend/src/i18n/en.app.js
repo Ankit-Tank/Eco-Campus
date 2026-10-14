@@ -78,7 +78,7 @@ const appEn = {
     },
     insight: { exceeded: 'Exceeded Target', normal: 'Normal', below: 'Below Target' },
     csv: {
-      file: 'ghostwatt-overview',
+      file: 'eco-campus-overview',
       date: 'Date',
       actual: 'Actual load (kW)',
       baseline: 'Estimated baseline (kW)',
@@ -140,7 +140,7 @@ const appEn = {
     chat: {
       title: 'AI Chatbot',
       subtitle: 'Ask anything about campus energy, water, your reports, or how to save resources.',
-      welcome: 'Hi! I am the GhostWatt assistant. Ask me a question and I will do my best to answer.',
+      welcome: 'Hi! I am the Eco-Campus assistant. Ask me a question and I will do my best to answer.',
       suggestionsTitle: 'Try asking',
       suggestions: [
         'How can I save electricity in my hostel room?',
@@ -155,7 +155,7 @@ const appEn = {
       assistant: 'Assistant',
       newChat: 'New chat',
       unavailable: 'The assistant is not available right now. Please try again in a moment. The rest of the app works as usual.',
-      note: 'Answers about campus numbers come from GhostWatt data. The assistant can make mistakes, so check important details.',
+      note: 'Answers about campus numbers come from Eco-Campus data. The assistant can make mistakes, so check important details.',
     },
     myReports: {
       title: 'My Reports',

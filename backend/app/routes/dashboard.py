@@ -1,5 +1,5 @@
 """
-GhostWatt - routes/dashboard.py
+Eco-Campus - routes/dashboard.py
 High-level campus summary metrics: actual vs expected electricity, ghost load,
 water consumption, emissions, and human-readable equivalents.
 

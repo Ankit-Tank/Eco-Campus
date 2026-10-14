@@ -1,4 +1,4 @@
-# GhostWatt — Architecture Overview
+# Eco-Campus — Architecture Overview
 
 > **Rule:** Read this file and docs/SPEC.md before starting any task.
 

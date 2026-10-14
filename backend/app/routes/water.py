@@ -1,5 +1,5 @@
 """
-GhostWatt — routes/water.py
+Eco-Campus — routes/water.py
 Water consumption time-series and night-flow leak detection alert endpoints.
 Read operations are open to authenticated users; alert modifications require administrator privileges.
 """

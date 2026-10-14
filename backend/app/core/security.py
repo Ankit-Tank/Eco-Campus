@@ -1,5 +1,5 @@
 """
-GhostWatt — app/core/security.py
+Eco-Campus — app/core/security.py
 JWT token creation/verification and password hashing using bcrypt.
 No FastAPI imports — pure functions.
 """

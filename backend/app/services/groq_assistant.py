@@ -1,5 +1,5 @@
 """
-GhostWatt — services/groq_assistant.py
+Eco-Campus — services/groq_assistant.py
 AI Sustainability Assistant powered by Groq Function Calling.
 SPEC §11:
 - Reads GROQ_API_KEY and GROQ_MODEL from environment variables only (never exposed).
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 TIMEOUT_SECONDS = 8.0
 
 SYSTEM_PROMPT = (
-    "You are GhostWatt AI, an expert campus energy and sustainability assistant. "
+    "You are Eco-Campus AI, an expert campus energy and sustainability assistant. "
     "Your objective is to diagnose campus electricity waste, ghost loads, verified savings, "
     "block consumption comparisons, water leak complaints, and prioritized switch-off actions.\n\n"
     "CRITICAL RULES:\n"

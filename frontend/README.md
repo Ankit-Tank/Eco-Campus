@@ -1,7 +1,7 @@
-# EcoCampus Frontend
+# Eco-Campus Frontend
 
 React + Vite, plain CSS, Lucide icons, Recharts (for the dashboard charts later).
-Built to sit next to the FastAPI backend: `GhostWatt/frontend` and `GhostWatt/backend`.
+Built to sit next to the FastAPI backend: `Eco-Campus/frontend` and `Eco-Campus/backend`.
 
 ## Run it
 

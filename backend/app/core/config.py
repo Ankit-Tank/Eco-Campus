@@ -1,5 +1,5 @@
 """
-GhostWatt - app/core/config.py
+Eco-Campus - app/core/config.py
 Reads configuration from environment variables / backend/.env.
 Never hardcode prices or factors - runtime values live in the settings DB table.
 """
@@ -15,7 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 _PLACEHOLDER_SECRETS = {"", "change_this_to_a_long_random_secret", "super_secret_jwt_key_change_in_production"}
-_log = logging.getLogger("ghostwatt.config")
+_log = logging.getLogger("eco_campus.config")
 
 
 class Settings(BaseSettings):
@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     )
 
     # App
-    app_name: str = "GhostWatt"
+    app_name: str = "Eco-Campus"
     app_version: str = "0.2.0"
     debug: bool = False
 
@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     demo_mode: bool = True
 
     # Database
-    db_url: str = "sqlite:///./ghostwatt.db"
+    db_url: str = "sqlite:///./eco-campus.db"
 
     # JWT
     jwt_secret: str = "change_this_to_a_long_random_secret"
